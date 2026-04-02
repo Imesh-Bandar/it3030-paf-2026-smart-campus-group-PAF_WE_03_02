@@ -1,0 +1,17 @@
+{
+  "root": true,
+  "ignorePatterns": ["backend/**", "frontend/dist/**", "frontend/node_modules/**"],
+  "overrides": [
+    {
+      "files": ["frontend/src/**/*.{ts,tsx}"],
+      "env": { "browser": true, "es2022": true },
+      "extends": ["eslint:recommended", "plugin:react/recommended"],
+      "parser": "@typescript-eslint/parser",
+      "plugins": ["@typescript-eslint", "react"],
+      "settings": { "react": { "version": "detect" } },
+      "rules": {
+        "react/react-in-jsx-scope": "off"
+      }
+    }
+  ]
+}

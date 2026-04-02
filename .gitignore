@@ -1,0 +1,35 @@
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+logs/
+
+# Build outputs
+backend/target/
+frontend/dist/
+coverage/
+
+# Node
+node_modules/
+frontend/node_modules/
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+
+# Misc
+*.tmp
+*.swp
