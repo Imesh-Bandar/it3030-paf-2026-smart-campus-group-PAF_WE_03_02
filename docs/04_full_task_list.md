@@ -495,6 +495,11 @@ VITE_GOOGLE_CLIENT_ID=
 - [x] Added persisted `refresh_tokens` entity/repository and expanded `users` entity to schema-aligned fields
 - [x] Implemented OAuth success redirect with `access_token` + `refresh_token` query parameters and httpOnly refresh cookie
 - [x] Added frontend auth store refresh-token support, login callback processing, and role-aware protected routes
+- [x] Added email/password authentication APIs: `POST /auth/register` and `POST /auth/login` with validation and BCrypt hashing
+- [x] Added local credential storage service (`user_credentials`) linked to `users` for password-based authentication
+- [x] Upgraded auth UX to a landing-first Login/Register tabbed page with submit flows and Google sign-in/register action
+- [x] Updated routing so landing auth page is available at `/` and protected app pages require authentication
+- [x] Aligned OAuth callback path to `/auth/callback` in backend config and environment defaults for Google registration/login compatibility
 
 ---
 

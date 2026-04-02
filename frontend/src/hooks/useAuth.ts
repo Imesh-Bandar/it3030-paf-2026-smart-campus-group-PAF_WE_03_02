@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../lib/axios';
 import { useAuthStore } from '../stores/authStore';
+import { authApi } from '../services/api/authApi';
 
 export function useAuth() {
   const navigate = useNavigate();
@@ -13,18 +14,62 @@ export function useAuth() {
   const clearAuth = useAuthStore((state) => state.clearAuth);
   const updateUser = useAuthStore((state) => state.updateUser);
   const backendBase =
-    import.meta.env.VITE_API_BASE_URL?.replace('/api/v1', '') ?? 'http://localhost:8080';
+    import.meta.env.VITE_API_BASE_URL?.replace('/api/v1', '') ?? 'http://localhost:8008';
 
   const login = useCallback(() => {
     window.location.href = `${backendBase}/auth/google`;
   }, [backendBase]);
+
+  const loginWithEmailPassword = useCallback(
+    async (email: string, password: string) => {
+      const response = await authApi.login({ email, password });
+      const nextUser = response?.user;
+      const nextAccessToken = response?.accessToken;
+      const nextRefreshToken = response?.refreshToken;
+
+      if (!nextUser || !nextAccessToken) {
+        throw new Error('Invalid login response');
+      }
+
+      setAuth({
+        user: nextUser,
+        accessToken: nextAccessToken,
+        refreshToken: nextRefreshToken,
+      });
+      navigate('/', { replace: true });
+      return nextUser;
+    },
+    [navigate, setAuth],
+  );
+
+  const registerWithEmailPassword = useCallback(
+    async (fullName: string, email: string, password: string) => {
+      const response = await authApi.register({ fullName, email, password });
+      const nextUser = response?.user;
+      const nextAccessToken = response?.accessToken;
+      const nextRefreshToken = response?.refreshToken;
+
+      if (!nextUser || !nextAccessToken) {
+        throw new Error('Invalid registration response');
+      }
+
+      setAuth({
+        user: nextUser,
+        accessToken: nextAccessToken,
+        refreshToken: nextRefreshToken,
+      });
+      navigate('/', { replace: true });
+      return nextUser;
+    },
+    [navigate, setAuth],
+  );
 
   const logout = useCallback(async () => {
     try {
       await api.post('/auth/logout', refreshToken ? { refreshToken } : {});
     } finally {
       clearAuth();
-      navigate('/login');
+      navigate('/');
     }
   }, [clearAuth, navigate, refreshToken]);
 
@@ -53,6 +98,8 @@ export function useAuth() {
     refreshToken,
     isAuthenticated,
     login,
+    loginWithEmailPassword,
+    registerWithEmailPassword,
     logout,
     refreshAccessToken,
     getUser,
