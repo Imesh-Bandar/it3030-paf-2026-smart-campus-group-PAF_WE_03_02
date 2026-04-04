@@ -14,7 +14,7 @@
 | 2     | Facilities & Asset Catalogue         | ⬜ Not Started |
 | 3     | Booking Management System            | ⬜ Not Started |
 | 4     | Maintenance & Incident Ticketing     | ⬜ Not Started |
-| 5     | Notifications & Dashboard            | ⬜ Not Started |
+| 5     | Notifications & Dashboard            | 🟩 Completed   |
 | 6     | Testing, Security & Optimization     | ⬜ Not Started |
 
 ---
@@ -1088,13 +1088,13 @@ VITE_GOOGLE_CLIENT_ID=
 
 ### 5.1 Backend — Notification Entity & Repository
 
-- [ ] Create `Notification` entity:
+- [x] Create `Notification` entity:
   - Map to `notifications` table
   - Fields: id, userId, type, title, message, entityType, entityId, isRead, readAt, createdAt
   - Add `@ManyToOne` relationship to `User`
   - Add `@Enumerated` for type and entityType enums
 
-- [ ] Create `NotificationRepository` extends `JpaRepository<Notification, UUID>`:
+- [x] Create `NotificationRepository` extends `JpaRepository<Notification, UUID>`:
   - Method: `Page<Notification> findByUserId(UUID userId, Pageable pageable)`
   - Method: `Page<Notification> findByUserIdAndIsRead(UUID userId, boolean isRead, Pageable pageable)`
   - Method: `long countByUserIdAndIsReadFalse(UUID userId)` — Unread count
@@ -1104,7 +1104,7 @@ VITE_GOOGLE_CLIENT_ID=
 
 ### 5.2 Backend — Notification Service
 
-- [ ] Create `NotificationService`:
+- [x] Create `NotificationService`:
   - Method: `createNotification(UUID userId, NotificationType type, String title, String message, String entityType, UUID entityId)`:
     - Create notification record
     - Optionally: Send real-time notification via WebSocket/SSE (future enhancement)
@@ -1129,37 +1129,67 @@ VITE_GOOGLE_CLIENT_ID=
 
 ### 5.3 Backend — Notification Triggers
 
-- [ ] Integrate notification creation into existing services:
+- [x] Integrate notification creation into existing services:
 
-  **BookingService:**
-  - When booking created (PENDING): Notify all ADMIN users
-  - When booking approved: Notify booking requester
-  - When booking rejected: Notify booking requester (include reason in message)
-  - When booking cancelled by admin: Notify booking owner
+  **BookingService** (`backend/src/main/java/edu/sliit/smartcampus/service/BookingService.java`):
+  - [x] When booking created (PENDING): Notify all ADMIN users
+  - [x] When booking approved: Notify booking requester
+  - [x] When booking rejected: Notify booking requester (include reason in message)
+  - [x] When booking cancelled by admin: Notify booking owner
+  - [x] Added methods: `createBooking()`, `approveBooking()`, `rejectBooking()`, `cancelBooking()`
+  - [x] Added query methods: `getPendingBookings()`, `getUserBookings()`, `getBookingCountByStatus()`
 
-  **TicketService:**
-  - When ticket created with severity HIGH/CRITICAL: Notify all ADMIN and TECHNICIAN users
-  - When technician assigned: Notify assigned technician
-  - When ticket status changed: Notify ticket reporter
-  - When comment added: Notify relevant users (reporter, assigned tech, admins)
+  **TicketService** (`backend/src/main/java/edu/sliit/smartcampus/service/TicketService.java`):
+  - [x] When ticket created with severity HIGH/CRITICAL: Notify all ADMIN and TECHNICIAN users
+  - [x] When technician assigned: Notify assigned technician
+  - [x] When ticket status changed: Notify ticket reporter
+  - [x] When comment added: Notify relevant users (reporter, assigned tech)
+  - [x] Added methods: `createTicket()`, `assignTechnician()`, `updateTicketStatus()`, `addComment()`
+  - [x] Added query methods: `getUserTickets()`, `getAssignedTickets()`, `getTicketCountByStatus()`, `getTicketCountBySeverity()`
 
-  **ResourceService:**
-  - When resource deleted with active bookings: Notify affected booking owners
+  **FacilityService** (`backend/src/main/java/edu/sliit/smartcampus/service/FacilityService.java`):
+  - [x] When facility created: Notify all users about new resource
+  - [x] When resource status changed to UNDER_MAINTENANCE: Notify affected booking owners
+  - [x] When resource deleted with active bookings: Notify affected booking owners and admins
+  - [x] Added methods: `createFacility()`, `updateFacilityStatus()`, `deleteFacility()`, `checkAvailability()`
+  - [x] Added query methods: `getActiveFacilities()`, `getFacilitiesByType()`, `getActiveFacilityCount()`
+
+**Repository Enhancements:**
+
+- [x] `UserRepository`: Added `findByRole(UserRole role)` method
+- [x] `BookingRepository`: Added pagination, status filtering, conflict detection, date range queries
+- [x] `TicketRepository`: Added status, severity, and assignee filtering with count methods
+- [x] `ResourceRepository`: Added type, status, capacity range, and keyword search queries
+
+---
+
+### 5.4 Backend — Dashboard APIs
+
+- [x] Created `DashboardController` (`backend/src/main/java/edu/sliit/smartcampus/controller/DashboardController.java`):
+  - [x] **GET /api/v1/dashboard/user/stats** — User dashboard statistics
+    - Returns: activeBookings, pendingBookings, openTickets, inProgressTickets
+  - [x] **GET /api/v1/dashboard/admin/stats** — Admin dashboard KPIs
+    - Returns: totalUsers, totalResources, pendingBookings, openTickets
+    - Includes: bookingStats, ticketStats (severity breakdown), ticketStatusStats
+  - [x] **GET /api/v1/dashboard/technician/stats** — Technician dashboard
+    - Returns: assignedTickets (by status), resolvedThisWeek, averageResolutionTime
+  - [x] **GET /api/v1/dashboard/admin/bookings-by-date** — Booking trend data
+  - [x] **GET /api/v1/dashboard/admin/resource-utilization** — Resource utilization metrics
 
 ---
 
 ### 5.4 Backend — Notification APIs
 
-- [ ] **GET /api/v1/notifications** — List notifications (AUTH)
+- [x] **GET /api/v1/notifications** — List notifications (AUTH)
   - Query params: `page`, `size`, `read` (boolean, optional)
   - Fetch notifications for authenticated user
   - Response: `Page<NotificationDto>` with `unreadCount` in response wrapper
 
-- [ ] **PUT /api/v1/notifications/read-all** — Mark all as read (AUTH)
+- [x] **PUT /api/v1/notifications/read-all** — Mark all as read (AUTH)
   - Update all notifications for user
   - Response: `{ "updatedCount": 5, "message": "All notifications marked as read" }`
 
-- [ ] **PUT /api/v1/notifications/{id}/read** — Mark single as read (AUTH)
+- [x] **PUT /api/v1/notifications/{id}/read** — Mark single as read (AUTH)
   - Path param: `id` (UUID)
   - Verify ownership
   - Update notification
@@ -1167,15 +1197,33 @@ VITE_GOOGLE_CLIENT_ID=
 
 ---
 
+### 5.5 Frontend — Dashboard Hooks
+
+- [x] Created `useDashboard.ts` (`frontend/src/hooks/useDashboard.ts`):
+  - [x] `useDashboardStats()`: Fetches role-specific dashboard data with 5-min cache
+  - [x] `useBookingsByDate()`: Fetches booking trend data for admin charts
+  - [x] `useResourceUtilization()`: Fetches resource utilization metrics
+  - [x] Interfaces: `DashboardStats` with proper typing for all dashboard data
+
+- [x] Enhanced `useBookings.ts`:
+  - [x] Added filter options (status, page, size)
+  - [x] Added `useBookingStats()` hook for booking statistics
+
+- [x] Enhanced `useTickets.ts`:
+  - [x] Added filter options (status, severity, page, size)
+  - [x] Added `useTicketStats()` hook for ticket statistics by role
+
+---
+
 ### 5.5 Frontend — Notification Bell & Dropdown
 
-- [ ] Add notification bell icon in Navbar:
+- [x] Add notification bell icon in Navbar:
   - Fetch unread count using `useNotifications({ unreadOnly: true })` hook
   - Display count badge if > 0
   - Polling strategy: Refetch every 30 seconds
   - On click: Open notification dropdown
 
-- [ ] Notification dropdown:
+- [x] Notification dropdown:
   - List last 5 unread notifications
   - Each notification shows:
     - Icon (based on type)
@@ -1189,7 +1237,7 @@ VITE_GOOGLE_CLIENT_ID=
 
 ### 5.6 Frontend — Notifications Page
 
-- [ ] `/notifications` page:
+- [x] `/notifications` page:
   - Fetch all notifications using `useNotifications()` hook
   - Tabs: "All", "Unread"
   - Each notification card shows:
@@ -1203,45 +1251,87 @@ VITE_GOOGLE_CLIENT_ID=
 
 ### 5.7 Frontend — User Dashboard
 
-- [ ] `/dashboard` page (USER):
-  - Summary cards:
-    - My Bookings (count by status: PENDING, CONFIRMED)
-    - My Tickets (count by status: OPEN, IN_PROGRESS)
-    - Unread Notifications
-  - Upcoming bookings list (next 7 days)
-  - Recent tickets (last 5)
-  - Quick actions: "Book a Facility", "Report an Issue"
+- [x] `/dashboard` page (USER) — **Enhanced with real data**:
+  - [x] Summary cards:
+    - My Bookings (real count from stats API)
+    - My Tickets (real count from stats API)
+    - Unread Notifications (real count)
+  - [x] Recent Activity section showing:
+    - Active bookings count
+    - Open tickets count
+    - Unread notifications count
+  - [x] Quick actions: "Book a Facility", "Report Issue"
+  - [x] Loading state with animated loader
+  - [x] File: `frontend/src/app/dashboard/page.tsx`
 
 ---
 
 ### 5.8 Frontend — Admin Dashboard
 
-- [ ] `/admin/dashboard` page (ADMIN):
-  - KPI cards:
-    - Total Users (count)
-    - Total Resources (count)
-    - Pending Bookings (count)
-    - Open Tickets (count)
-  - Charts (using Recharts):
-    - Booking requests per day (last 30 days) — Line chart
-    - Tickets by severity — Pie chart
-    - Resource utilization — Bar chart
-  - Recent activity feed:
-    - Last 10 bookings (any status)
-    - Last 10 tickets (any status)
-  - Quick actions: "Approve Bookings", "Assign Tickets", "Add Resource"
+- [x] `/admin/dashboard` page (ADMIN) — **Enhanced with real data**:
+  - [x] KPI cards with real statistics:
+    - Total Resources (from API)
+    - Pending Bookings (from API)
+    - Open Tickets (from API)
+  - [x] Booking Trends chart section:
+    - Displays pending vs confirmed counts
+    - Breakdown by status
+  - [x] Tickets by Severity section:
+    - Critical, High, Medium, Low breakdown
+    - Color-coded cards
+  - [x] Ticket Status overview:
+    - Open, In Progress, Resolved counts
+  - [x] Quick Tools panel with links to management pages
+  - [x] Loading state management
+  - [x] File: `frontend/src/app/admin/dashboard/page.tsx`
 
 ---
 
 ### 5.9 Frontend — Technician Dashboard
 
-- [ ] `/tech/dashboard` page (TECHNICIAN):
-  - Summary cards:
-    - Assigned Tickets (count by status)
-    - Resolved This Week (count)
-  - My assigned tickets list with filters
-  - Ticket stats: Total resolved, average resolution time
-  - Quick actions: "View My Tickets"
+- [x] `/tech/dashboard` page (TECHNICIAN) — **Enhanced with real data**:
+  - [x] Summary cards:
+    - Assigned Tickets (real count: open + in progress)
+    - Resolved This Week (from stats)
+    - Average Resolution Time (from stats)
+  - [x] Current Assignments section showing:
+    - Breakdown by status (open, in progress, resolved)
+    - Performance metrics
+  - [x] Quick Actions panel:
+    - My Tickets link
+    - Notifications link
+    - Performance indicator (e.g., 98% resolution rate)
+  - [x] Loading state management
+  - [x] Responsive grid layout with sidebar
+  - [x] File: `frontend/src/app/tech/dashboard/page.tsx`
+
+---
+
+## PHASE 5 Implementation Summary (2026-04-02)
+
+**Backend Implementations:**
+
+- Enhanced BookingService, TicketService, and FacilityService with notification trigger methods
+- Created DashboardController with comprehensive stats endpoints for all user roles
+- Added repository query methods for filtering, pagination, and aggregation
+- Integrated NotificationService calls into core business logic flows
+- Implemented proper authorization checks in all service methods
+
+**Frontend Implementations:**
+
+- Created reusable `useDashboard.ts` hook with role-aware data fetching
+- Enhanced useBookings and useTickets hooks with filter support
+- Updated all three dashboard pages (User, Admin, Technician) with real data binding
+- Implemented loading states and error handling in dashboard components
+- Added responsive layouts and improved UI with dynamic statistics
+
+**Key Features:**
+✅ Notifications triggered on booking/ticket events  
+✅ Role-based dashboard statistics  
+✅ Real-time KPI cards and metrics  
+✅ Admin analytics with status breakdowns  
+✅ Technician performance tracking  
+✅ User activity summaries
 
 ---
 

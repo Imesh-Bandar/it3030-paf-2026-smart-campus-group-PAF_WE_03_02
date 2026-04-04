@@ -16,6 +16,11 @@ import { AdminUsersPage } from './app/admin/users/page';
 import { useRole } from './hooks/useRole';
 import { useTheme } from './hooks/useTheme';
 import type { UserRole } from './services/types/user';
+import { NotificationBell } from './components/layout/NotificationBell';
+import { NotificationsPage } from './app/notifications/page';
+import { UserDashboardPage } from './app/dashboard/page';
+import { AdminDashboardPage } from './app/admin/dashboard/page';
+import { TechDashboardPage } from './app/tech/dashboard/page';
 
 /* ─── Icons (inline SVG helpers) ─────────────────── */
 function IconHome() {
@@ -280,6 +285,7 @@ function AppLayout() {
 
         {/* Right actions */}
         <div className="header-actions">
+          {isAuthenticated && <NotificationBell />}
           {/* Theme toggle */}
           <button
             type="button"
@@ -422,6 +428,39 @@ function App() {
       <Route element={<AppLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
+
+        <Route
+          path="/notifications"
+          element={
+            <ProtectedRoute>
+              <NotificationsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <UserDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedRoute roles={['ADMIN']}>
+              <AdminDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tech/dashboard"
+          element={
+            <ProtectedRoute roles={['TECHNICIAN']}>
+              <TechDashboardPage />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/home"
