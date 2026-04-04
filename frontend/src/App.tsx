@@ -8,6 +8,7 @@ import { FacilityDetailsPage } from './app/facilities/[id]/page';
 import { BookingsPage } from './app/bookings/page';
 import { BookingDetailsPage } from './app/bookings/[id]/page';
 import { TicketsPage } from './app/tickets/page';
+import { NewTicketPage } from './app/tickets/new/page';
 import { TicketDetailsPage } from './app/tickets/[id]/page';
 import { AdminBookingsPage } from './app/admin/bookings/page';
 import { AdminFacilitiesPage } from './app/admin/facilities/page';
@@ -472,6 +473,14 @@ function App() {
           }
         />
         <Route
+          path="/tickets/new"
+          element={
+            <ProtectedRoute>
+              <NewTicketPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/tickets/:id"
           element={
             <ProtectedRoute>
@@ -499,7 +508,7 @@ function App() {
         <Route
           path="/admin/tickets"
           element={
-            <ProtectedRoute roles={['ADMIN']}>
+            <ProtectedRoute roles={['ADMIN', 'TECHNICIAN']}>
               <AdminTicketsPage />
             </ProtectedRoute>
           }

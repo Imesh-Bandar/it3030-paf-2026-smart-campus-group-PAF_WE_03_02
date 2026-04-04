@@ -64,7 +64,8 @@ public class AuthService {
         user.setStatus(UserStatus.ACTIVE);
         user.setLastLoginAt(OffsetDateTime.now());
 
-        User saved = userRepository.save(user);
+        // Flush user insert before writing credentials that reference users(id).
+        User saved = userRepository.saveAndFlush(user);
         localCredentialService.upsertPasswordHash(saved.getId(), passwordEncoder.encode(request.password()));
 
         return issueSession(saved);
