@@ -2,7 +2,6 @@ package edu.sliit.smartcampus.service;
 
 import edu.sliit.smartcampus.model.*;
 import edu.sliit.smartcampus.repository.BookingRepository;
-import edu.sliit.smartcampus.repository.NotificationRepository;
 import edu.sliit.smartcampus.repository.ResourceRepository;
 import edu.sliit.smartcampus.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -26,28 +26,28 @@ public class FacilityService {
     /**
      * Get all active facilities
      */
-    public Page<Object> getActiveFacilities(Pageable pageable) {
+    public Page<Resource> getActiveFacilities(Pageable pageable) {
         return resourceRepository.findByDeletedAtIsNull(pageable);
     }
 
     /**
      * Get facilities filtered by type
      */
-    public Page<Object> getFacilitiesByType(String type, Pageable pageable) {
+    public Page<Resource> getFacilitiesByType(String type, Pageable pageable) {
         return resourceRepository.findByTypeAndDeletedAtIsNull(type, pageable);
     }
 
     /**
      * Get facilities filtered by status
      */
-    public Page<Object> getFacilitiesByStatus(String status, Pageable pageable) {
+    public Page<Resource> getFacilitiesByStatus(String status, Pageable pageable) {
         return resourceRepository.findByStatusAndDeletedAtIsNull(status, pageable);
     }
 
     /**
      * Search facilities by keyword
      */
-    public Page<Object> searchFacilities(String keyword, Pageable pageable) {
+    public Page<Resource> searchFacilities(String keyword, Pageable pageable) {
         return resourceRepository.searchByKeyword(keyword, pageable);
     }
 
@@ -85,26 +85,23 @@ public class FacilityService {
     @Transactional
     public void updateFacilityStatus(UUID resourceId, String newStatus) {
         // Fetch resource
-        Resource resource = resourceRepository.findById(resourceId)
+        Resource resource = resourceRepository.findById(Objects.requireNonNull(resourceId, "resourceId"))
                 .orElseThrow(() -> new RuntimeException("Resource not found"));
 
         // If status changed to UNDER_MAINTENANCE, check for active bookings and notify
         // users
         if ("UNDER_MAINTENANCE".equals(newStatus)) {
-            List<Object> activeBookings = bookingRepository.findByResourceIdAndActiveStatus(resourceId);
+            List<Booking> activeBookings = bookingRepository.findByResourceIdAndActiveStatus(resourceId);
             if (!activeBookings.isEmpty()) {
                 // Notify booking owners about facility maintenance
-                for (Object booking : activeBookings) {
-                    // Extract userId from booking and send notification
-                    UUID bookingOwnerId = UUID.randomUUID(); // Would be extracted from booking
-                    notificationService.createNotification(
-                            bookingOwnerId,
-                            NotificationType.SYSTEM,
-                            "Facility Under Maintenance",
-                            "The facility you booked is now under maintenance",
-                            EntityType.RESOURCE,
-                            resourceId);
-                }
+                UUID bookingOwnerId = UUID.randomUUID(); // Would be extracted from booking
+                notificationService.createNotification(
+                        bookingOwnerId,
+                        NotificationType.SYSTEM,
+                        "Facility Under Maintenance: " + resource.getName(),
+                        "The facility you booked is now under maintenance",
+                        EntityType.RESOURCE,
+                        resourceId);
             }
         }
 
@@ -118,11 +115,11 @@ public class FacilityService {
     @Transactional
     public void deleteFacility(UUID resourceId) {
         // Fetch resource
-        Resource resource = resourceRepository.findById(resourceId)
+        Resource resource = resourceRepository.findById(Objects.requireNonNull(resourceId, "resourceId"))
                 .orElseThrow(() -> new RuntimeException("Resource not found"));
 
         // Check for active bookings
-        List<Object> activeBookings = bookingRepository.findByResourceIdAndActiveStatus(resourceId);
+        List<Booking> activeBookings = bookingRepository.findByResourceIdAndActiveStatus(resourceId);
         if (!activeBookings.isEmpty()) {
             throw new RuntimeException("Cannot delete facility with active bookings");
         }
@@ -148,7 +145,8 @@ public class FacilityService {
      */
     public Object checkAvailability(UUID resourceId, String fromDate, String toDate) {
         // Fetch all bookings for resource in date range
-        List<Object> bookings = bookingRepository.findByResourceIdAndDateRange(resourceId, fromDate, toDate);
+        List<Booking> bookings = bookingRepository
+                .findByResourceIdAndDateRange(Objects.requireNonNull(resourceId, "resourceId"), fromDate, toDate);
         // Build availability response
         return bookings;
     }

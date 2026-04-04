@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -29,7 +30,7 @@ public class BookingService {
     public void createBooking(UUID resourceId, UUID userId, LocalDateTime startTime, LocalDateTime endTime,
             String purpose) {
         // Conflict detection
-        List<Object> conflicts = bookingRepository.findConflictingBookings(resourceId, startTime, endTime);
+        List<Booking> conflicts = bookingRepository.findConflictingBookings(resourceId, startTime, endTime);
         if (!conflicts.isEmpty()) {
             throw new RuntimeException("Resource is not available for this time slot");
         }
@@ -129,14 +130,14 @@ public class BookingService {
     /**
      * Get all pending bookings (admin dashboard)
      */
-    public Page<Object> getPendingBookings(Pageable pageable) {
+    public Page<Booking> getPendingBookings(Pageable pageable) {
         return bookingRepository.findByStatus("PENDING", pageable);
     }
 
     /**
      * Get all bookings for a specific user
      */
-    public Page<Object> getUserBookings(UUID userId, Pageable pageable) {
+    public Page<Booking> getUserBookings(UUID userId, Pageable pageable) {
         return bookingRepository.findByUserId(userId, pageable);
     }
 
@@ -156,7 +157,7 @@ public class BookingService {
     }
 
     private User getCurrentUser() {
-        UUID currentUserId = authService.getCurrentUserId();
+        UUID currentUserId = Objects.requireNonNull(authService.getCurrentUserId(), "Authenticated user id not found");
         return userRepository.findById(currentUserId)
                 .orElseThrow(() -> new IllegalArgumentException("Authenticated user not found"));
     }

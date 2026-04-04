@@ -9,8 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -68,7 +68,7 @@ public class TicketService {
         }
 
         // Verify technician exists
-        User technician = userRepository.findById(technicianId)
+        User technician = userRepository.findById(Objects.requireNonNull(technicianId, "technicianId"))
                 .orElseThrow(() -> new RuntimeException("Technician not found"));
 
         if (technician.getRole() != UserRole.TECHNICIAN) {
@@ -149,22 +149,22 @@ public class TicketService {
     /**
      * Get tickets for authenticated user
      */
-    public Page<Object> getUserTickets(UUID userId, Pageable pageable) {
+    public Page<Ticket> getUserTickets(UUID userId, Pageable pageable) {
         return ticketRepository.findByReporterId(userId, pageable);
     }
 
     /**
      * Get tickets assigned to technician
      */
-    public Page<Object> getAssignedTickets(UUID technicianId, Pageable pageable) {
+    public Page<Ticket> getAssignedTickets(UUID technicianId, Pageable pageable) {
         return ticketRepository.findByAssignedTo(technicianId, pageable);
     }
 
     /**
      * Get all tickets (admin view)
      */
-    public Page<Object> getAllTickets(Pageable pageable) {
-        return ticketRepository.findAll(pageable);
+    public Page<Ticket> getAllTickets(Pageable pageable) {
+        return ticketRepository.findAll(Objects.requireNonNull(pageable, "pageable"));
     }
 
     /**
@@ -196,7 +196,7 @@ public class TicketService {
     }
 
     private User getCurrentUser() {
-        UUID currentUserId = authService.getCurrentUserId();
+        UUID currentUserId = Objects.requireNonNull(authService.getCurrentUserId(), "Authenticated user id not found");
         return userRepository.findById(currentUserId)
                 .orElseThrow(() -> new IllegalArgumentException("Authenticated user not found"));
     }
