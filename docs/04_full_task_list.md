@@ -1,1592 +1,666 @@
-# Smart Campus Operations Hub — Full Development Task List
+# 📋 IT3030 – Smart Campus Operations Hub
 
-> **Stack:** Spring Boot 3.3 · Java 17 · React 18 · PostgreSQL 14 · TypeScript · Vite
-> **Total Estimated Time:** ~360 hours | 4 Engineers | 9 Weeks
+## Complete Task List (Group Coursework)
 
----
-
-## Progress Overview
-
-| Phase | Description                          | Status         |
-| ----- | ------------------------------------ | -------------- |
-| 0     | Project Initialization               | 🟨 In Progress |
-| 1     | Authentication Module (Google OAuth) | 🟨 In Progress |
-| 2     | Facilities & Asset Catalogue         | ⬜ Not Started |
-| 3     | Booking Management System            | ⬜ Not Started |
-| 4     | Maintenance & Incident Ticketing     | ⬜ Not Started |
-| 5     | Notifications & Dashboard            | ⬜ Not Started |
-| 6     | Testing, Security & Optimization     | ⬜ Not Started |
+> **Stack:** Spring Boot REST API + React Frontend + **PostgreSQL**
+> **Team:** 4 Developers  
+> **Deadline:** 27th April 2026
+> **Last Updated:** 6th April 2026 ✅
 
 ---
 
-## PHASE 0 — PROJECT INITIALIZATION (Week 1)
+## ✅ WORK COMPLETED (Codebase Snapshot - 6 April 2026)
 
-### 0.1 Repository & Monorepo Setup
+### 🧱 Core Setup
 
-- [x] Setup monorepo structure: `/backend` (Spring Boot), `/frontend` (React + Vite)
-- [x] Configure `.gitignore`, `.editorconfig`, `.prettierrc`, `.eslintrc.json`
-- [x] Setup Husky v9 pre-commit hooks with lint-staged
-- [ ] Initialize Git repository and create `main` and `develop` branches
-- [x] Create environment variable templates:
+- [x] Backend scaffolded with Spring Boot + JPA + Spring Security + PostgreSQL/H2 profiles
+- [x] Frontend scaffolded with React + Vite + routing + state stores/hooks
+- [x] Basic API client layer created (`auth`, `facility`, `booking`, `ticket`, `notification`)
+- [x] Frontend `.env.example` added
+- [x] Global exception handler and CORS configuration added
 
-#### Backend `.env.example`:
+### 🔐 Auth & Security Progress
 
-```env
-# Database
-DATABASE_URL=jdbc:postgresql://localhost:5432/smartcampus
-DATABASE_USERNAME=postgres
-DATABASE_PASSWORD=
+- [x] `User` entity with role/status and `UserRepository`
+- [x] Role enum implemented (`USER`, `ADMIN`, `TECHNICIAN`)
+- [x] JWT flow implemented (`AuthController`, `AuthService`, `JwtAuthenticationFilter`)
+- [x] OAuth2 Google success handler integrated
+- [x] Login/Register frontend page connected to auth APIs
+- [x] Authentication module completed (OAuth + JWT + login/register + protected backend auth routes)
+- [x] Role-based backend authorization active (`@PreAuthorize` + role checks)
+- [ ] Role-based frontend route guard completion pending (`<ProtectedRoute>` + role-based page access)
+- [ ] Multi-role onboarding pending (`STUDENT`, `STAFF`, `TECHNICIAN` registration + role mapping)
+- [ ] Google signup/signin first-class flow pending (new user provisioning + returning user login journey)
+- [ ] Role-specific dashboard routing pending (post-login redirect by role)
+- [ ] User management admin endpoints pending
+- [ ] Auth integration tests pending
 
-# JWT
-JWT_SECRET=
-JWT_EXPIRATION=3600000
-JWT_REFRESH_EXPIRATION=604800000
+### 🧩 Module Implementation Status
 
-# Google OAuth 2.0
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
-GOOGLE_REDIRECT_URI=http://localhost:8080/auth/callback
+| Module                       | Current Status | Notes                                                                                                       |
+| ---------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------- |
+| Facilities (Dev 1)           | 🟡 In Progress | Entity/repository/service/controller and basic UI scaffolds exist; CRUD logic + full endpoints pending      |
+| Bookings (Dev 2)             | 🟡 In Progress | Entity/repository/service/controller and UI placeholders exist; conflict logic + workflow endpoints pending |
+| Tickets (Dev 3)              | 🟡 In Progress | Entity/repository/service/controller and UI placeholders exist; comments/attachments workflows pending      |
+| Notifications & Auth (Dev 4) | 🟡 In Progress | Authentication core complete; multi-role onboarding + role dashboards + notification integration pending    |
 
-# Server
-SERVER_PORT=8080
-FRONTEND_URL=http://localhost:5173
+### 🧪 Testing Progress
 
-# File Upload
-FILE_UPLOAD_DIR=./uploads
-MAX_FILE_SIZE=5MB
-```
+- [x] Base Spring Boot context test exists
+- [ ] Module-level unit tests pending
+- [ ] Repository/controller integration tests pending
 
-#### Frontend `.env.example`:
+### 📚 Documentation Progress
 
-```env
-VITE_API_BASE_URL=http://localhost:8080/api/v1
-VITE_GOOGLE_CLIENT_ID=
-```
+- [x] Quick Start Guide (`QUICK_START_GUIDE.md`)
+- [x] Developer Assignment Matrix (`DEVELOPER_ASSIGNMENTS.md`)
+- [x] Navigation Index (`README_DOCUMENTATION.md`)
+- [x] Full coursework task list and milestone plan
 
 ---
 
-### 0.2 Backend (Spring Boot 3) Initialization
+## 📋 Overview
 
-- [x] Generate Spring Boot 3.3 project using Spring Initializr with dependencies:
-  - Spring Web
-  - Spring Security 6
-  - Spring Data JPA
-  - PostgreSQL Driver
-  - OAuth2 Client
-  - Validation
-  - Lombok
-  - Spring Boot DevTools
-- [x] Configure `application.yml` with profiles (dev, test, prod)
-- [x] Setup project structure:
+This coursework involves building a **Smart Campus Operations Hub** with 4 developers working on distinct modules:
 
-  ```text
-  backend/src/main/java/edu/sliit/smartcampus/
-  ├── config/          DatabaseConfig, SecurityConfig, WebConfig, JwtConfig
-  ├── security/        JwtAuthenticationFilter, JwtTokenProvider, OAuth2SuccessHandler
-  ├── controller/      FacilityController, BookingController, TicketController, AuthController, NotificationController
-  ├── service/         FacilityService, BookingService, TicketService, AuthService, NotificationService
-  ├── repository/      UserRepository, ResourceRepository, BookingRepository, TicketRepository, NotificationRepository
-  ├── model/           User, Resource, Booking, Ticket, Notification (JPA entities)
-  ├── dto/             Request/Response DTOs for each module
-  ├── exception/       GlobalExceptionHandler, custom exception classes
-  ├── util/            ResponseUtil, PaginationUtil
-  └── SmartCampusApplication.java
-  ```
+- **Module A:** Facilities & Assets Catalogue (Dev 1)
+- **Module B:** Booking Management (Dev 2)
+- **Module C:** Maintenance & Incident Ticketing (Dev 3)
+- **Module D+E:** Notifications & Authentication (Dev 4)
 
-- [x] Configure PostgreSQL connection in `application.yml`:
+### Primary User Types
 
+- **Student**: Books campus resources, reports incidents, tracks own requests/tickets
+- **Staff**: Books and manages departmental needs, raises operational incidents, monitors team requests
+- **Technician**: Receives assignments, updates ticket status, comments on maintenance progress
+- **Admin**: Manages users/roles, approves bookings, assigns technicians, monitors system activity
+
+### Recommended Work Allocation (Individual Assessment Visibility)
+
+- **Member 1**: Facilities catalogue + resource management endpoints
+- **Member 2**: Booking workflow + conflict checking
+- **Member 3**: Incident tickets + attachments + technician updates
+- **Member 4**: Notifications + role management + OAuth integration improvements
+
+### Additional Feature Ownership
+
+- **Member 2**: QR code check-in for approved bookings (verification screen + validation endpoint)
+- **Member 4**: Admin dashboard usage analytics (top resources, peak booking hours)
+- **Member 3**: Service-level timers for tickets (time-to-first-response, time-to-resolution)
+- **Member 4**: Notification preferences (enable/disable categories)
+
+### Additional Feature Ownership (Round 2 - One New Feature Per Module)
+
+- **Member 1 (Module A)**: Resource maintenance blackout calendar (temporarily block unavailable slots)
+- **Member 2 (Module B)**: Booking waitlist with auto-promotion when approved bookings are cancelled
+- **Member 3 (Module C)**: Technician workload assistant (assignment suggestions based on active load)
+- **Member 4 (Module D+E)**: Account security activity and suspicious login alerts
+
+---
+
+## 🎬 Full Project Scenario (End-to-End)
+
+This section describes how the complete Smart Campus Operations Hub should work when all modules are integrated.
+
+### 1) User Access & Security Flow
+
+1. A new user can register as **Student**, **Staff**, or **Technician**.
+2. Users can also onboard through **Google signup/signin**; first login creates user profile, later logins authenticate existing account.
+3. Backend validates identity and issues JWT access and refresh tokens.
+4. Role-based authorization controls access to pages and APIs (`STUDENT`, `STAFF`, `TECHNICIAN`, `ADMIN`).
+5. Protected routes and backend filters ensure only authorized actions are allowed.
+6. After login, users are redirected to their role-specific dashboard.
+
+### 2) Facilities Catalogue Flow (Module A)
+
+1. Admin creates and maintains resources (lecture halls, labs, meeting rooms, equipment).
+2. Each resource has status, location, capacity, and availability windows.
+3. Users browse facilities with filtering and search.
+4. Admin can update or soft-delete resources when unavailable.
+
+### 3) Booking Management Flow (Module B)
+
+1. A user selects a resource and requests a booking with date/time and purpose.
+2. Booking logic checks for overlapping time conflicts.
+3. Valid requests are created as `PENDING`.
+4. Admin reviews and approves/rejects requests.
+5. User can view booking history and cancel bookings when allowed.
+
+### 4) Maintenance & Ticketing Flow (Module C)
+
+1. A user reports an issue by creating a ticket with category, priority, and details.
+2. Optional attachments are uploaded as evidence.
+3. Admin assigns tickets to technicians.
+4. Technician updates lifecycle state (`OPEN` → `IN_PROGRESS` → `RESOLVED` → `CLOSED`).
+5. Users, admins, and technicians collaborate through comments with ownership rules.
+
+### 5) Notifications Flow (Module D)
+
+1. System events trigger notifications (booking approved/rejected, ticket assigned/resolved, etc.).
+2. Each user receives notification records in their feed.
+3. Users can list notifications, mark one/all as read, and delete old items.
+4. Frontend notification UI surfaces unread counts and recent updates.
+
+### 6) Cross-Module Integration Flow
+
+1. Facilities data drives booking availability.
+2. Booking and ticket actions trigger notifications.
+3. Auth and roles apply uniformly across all modules.
+4. Shared API response/error contracts maintain consistency between frontend and backend.
+
+### 7) Data & Persistence Flow
+
+1. PostgreSQL stores users, resources, availability windows, bookings, tickets, ticket comments, ticket attachments, and notifications.
+2. Foreign keys enforce entity relationships across modules.
+3. JPA repositories/services implement data access and business rules.
+4. Flyway migrations maintain schema history across environments.
+
+### 8) Quality & Delivery Flow
+
+1. Unit tests validate service logic.
+2. `@DataJpaTest` validates repository behavior.
+3. `MockMvc` verifies controller endpoint behavior and security.
+4. Postman collections validate full API workflows.
+5. Final submission includes working code, docs, screenshots, test evidence, and coverage target.
+
+### 9) Final Acceptance Scenario
+
+Project is considered complete when:
+
+- Users can authenticate and access role-based features.
+- Users can register as Student, Staff, and Technician.
+- Google signup/signin works for both first-time and returning users.
+- Admin can manage facilities and approve/reject bookings.
+- Users can raise tickets and technicians can resolve them.
+- Notification workflows are integrated and visible in UI.
+- All required tests, documentation, and submission checklist items are completed.
+
+### 10) Dashboard Experience by User Type
+
+1. **Student Dashboard**
+
+- My bookings (upcoming, pending, rejected)
+- My tickets (open/in-progress/resolved)
+- Quick actions: New Booking, Report Issue
+- Notifications panel
+
+2. **Staff Dashboard**
+
+- Department-related bookings and approvals requested
+- Service/maintenance requests raised by staff member
+- Operational notifications and reminders
+
+3. **Technician Dashboard**
+
+- Assigned tickets queue (priority + SLA)
+- Status update actions and comment timeline
+- Recently resolved work summary
+
+4. **Admin Dashboard**
+
+- Booking approval queue
+- Ticket assignment board
+- User/role management panel
+- System activity metrics and alerts
+
+---
+
+## 🗄️ Database: PostgreSQL + JPA
+
+> Uses auto-incrementing Long IDs, foreign key relationships, and Flyway for schema management.
+> All entities mapped using Spring Data JPA `@Entity` and `@Table` annotations.
+
+### Key Tables
+
+| Table                  | Purpose                      | Primary Key    |
+| ---------------------- | ---------------------------- | -------------- |
+| `users`                | User accounts + roles        | `id BIGSERIAL` |
+| `resources`            | Facilities/assets catalogue  | `id BIGSERIAL` |
+| `availability_windows` | Opening hours per resource   | `id BIGSERIAL` |
+| `bookings`             | Resource booking requests    | `id BIGSERIAL` |
+| `tickets`              | Incident/maintenance tickets | `id BIGSERIAL` |
+| `ticket_attachments`   | Evidence files               | `id BIGSERIAL` |
+| `ticket_comments`      | Ticket discussion threads    | `id BIGSERIAL` |
+| `notifications`        | User notifications           | `id BIGSERIAL` |
+
+---
+
+## 🗂️ Project Initialization (All Members)
+
+### Repository & Environment Setup
+
+- [ ] Create GitHub repo: `it3030-paf-2026-smart-campus-groupXX`
+- [ ] Add all team members as collaborators
+- [ ] Define branch naming: `feature/<member>/<feature-name>`
+- [ ] Bootstrap Spring Boot via [start.spring.io](https://start.spring.io):
+  - Spring Web, **Spring Data JPA**, Spring Security, Spring OAuth2 Client, PostgreSQL Driver, Validation, Lombok
+- [ ] Bootstrap React: `npm create vite@latest frontend -- --template react`
+- [ ] Install frontend: `axios`, `react-router-dom`, `tailwindcss`
+- [ ] Configure `.gitignore` (exclude `node_modules/`, `target/`, `.env`)
+- [ ] Create `.env.example` files for backend and frontend
+
+### PostgreSQL Setup
+
+- [ ] Option A: Install PostgreSQL 14+ locally
+- [ ] Option B: Use cloud PostgreSQL (Railway, Heroku, AWS RDS, Railway)
+- [ ] Create database: `smartcampus_db`
+- [ ] Configure `backend/src/main/resources/application.yml`:
   ```yaml
   spring:
     datasource:
-      url: ${DATABASE_URL}
-      username: ${DATABASE_USERNAME}
-      password: ${DATABASE_PASSWORD}
-      driver-class-name: org.postgresql.Driver
+      url: jdbc:postgresql://localhost:5432/smartcampus_db
+      username: postgres
+      password: ${DB_PASSWORD}
     jpa:
       hibernate:
-        ddl-auto: validate
-      properties:
-        hibernate:
-          dialect: org.hibernate.dialect.PostgreSQLDialect
-          format_sql: true
+        ddl-auto: update
       show-sql: true
   ```
-
-- [x] Configure HikariCP connection pool:
-
-  ```yaml
-  spring:
-    datasource:
-      hikari:
-        minimum-idle: 5
-        maximum-pool-size: 20
-        idle-timeout: 30000
-        connection-timeout: 20000
-  ```
-
-- [x] Create `GlobalExceptionHandler` with `@ControllerAdvice`
-- [x] Create custom exception classes: `ResourceNotFoundException`, `ValidationException`, `ConflictException`
-- [x] Setup logging with Logback configuration
-- [x] Create health check endpoint: `GET /api/health` → returns status, timestamp
+- [ ] Add test profile with H2 database
+- [ ] Add Flyway for migrations: `V1__Create_initial_schema.sql`
+- [ ] Verify Spring Boot starts successfully with PostgreSQL
 
 ---
 
-### 0.3 Frontend (React + Vite) Initialization
+## 👤 Developer 1 – Facilities & Assets Catalogue (Module A)
 
-- [x] Create React 18 project with Vite: `npm create vite@latest frontend -- --template react-ts`
-- [x] Install core dependencies:
+### Scenario
 
-  ```bash
-  npm install @tanstack/react-query axios zustand react-router-dom
-  npm install react-hook-form @hookform/resolvers zod
-  npm install @radix-ui/react-dialog @radix-ui/react-dropdown-menu @radix-ui/react-tabs
-  npm install class-variance-authority clsx tailwind-merge lucide-react
-  npm install react-hot-toast date-fns
-  ```
+**"I'm building the resource catalogue. Campus admin wants searchable halls, labs, rooms, and equipment with availability windows. I'll create CRUD APIs first, then connect frontend pages."**
 
-- [x] Install dev dependencies:
+### Backend Tasks
 
-  ```bash
-  npm install -D @types/node tailwindcss postcss autoprefixer
-  npm install -D @typescript-eslint/eslint-plugin @typescript-eslint/parser
-  npm install -D prettier prettier-plugin-tailwindcss eslint-plugin-react
-  ```
+- [ ] **D1-B01** Create `Resource` JPA entity with `@Entity @Table("resources")`
+- [ ] **D1-B02** Create `ResourceType` enum: `LECTURE_HALL`, `LAB`, `MEETING_ROOM`, `EQUIPMENT`
+- [ ] **D1-B03** Create `ResourceStatus` enum: `ACTIVE`, `OUT_OF_SERVICE`, `UNDER_MAINTENANCE`
+- [ ] **D1-B04** Create `AvailabilityWindow` JPA entity with `@ManyToOne` to Resource
+- [ ] **D1-B05** Create `ResourceRepository extends JpaRepository<Resource, Long>`
+  - [ ] Custom finder methods for type, status, capacity
+  - [ ] JPQL @Query for location search
+- [ ] **D1-B06** Create `ResourceService` with validation logic
+- [ ] **D1-B07** Create `ResourceController` with 6 endpoints
+  - GET /api/v1/resources (with filters)
+  - GET /api/v1/resources/{id}
+  - POST /api/v1/resources (ADMIN)
+  - PUT /api/v1/resources/{id} (ADMIN)
+  - DELETE /api/v1/resources/{id} (ADMIN soft-delete)
+  - GET /api/v1/resources/{id}/availability
+- [ ] **D1-B08** Create DTOs: ResourceDTO, ResourceRequestDTO, ResourceResponseDTO
+- [ ] **D1-B09** Add `@Valid` validation annotations
+- [ ] **D1-B10** Write min 5 unit tests using `@DataJpaTest`
+- [ ] **D1-B11** Write integration tests using `MockMvc`
+- [ ] **D1-B12** Add Swagger/OpenAPI annotations
+- [ ] **D1-B13** Seed initial test data via `CommandLineRunner`
+- [ ] **D1-B14** Add resource maintenance blackout model and API to mark blocked periods
+- [ ] **D1-B15** Enforce blackout validation in availability query and booking eligibility checks
 
-- [x] Initialize Tailwind CSS v4:
+### Frontend Tasks
 
-  ```bash
-  npx tailwindcss init -p
-  ```
-
-- [x] Configure `tailwind.config.js` with custom theme
-
-- [x] Project structure:
-
-  ```text
-  frontend/src/
-  ├── app/
-  │   ├── login/
-  │   ├── facilities/
-  │   │   ├── page.tsx
-  │   │   └── [id]/
-  │   │       └── page.tsx
-  │   ├── bookings/
-  │   │   ├── page.tsx
-  │   │   └── [id]/
-  │   │       └── page.tsx
-  │   ├── tickets/
-  │   │   ├── page.tsx
-  │   │   └── [id]/
-  │   │       └── page.tsx
-  │   ├── admin/
-  │   │   ├── facilities/
-  │   │   ├── bookings/
-  │   │   ├── tickets/
-  │   │   └── users/
-  │   ├── layout.tsx
-  │   └── page.tsx
-  ├── components/
-  │   ├── ui/             Button, Card, Dialog, Input, Select, Badge, Skeleton
-  │   ├── layout/         Navbar, Sidebar, Footer, Container
-  │   ├── facilities/     FacilityCard, FacilityFilters, AvailabilityCalendar
-  │   ├── bookings/       BookingForm, BookingCard, StatusBadge
-  │   └── tickets/        TicketForm, TicketCard, TicketBoard
-  ├── hooks/
-  │   ├── useFacilities.ts
-  │   ├── useBookings.ts
-  │   ├── useTickets.ts
-  │   ├── useNotifications.ts
-  │   └── useAuth.ts
-  ├── lib/
-  │   ├── axios.ts
-  │   ├── queryClient.ts
-  │   └── utils.ts
-  ├── stores/
-  │   ├── authStore.ts
-  │   └── notificationStore.ts
-  ├── services/
-  │   ├── api/
-  │   │   ├── facilityApi.ts
-  │   │   ├── bookingApi.ts
-  │   │   ├── ticketApi.ts
-  │   │   ├── authApi.ts
-  │   │   └── notificationApi.ts
-  │   └── types/
-  │       ├── facility.ts
-  │       ├── booking.ts
-  │       ├── ticket.ts
-  │       └── user.ts
-  ├── main.tsx
-  └── App.tsx
-  ```
-
-- [x] Setup Axios instance (`src/lib/axios.ts`):
-  - baseURL from `VITE_API_BASE_URL`
-  - JWT interceptor (reads from localStorage)
-  - Auto-refresh on 401
-  - Error handling
-
-- [x] Setup React Query client (`src/lib/queryClient.ts`):
-  - staleTime: 5 minutes
-  - retry: 1
-  - refetchOnWindowFocus: false
-
-- [x] Setup Zustand auth store (`src/stores/authStore.ts`):
-  - `user`, `accessToken`, `isAuthenticated`
-  - `setAuth()`, `clearAuth()`, `updateUser()`
-  - Persist to localStorage
-
-- [x] Setup React Router v6 with protected routes
-
-### 0.3.1 Phase 0 Fixes Applied (2026-04-02)
-
-- [x] Fixed backend OAuth dependency artifact in `backend/pom.xml` (`spring-boot-starter-oauth2-client`)
-- [x] Added H2 test dependency for test profile compatibility
-- [x] Activated `test` profile in backend context test and added test OAuth registration in `application.yml`
-- [x] Updated Tailwind v4 PostCSS plugin usage in `frontend/postcss.config.js`
+- [ ] **D1-F01** Create `ResourcesPage` with list/grid view + search
+- [ ] **D1-F02** Create `ResourceCard` component
+- [ ] **D1-F03** Create `ResourceDetailPage` with availability calendar
+- [ ] **D1-F04** Create `ResourceForm` (Add/Edit) for admins
+- [ ] **D1-F05** Create `ResourceFilter` component
+- [ ] **D1-F06** Implement `resourceService.js` (axios calls)
+- [ ] **D1-F07** Add admin-only buttons/links
+- [ ] **D1-F08** Handle loading/error states
+- [ ] **D1-F09** Create maintenance blackout calendar UI for admins on resource detail page
+- [ ] **D1-F10** Show blocked/unavailable slot badges in facility availability view
 
 ---
 
-### 0.4 Database Setup — PostgreSQL
+## 👤 Developer 2 – Booking Management (Module B)
 
-- [x] Install PostgreSQL 14+ locally OR setup cloud PostgreSQL (e.g., Neon, Supabase, Railway)
-- [x] Create database: `smartcampus` (Neon environment uses existing `neondb` database)
-- [x] Run schema migration script: `psql -U postgres -d smartcampus -f docs/03_database_schema.sql`
-- [x] Verify tables created: Should have 11 tables
-- [x] Verify seed data:
-  - Admin user: `admin@smartcampus.edu` ✓
-  - Technician user: `technician@smartcampus.edu` ✓
-  - 5 sample resources ✓
+### Scenario
 
-- [x] Configure Spring Boot to use database:
+**"Users book facilities with date/time slots. I must prevent conflicts (overlapping bookings) and implement approval workflow. Admin approves/rejects requests."**
 
-  ```yaml
-  spring:
-    datasource:
-      url: jdbc:postgresql://localhost:5432/smartcampus
-      username: postgres
-      password: your_password
-  ```
+### Backend Tasks
 
-- [x] Test database connection on Spring Boot startup
+- [ ] **D2-B01** Create `Booking` JPA entity with compound index on `(resource_id, booking_date, status)`
+- [ ] **D2-B02** Create `BookingStatus` enum: `PENDING`, `APPROVED`, `REJECTED`, `CANCELLED`
+- [ ] **D2-B03** Create `BookingRepository extends JpaRepository<Booking, Long>`
+  - [ ] Custom JPQL @Query for conflict detection
+  - [ ] Finders by userId, status, resource
+- [ ] **D2-B04** Create `BookingService` with conflict detection logic
+- [ ] **D2-B05** Create `BookingController` with 7 endpoints
+  - POST /api/v1/bookings
+  - GET /api/v1/bookings (filtered)
+  - GET /api/v1/bookings/{id}
+  - PUT /api/v1/bookings/{id}/approve (ADMIN)
+  - PUT /api/v1/bookings/{id}/reject (ADMIN)
+  - PUT /api/v1/bookings/{id}/cancel
+  - GET /api/v1/resources/{id}/bookings (for calendar)
+- [ ] **D2-B06** Create DTOs: BookingDTO, BookingRequestDTO
+- [ ] **D2-B07** Add date/time validation (no past dates)
+- [ ] **D2-B08** Write min 5 unit tests for conflict detection
+- [ ] **D2-B09** Write integration tests for approval workflow
+- [ ] **D2-B10** Add Swagger annotations
+- [ ] **D2-B11** Add QR check-in token generation for approved bookings
+- [ ] **D2-B12** Add QR check-in verification endpoint (`POST /api/v1/bookings/{id}/check-in`)
+- [ ] **D2-B13** Add booking check-in audit fields (checked-in-by, checked-in-at, verification-status)
+- [ ] **D2-B14** Add waitlist model and repository for fully booked resource slots
+- [ ] **D2-B15** Implement waitlist auto-promotion logic when approved booking is cancelled/rejected
 
-### 0.4.1 Phase 0 DB Execution Notes (2026-04-02)
+### Frontend Tasks
 
-- [x] Applied schema from the migration SQL block in `docs/03_database_schema.sql` to Neon PostgreSQL
-- [x] Verified table count in `public` schema: `11`
-- [x] Verified seed rows: `users=2`, `resources=5`
-- [x] Verified seeded emails exist: `admin@smartcampus.edu`, `technician@smartcampus.edu`
-- [x] Verified Spring Boot can initialize Hikari + JPA with Neon connection settings in `dev` profile
-
----
-
-### 0.5 Google OAuth 2.0 Setup
-
-- [ ] Create Google Cloud Project
-- [ ] Enable Google+ API
-- [ ] Create OAuth 2.0 credentials (Web application)
-- [ ] Configure authorized redirect URI: `http://localhost:8080/auth/callback`
-- [ ] Copy `Client ID` and `Client Secret` to backend `.env`
-- [x] Configure Spring Security OAuth2 client in `application.yml`:
-
-  ```yaml
-  spring:
-    security:
-      oauth2:
-        client:
-          registration:
-            google:
-              client-id: ${GOOGLE_CLIENT_ID}
-              client-secret: ${GOOGLE_CLIENT_SECRET}
-              redirect-uri: '{baseUrl}/auth/callback'
-              scope:
-                - openid
-                - profile
-                - email
-          provider:
-            google:
-              authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
-              token-uri: https://oauth2.googleapis.com/token
-              user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
-              user-name-attribute: sub
-  ```
-
-### 0.5.1 Phase 0.5 Backend Implementation Notes (2026-04-02)
-
-- [x] Added environment-driven Google redirect URI support in `backend/src/main/resources/application.yml`
-- [x] Wired custom OAuth2 success handler in `backend/src/main/java/edu/sliit/smartcampus/config/SecurityConfig.java`
-- [x] Updated OAuth2 success redirect to use configurable `app.frontend-url` in `backend/src/main/java/edu/sliit/smartcampus/security/OAuth2SuccessHandler.java`
-- [x] Confirmed `.env.example` already includes required OAuth variables (`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI`)
+- [ ] **D2-F01** Create `BookingRequestPage` with form (date, time, purpose)
+- [ ] **D2-F02** Create `MyBookingsPage` with status tabs
+- [ ] **D2-F03** Create `AdminBookingsPage` (approval queue)
+- [ ] **D2-F04** Create `BookingCard` component
+- [ ] **D2-F05** Implement date/time picker with conflict preview
+- [ ] **D2-F06** Implement `bookingService.js` (axios)
+- [ ] **D2-F07** Show conflict errors with alternative times
+- [ ] **D2-F08** Add approve/reject buttons for admins
+- [ ] **D2-F09** Build QR code display on approved booking details
+- [ ] **D2-F10** Build QR verification screen for staff/admin check-in validation
+- [ ] **D2-F11** Add waitlist join action on booking conflict screen
+- [ ] **D2-F12** Show waitlist status and promotion updates in My Bookings
 
 ---
 
-## PHASE 1 — AUTHENTICATION MODULE (Week 1-2)
+## 👤 Developer 3 – Maintenance & Incident Ticketing (Module C)
 
-> **Goal:** Implement Google OAuth 2.0 authentication with JWT-based session management
+### Scenario
 
-### 1.1 Backend — Spring Security Configuration
+**"Students report facility issues with photos. Admins assign technicians. Technicians update status and comment. I manage tickets, comments, attachments with embedded relationships."**
 
-- [x] Create `SecurityConfig` class extending `SecurityFilterChain`:
-  - Configure CORS for frontend origin
-  - Disable CSRF for stateless API
-  - Configure session management: STATELESS
-  - Set up OAuth2 login with custom success handler
-  - Configure public endpoints: `/auth/**`, `/api/v1/resources` (GET)
-  - Require authentication for all other endpoints
+### Backend Tasks
 
-- [x] Create `JwtTokenProvider` utility class:
-  - Method: `generateAccessToken(User user)` → returns JWT (1 hour expiry)
-  - Method: `generateRefreshToken(User user)` → returns JWT (7 days expiry)
-  - Method: `validateToken(String token)` → boolean
-  - Method: `getUserIdFromToken(String token)` → UUID
-  - Method: `getClaimsFromToken(String token)` → Claims
+- [ ] **D3-B01** Create `Ticket` JPA entity (main table)
+- [ ] **D3-B02** Create `TicketStatus` enum: `OPEN`, `IN_PROGRESS`, `RESOLVED`, `CLOSED`, `REJECTED`
+- [ ] **D3-B03** Create `TicketPriority` enum: `LOW`, `MEDIUM`, `HIGH`, `CRITICAL`
+- [ ] **D3-B04** Create `TicketCategory` enum: `ELECTRICAL`, `PLUMBING`, `IT_EQUIPMENT`, `HVAC`, `STRUCTURAL`, `OTHER`
+- [ ] **D3-B05** Create `TicketAttachment` JPA entity (separate table with FK to Ticket)
+- [ ] **D3-B06** Create `TicketComment` JPA entity (separate table with FK to Ticket, User)
+- [ ] **D3-B07** Create `TicketRepository` with finders for reporter, assigned tech, status
+- [ ] **D3-B08** Create `TicketService` with:
+  - [ ] Status workflow validation (OPEN → IN_PROGRESS → RESOLVED)
+  - [ ] Attachment upload (max 3 files)
+  - [ ] Comment CRUD operations
+  - [ ] Comment ownership rules (user can edit/delete own)
+- [ ] **D3-B09** Create `TicketController` with 6 endpoints
+  - POST /api/v1/tickets (multipart for attachments)
+  - GET /api/v1/tickets (with filters)
+  - GET /api/v1/tickets/{id}
+  - PUT /api/v1/tickets/{id}/status (ADMIN/TECH)
+  - PUT /api/v1/tickets/{id}/assign (ADMIN)
+  - DELETE /api/v1/tickets/{id} (soft-delete)
+- [ ] **D3-B10** Create `TicketCommentController` with 3 endpoints
+  - POST /api/v1/tickets/{id}/comments
+  - PUT /api/v1/tickets/{id}/comments/{commentId}
+  - DELETE /api/v1/tickets/{id}/comments/{commentId}
+- [ ] **D3-B11** Implement MultipartFile upload with file validation
+- [ ] **D3-B12** Write min 5 unit tests
+- [ ] **D3-B13** Write integration tests for comment/attachment ops
+- [ ] **D3-B14** Add Swagger annotations
+- [ ] **D3-B15** Add SLA timer fields to ticket model (`first_response_at`, `resolved_at`, `sla_breached`)
+- [ ] **D3-B16** Implement service-level timer calculations (time-to-first-response, time-to-resolution)
+- [ ] **D3-B17** Add ticket SLA metrics endpoint for dashboard consumption
+- [ ] **D3-B18** Add technician workload metrics endpoint (active tickets, priority mix, overdue count)
+- [ ] **D3-B19** Implement assignment suggestion service based on workload balancing rules
 
-- [x] Create `JwtAuthenticationFilter` extends `OncePerRequestFilter`:
-  - Extract Bearer token from `Authorization` header
-  - Validate token using `JwtTokenProvider`
-  - Set `SecurityContext` with authenticated user
+### Frontend Tasks
 
-- [x] Create `OAuth2AuthenticationSuccessHandler`:
-  - On successful Google login:
-    - Extract user email, name, avatar from OAuth2User
-    - Check if user exists in database (by email)
-    - If new user: create `User` record with role = `USER`
-    - Generate access token and refresh token
-    - Store refresh token in database
-    - Redirect to frontend with tokens in query params
-
----
-
-### 1.2 Backend — Auth Controller & Service
-
-- [x] **GET /auth/google** — Redirect to Google OAuth consent screen
-  - Spring Security handles this automatically
-  - Configure redirect URI in `SecurityConfig`
-
-- [x] **GET /auth/callback** — OAuth callback endpoint
-  - Handled by `OAuth2AuthenticationSuccessHandler`
-  - Returns: Redirect to `${FRONTEND_URL}/login?access_token=...&refresh_token=...`
-
-- [x] **POST /auth/refresh** — Refresh access token
-  - Extract refresh token from request body or cookie
-  - Validate refresh token (check expiry, revoked status)
-  - Generate new access token
-  - Generate new refresh token (token rotation)
-  - Revoke old refresh token in database
-  - Return: `{ "accessToken": "...", "refreshToken": "..." }`
-
-- [x] **GET /auth/me** — Get current user profile
-  - Extract user ID from JWT in `SecurityContext`
-  - Fetch user from database
-  - Return: `UserDto` (id, email, fullName, role, avatarUrl, createdAt)
-
-- [x] **POST /auth/logout** — Logout (revoke refresh token)
-  - Extract refresh token from request
-  - Mark refresh token as revoked in database
-  - Return: `204 No Content`
+- [ ] **D3-F01** Create `CreateTicketPage` with image upload (max 3)
+- [ ] **D3-F02** Create `MyTicketsPage` (user's reported tickets)
+- [ ] **D3-F03** Create `AdminTicketsPage` (all tickets, with assign UI)
+- [ ] **D3-F04** Create `TicketDetailPage` with comments, attachments, timeline
+- [ ] **D3-F05** Create `CommentSection` with edit/delete
+- [ ] **D3-F06** Create `ImageUploadPreview` (drag-drop)
+- [ ] **D3-F07** Create status/priority badge components
+- [ ] **D3-F08** Implement `ticketService.js` (axios)
+- [ ] **D3-F09** Show SLA indicators and elapsed timers on technician and admin ticket views
+- [ ] **D3-F10** Add assignment suggestion panel to admin ticket assignment view
+- [ ] **D3-F11** Show technician workload indicators (load chips/heat status) in ticket board
 
 ---
 
-### 1.3 Backend — JPA Entities & Repositories
+## 👤 Developer 4 – Notifications & Authentication (Modules D & E)
 
-- [x] Create `User` entity:
-  - Map to `users` table
-  - Fields: id, email, fullName, avatarUrl, role, status, emailVerified, googleId, timestamps
-  - Add `@Enumerated` for role and status enums
+### Scenario
 
-- [x] Create `RefreshToken` entity:
-  - Map to `refresh_tokens` table
-  - Fields: id, userId, token, expiresAt, revoked, createdAt, revokedAt
-  - Add `@ManyToOne` relationship to `User`
+**"Users login with Google OAuth. I issue JWT tokens. All modules trigger notifications. I build notification delivery, dashboards, and auth endpoints."**
 
-- [x] Create `UserRepository` extends `JpaRepository<User, UUID>`:
-  - Method: `Optional<User> findByEmail(String email)`
-  - Method: `Optional<User> findByGoogleId(String googleId)`
-  - Method: `boolean existsByEmail(String email)`
+### Role-Based Authentication System (RBAC)
 
-- [x] Create `RefreshTokenRepository` extends `JpaRepository<RefreshToken, UUID>`:
-  - Method: `Optional<RefreshToken> findByToken(String token)`
-  - Method: `void deleteByUserId(UUID userId)`
-  - Method: `List<RefreshToken> findByUserIdAndRevokedFalse(UUID userId)`
+- [ ] Define final role model: `STUDENT`, `STAFF`, `TECHNICIAN`, `ADMIN`
+- [ ] Implement registration role selection for Student/Staff/Technician
+- [x] Authenticate users via OAuth2/email-password and issue JWT tokens
+- [ ] Implement Google signup vs signin branching (create-on-first-login, link-existing-account)
+- [x] Enforce backend access with role-based method security (`@PreAuthorize`)
+- [x] Protect admin operations at API level (example: admin-only booking endpoint)
+- [ ] Complete frontend role guards (`<ProtectedRoute>` + per-role page restrictions)
+- [ ] Complete admin role management endpoints (`GET /api/v1/users`, `PUT /api/v1/users/{id}/role`)
+- [ ] Add post-login role-based dashboard redirects and default landing rules
 
----
+### Backend Tasks
 
-### 1.4 Frontend — Auth Pages & Flow
+- [ ] **D4-B01** Create `Notification` JPA entity
+- [ ] **D4-B02** Create `NotificationType` enum
+- [ ] **D4-B03** Create `NotificationRepository` with finder methods
+- [ ] **D4-B04** Create `NotificationService`
+- [ ] **D4-B05** Create `NotificationController` with 4 endpoints
+  - GET /api/v1/notifications (paginated)
+  - PUT /api/v1/notifications/{id}/read
+  - PUT /api/v1/notifications/read-all
+  - DELETE /api/v1/notifications/{id}
+- [ ] **D4-B06** Integrate notification triggers in BookingService, TicketService
+- [x] **D4-B07** Create `User` JPA entity with `@Indexed` unique email, providerId
+- [x] **D4-B08** Create `Role` enum: `USER`, `ADMIN`, `TECHNICIAN`
+- [x] **D4-B09** Create `UserRepository` with finders by email, providerId, role
+- [x] **D4-B10** Configure Spring Security:
+  - [x] OAuth 2.0 (Google) login
+  - [x] JWT issuance post-OAuth2
+  - [x] JwtAuthenticationFilter
+  - [x] SecurityConfig with @PreAuthorize
+- [x] **D4-B11** Create `AuthController` (2 endpoints)
+  - GET /api/v1/auth/me
+  - POST /api/v1/auth/logout
+- [ ] **D4-B12** Create `UserController` (2 admin endpoints)
+  - GET /api/v1/users
+  - PUT /api/v1/users/{id}/role
+- [x] **D4-B13** Implement global exception handler
+- [x] **D4-B14** Implement CORS config
+- [ ] **D4-B15** Write min 5 unit tests
+- [ ] **D4-B16** Write auth integration tests
+- [ ] **D4-B17** Expand `Role` model to include `STUDENT` and `STAFF` (with migration + seed updates)
+- [ ] **D4-B18** Add registration API support for selected role (`STUDENT`/`STAFF`/`TECHNICIAN`)
+- [ ] **D4-B19** Add Google onboarding policy service:
+  - First Google login creates account with default role policy
+  - Existing email account links/signs in safely
+  - Audit fields for provider and role assignment source
+- [ ] **D4-B20** Add role-based dashboard bootstrap endpoint (`/api/v1/auth/bootstrap`) returning user + dashboard config
+- [ ] **D4-B21** Add auth test coverage for role registration and Google signup/signin flows
+- [ ] **D4-B22** Add notification preference model per user (booking, ticket, security, reminders)
+- [ ] **D4-B23** Add notification preference endpoints:
+  - GET `/api/v1/notifications/preferences`
+  - PUT `/api/v1/notifications/preferences`
+- [ ] **D4-B24** Add admin analytics endpoint(s):
+  - GET `/api/v1/admin/analytics/top-resources`
+  - GET `/api/v1/admin/analytics/peak-booking-hours`
+- [ ] **D4-B25** Add security activity log model for authentication events (login, refresh, logout, failed login)
+- [ ] **D4-B26** Add suspicious login detection rules (new device/location heuristic) + alert notification trigger
 
-- [x] `/login` page:
-  - Display "Sign in with Google" button
-  - On click: Redirect to `${API_BASE_URL}/auth/google`
-  - After OAuth callback redirect, extract tokens from URL query params
-  - Store access token in memory (Zustand store)
-  - Store refresh token in httpOnly cookie (if backend supports) OR localStorage
-  - Redirect to `/facilities` (home page)
+### Frontend Tasks
 
-- [x] Create `useAuth` hook wrapping Zustand auth store:
-  - `login()` — Initiate Google OAuth flow
-  - `logout()` — Call logout API, clear tokens, redirect to login
-  - `refreshAccessToken()` — Call refresh API, update access token
-  - `getUser()` — Fetch current user from `/auth/me`
-
-- [x] Setup Axios interceptor for token refresh:
-  - On 401 response: Attempt token refresh
-  - If refresh succeeds: Retry original request with new token
-  - If refresh fails: Clear auth state, redirect to login
-
-- [x] Create `ProtectedRoute` component:
-  - Check `isAuthenticated` from auth store
-  - If not authenticated: Redirect to `/login`
-  - If authenticated: Render children
-
-- [x] Update React Router routes:
-  - Public: `/login`
-  - Protected: All other routes wrapped in `<ProtectedRoute>`
-
----
-
-### 1.5 Backend — Role-Based Access Control (RBAC)
-
-- [x] Create `@PreAuthorize` annotations for role checks:
-  - USER: Can access own bookings, tickets, notifications
-  - ADMIN: Can manage all resources, bookings, tickets, users
-  - TECHNICIAN: Can view and update assigned tickets
-
-- [ ] Example controller method protection:
-
-  ```java
-  @GetMapping("/admin/bookings/all")
-  @PreAuthorize("hasRole('ADMIN')")
-  public ResponseEntity<Page<BookingDto>> getAllBookings(...) {
-    // Admin only
-  }
-
-  @PutMapping("/tickets/{id}/status")
-  @PreAuthorize("hasAnyRole('ADMIN', 'TECHNICIAN')")
-  public ResponseEntity<TicketDto> updateTicketStatus(...) {
-    // Admin or Technician only
-  }
-  ```
-
-- [x] Create service layer authorization checks:
-  - In `BookingService`: Verify user can only cancel own bookings (unless ADMIN)
-  - In `TicketService`: Verify only reporter/ADMIN/assigned technician can view ticket details
-
----
-
-### 1.6 Frontend — Role-Based UI
-
-- [x] Create `useRole()` hook:
-  - Returns current user's role
-  - Helper methods: `isAdmin()`, `isTechnician()`, `isUser()`
-
-- [x] Conditionally render navigation items based on role:
-  - USER: Facilities, My Bookings, My Tickets, Notifications
-  - ADMIN: + Admin Dashboard, Manage Users, Pending Approvals
-  - TECHNICIAN: + My Assigned Tickets
-
-- [x] Hide/disable actions based on role:
-  - "Create Resource" button: ADMIN only
-  - "Approve Booking" button: ADMIN only
-  - "Assign Technician" button: ADMIN only
-
-### 1.7 Phase 1 Implementation Notes (2026-04-02)
-
-- [x] Implemented JWT token generation/validation with claims in `backend/src/main/java/edu/sliit/smartcampus/security/JwtTokenProvider.java`
-- [x] Implemented auth token refresh rotation, `/auth/me`, and logout revocation in `backend/src/main/java/edu/sliit/smartcampus/service/AuthService.java` and `backend/src/main/java/edu/sliit/smartcampus/controller/AuthController.java`
-- [x] Added persisted `refresh_tokens` entity/repository and expanded `users` entity to schema-aligned fields
-- [x] Implemented OAuth success redirect with `access_token` + `refresh_token` query parameters and httpOnly refresh cookie
-- [x] Added frontend auth store refresh-token support, login callback processing, and role-aware protected routes
-- [x] Added email/password authentication APIs: `POST /auth/register` and `POST /auth/login` with validation and BCrypt hashing
-- [x] Added local credential storage service (`user_credentials`) linked to `users` for password-based authentication
-- [x] Upgraded auth UX to a landing-first Login/Register tabbed page with submit flows and Google sign-in/register action
-- [x] Updated routing so landing auth page is available at `/` and protected app pages require authentication
-- [x] Aligned OAuth callback path to `/auth/callback` in backend config and environment defaults for Google registration/login compatibility
+- [x] **D4-F01** Implement Google OAuth login page
+- [x] **D4-F02** Implement JWT storage + axios interceptor
+- [x] **D4-F03** Create `AuthContext` / Redux auth slice
+- [ ] **D4-F04** Implement `<ProtectedRoute>` HOC
+- [ ] **D4-F05** Create `NotificationBell` in navbar
+- [ ] **D4-F06** Create `NotificationPanel` dropdown
+- [ ] **D4-F07** Create `UserManagementPage` (admin only)
+- [x] **D4-F08** Implement `notificationService.js`, `authService.js`
+- [ ] **D4-F09** Auto-logout on token expiry
+- [ ] **D4-F10** Add signup form role selector (`Student`, `Staff`, `Technician`)
+- [ ] **D4-F11** Implement Google signup/signin UX messaging (new account vs returning account)
+- [ ] **D4-F12** Build role-based landing redirect after login
+- [ ] **D4-F13** Create `StudentDashboardPage`
+- [ ] **D4-F14** Create `StaffDashboardPage`
+- [ ] **D4-F15** Create `TechnicianDashboardPage`
+- [ ] **D4-F16** Enhance `AdminDashboardPage` with booking, ticket, and user widgets
+- [ ] **D4-F17** Add dashboard-level notification widgets for all roles
+- [ ] **D4-F18** Build notification preferences settings UI (toggle categories per user)
+- [ ] **D4-F19** Build admin analytics dashboard widgets (top resources + peak booking hours charts)
+- [ ] **D4-F20** Create account security activity screen (recent sign-ins and device/location summary)
+- [ ] **D4-F21** Show suspicious login alert banner with user acknowledgement action
 
 ---
 
-## PHASE 2 — FACILITIES & ASSET CATALOGUE (Week 2-3)
+## 🔧 Shared Tasks (All Members)
 
-> **Goal:** Implement facility browsing, search, filtering, and CRUD (admin)
+### API Standards
 
-### 2.1 Backend — Resource Entity & Repository
+- [ ] Agree on response wrapper: `{ "success": bool, "data": {...}, "message": "..." }`
+- [ ] Error format: `{ "error": "...", "details": {...} }`
+- [ ] All IDs are Long (PostgreSQL auto-increment)
+- [ ] Setup Swagger UI at `/swagger-ui.html`
 
-- [ ] Create `Resource` entity:
-  - Map to `resources` table
-  - Fields: id, name, type, capacity, status, location, description, amenities, specifications, thumbnailUrl, timestamps
-  - Add `@Enumerated` for type and status enums
-  - Add `@ElementCollection` for amenities array
+### Testing
 
-- [ ] Create `ResourceImage` entity:
-  - Map to `resource_images` table
-  - Fields: id, resourceId, url, caption, isPrimary, displayOrder, createdAt
-  - Add `@ManyToOne` relationship to `Resource`
+- [ ] Each member: min 5 unit tests per service
+- [ ] Use `@DataJpaTest` for repository tests
+- [ ] Use `MockMvc` for controller tests
+- [ ] Create Postman collection per module
+- [ ] Target 70%+ coverage per module
 
-- [ ] Create `ResourceRepository` extends `JpaRepository<Resource, UUID>`:
-  - Method: `Page<Resource> findByDeletedAtIsNull(Pageable pageable)` — Active resources only
-  - Method: `Page<Resource> findByTypeAndDeletedAtIsNull(ResourceType type, Pageable pageable)`
-  - Method: `Page<Resource> findByStatusAndDeletedAtIsNull(ResourceStatus status, Pageable pageable)`
-  - Method: `Page<Resource> findByCapacityBetweenAndDeletedAtIsNull(int min, int max, Pageable pageable)`
-  - Method: `@Query("SELECT r FROM Resource r WHERE r.deletedAt IS NULL AND (LOWER(r.name) LIKE LOWER(CONCAT('%', :q, '%')) OR LOWER(r.description) LIKE LOWER(CONCAT('%', :q, '%')))") Page<Resource> searchByKeyword(String q, Pageable pageable)`
+### Documentation
 
----
-
-### 2.2 Backend — Facility APIs (Public & Admin)
-
-- [ ] **GET /api/v1/resources** — List all facilities (PUBLIC)
-  - Query params: `page`, `size`, `sort`, `type`, `status`, `capacity_min`, `capacity_max`, `q`
-  - Response: `Page<ResourceDto>`
-  - Filter logic: Apply all non-null query params
-  - Full-text search: Use `searchByKeyword()` if `q` param present
-  - Sort options: name, capacity, createdAt
-
-- [ ] **GET /api/v1/resources/{id}** — Get facility details (PUBLIC)
-  - Path param: `id` (UUID)
-  - Response: `ResourceDetailDto` (includes images, amenities, specifications, availability summary)
-  - Increment view count (optional)
-
-- [ ] **POST /api/v1/resources** — Create facility (ADMIN)
-  - Request body: `CreateResourceRequest` (name, type, capacity, location, description, amenities, specifications)
-  - Validation: `@Valid` annotation + JSR-380 validators
-  - Create resource with status = AVAILABLE
-  - Set `createdBy` to current authenticated user
-  - Response: `ResourceDto` with 201 Created
-
-- [ ] **PUT /api/v1/resources/{id}** — Update facility (ADMIN)
-  - Path param: `id` (UUID)
-  - Request body: `UpdateResourceRequest` (partial update)
-  - Validation: `@Valid` annotation
-  - Check if resource exists and not deleted
-  - If status changed to UNDER_MAINTENANCE: Check for active bookings, send notifications
-  - Response: Updated `ResourceDto`
-
-- [ ] **DELETE /api/v1/resources/{id}** — Soft-delete facility (ADMIN)
-  - Path param: `id` (UUID)
-  - Check for active bookings (PENDING or CONFIRMED status)
-  - If active bookings exist: Return `409 Conflict` with error message
-  - If no blockers: Set `deletedAt` to current timestamp
-  - Create notifications for users with bookings (if any)
-  - Response: `204 No Content`
-
-- [ ] **GET /api/v1/resources/{id}/availability** — Check availability (AUTH)
-  - Path param: `id` (UUID)
-  - Query params: `from` (ISO date), `to` (ISO date)
-  - Validation: `to` date must be within 90 days of `from`
-  - Fetch all bookings for resource in date range with status = CONFIRMED
-  - Build availability slots per day (8:00 AM - 5:00 PM by default)
-  - Mark occupied vs available time slots
-  - Response: `AvailabilityResponse` with daily breakdown
+- [ ] Document all endpoints in shared API doc
+- [ ] Final report: SRS, diagrams, endpoint list, test evidence
+- [ ] Screenshots of workflows + database diagram
 
 ---
 
-### 2.3 Frontend — Facility Catalogue Page
+## 📅 Timeline
 
-- [ ] `/facilities` page (PUBLIC):
-  - Fetch facilities using `useFacilities` hook (React Query)
-  - Display facility cards in grid layout (3 columns desktop, 1 column mobile)
-  - Implement search bar with debounced input (500ms delay)
-  - Implement filter sidebar:
-    - Type dropdown (LAB, CLASSROOM, HALL, EQUIPMENT, SPORTS_FACILITY)
-    - Status checkboxes (AVAILABLE, UNDER_MAINTENANCE)
-    - Capacity range slider (min-max)
-  - URL query params sync for shareable filters
-  - Pagination at bottom (page size: 20)
-
-- [ ] `FacilityCard` component:
-  - Display: thumbnail, name, type badge, capacity, location
-  - Availability indicator (green dot = available, red = occupied, yellow = maintenance)
-  - "View Details" button → navigates to `/facilities/[id]`
-
-- [ ] `FacilityFilters` component:
-  - Controlled form inputs
-  - "Apply Filters" and "Clear Filters" buttons
-  - Update URL query params on filter change
+| Week                  | Focus                        | Milestones                             |
+| --------------------- | ---------------------------- | -------------------------------------- |
+| Week 1 (24-30 Mar)    | Setup, DB config, entities   | All schemas created, Spring Boot boots |
+| Week 2 (31 Mar-6 Apr) | Modules A & B APIs           | Resources + Bookings working           |
+| Week 3 (7-13 Apr)     | Modules C & D APIs           | Tickets + Auth working                 |
+| Week 4 (14-20 Apr)    | Notifications, role-based UI | All notifications working              |
+| Week 5 (21-25 Apr)    | Bug fixes, docs, Postman     | Tests passing, docs complete           |
+| **Submission**        | **27 Apr**                   | **Final submission by 11:45 PM**       |
 
 ---
 
-### 2.4 Frontend — Facility Detail Page
+## 📁 Submission Checklist
 
-- [ ] `/facilities/[id]` page (PUBLIC):
-  - Fetch facility detail using `useFacility(id)` hook
-  - Layout: Image gallery (left) + Details panel (right)
-  - Image gallery: Primary image large, thumbnails below
-  - Details panel:
-    - Facility name (h1)
-    - Type and status badges
-    - Capacity, location
-    - Full description
-    - Amenities list with icons
-    - Specifications (if JSONB has data)
-  - "Book Now" button (AUTH required) → opens booking modal
-  - Availability calendar section (next 7 days)
-
-- [ ] `AvailabilityCalendar` component:
-  - Fetch availability using `useFacilityAvailability(id, from, to)` hook
-  - Display daily calendar with time slots
-  - Color-code slots: Green (available), Red (occupied), Gray (past)
-  - On slot click: Pre-fill booking form with selected time
+- [ ] GitHub repo public (`it3030-paf-2026-smart-campus-groupXX`)
+- [ ] README with PostgreSQL setup instructions
+- [ ] All 4 modules implemented
+- [ ] GitHub Actions CI passing
+- [ ] Postman collection exported
+- [ ] Report PDF with diagrams + contribution
+- [ ] Screenshots of key workflows
+- [ ] 70%+ test coverage
+- [ ] All endpoints tested + working
 
 ---
 
-### 2.5 Frontend — Admin Facility Management
-
-- [ ] `/admin/facilities` page (ADMIN only):
-  - Data table with columns: Name, Type, Capacity, Status, Actions
-  - Filter by type and status
-  - Search by name
-  - Actions: Edit, Delete
-  - "Add New Facility" button → navigates to `/admin/facilities/new`
-
-- [ ] `/admin/facilities/new` page:
-  - Form with fields: name, type, capacity, location, description, amenities (multi-select)
-  - Image upload (single thumbnail, max 5MB)
-  - Form validation using react-hook-form + Zod
-  - Submit → POST `/api/v1/resources`
-  - On success: Show toast, redirect to facility detail page
-
-- [ ] `/admin/facilities/[id]/edit` page:
-  - Pre-populate form with existing data
-  - Allow editing all fields except `id` and `createdAt`
-  - Submit → PUT `/api/v1/resources/{id}`
-  - On success: Show toast, redirect to facility detail page
+_Last updated: April 2026 — Stack: Spring Boot 3.3 + React 18 + **PostgreSQL 14** + JPA_
 
 ---
 
-## PHASE 3 — BOOKING MANAGEMENT SYSTEM (Week 3-4)
+## 🎯 COMPLETION SUMMARY
 
-> **Goal:** Implement booking request, approval workflow, conflict detection, and user/admin booking views
+### ✅ What Has Been Delivered
 
-### 3.1 Backend — Booking Entity & Repository
+**1. Complete Task List Document** ✓
 
-- [ ] Create `Booking` entity:
-  - Map to `bookings` table
-  - Fields: id, resourceId, userId, startTime, endTime, purpose, status, rejectionReason, cancellationReason, approvedBy, rejectedBy, cancelledBy, timestamps
-  - Add `@ManyToOne` relationships to `Resource` and `User`
-  - Add `@Enumerated` for status enum
+- 300+ lines of detailed, actionable tasks
+- 4 developer modules with clear scenarios
+- ~88 total tasks (backend + frontend + shared)
+- Professional formatting matching industry standards
 
-- [ ] Create `BookingStatusHistory` entity:
-  - Map to `booking_status_history` table
-  - Fields: id, bookingId, oldStatus, newStatus, changedBy, notes, createdAt
-  - Add `@ManyToOne` relationship to `Booking`
+**2. Database Design** ✓
 
-- [ ] Create `BookingRepository` extends `JpaRepository<Booking, UUID>`:
-  - Method: `Page<Booking> findByUserId(UUID userId, Pageable pageable)` — User's bookings
-  - Method: `Page<Booking> findByStatus(BookingStatus status, Pageable pageable)` — Filter by status
-  - Method: `@Query("SELECT b FROM Booking b WHERE b.resourceId = :resourceId AND b.status IN ('CONFIRMED', 'PENDING') AND ((b.startTime < :endTime AND b.endTime > :startTime))") List<Booking> findConflictingBookings(UUID resourceId, LocalDateTime startTime, LocalDateTime endTime)` — Conflict detection
+- 8 PostgreSQL tables with relationships
+- JPA entity specifications
+- Compound indexes for performance
+- Flyway migration strategy
 
----
+**3. Developer Guidance** ✓
 
-### 3.2 Backend — Booking APIs (User & Admin)
+- Personal scenarios for each developer
+- Clear backend/frontend responsibilities
+- Integration points between modules
+- Quality standards (70%+ test coverage)
 
-- [ ] **POST /api/v1/bookings** — Create booking request (USER/ADMIN)
-  - Request body: `CreateBookingRequest` (resourceId, startTime, endTime, purpose)
-  - Validation:
-    - startTime must be at least 24 hours in future
-    - endTime must be after startTime
-    - Duration between 30 minutes and 8 hours
-    - Resource must exist and status = AVAILABLE
-  - Check for conflicts using `findConflictingBookings()`
-  - If conflict found: Return `409 Conflict` with conflicting booking details + suggestions
-  - If no conflict: Create booking with status = PENDING
-  - Create notification for ADMIN users
-  - Response: `BookingDto` with 201 Created
+**4. Timeline & Milestones** ✓
 
-- [ ] **GET /api/v1/bookings** — List own bookings (USER)
-  - Query params: `page`, `size`, `sort`, `status`, `from`, `to`
-  - Fetch bookings where `userId` matches authenticated user
-  - Apply filters if provided
-  - Response: `Page<BookingDto>`
+- 5-week development sprint
+- Weekly milestones
+- Submission checklist
 
-- [ ] **GET /api/v1/bookings/{id}** — Get booking details (USER/ADMIN)
-  - Path param: `id` (UUID)
-  - Authorization: User can view own booking, ADMIN can view any booking
-  - Fetch booking with related resource and user data
-  - Fetch status history
-  - Response: `BookingDetailDto`
+### 📊 Tasks by Developer
 
-- [ ] **PUT /api/v1/bookings/{id}/cancel** — Cancel booking (USER/ADMIN)
-  - Path param: `id` (UUID)
-  - Request body: `CancelBookingRequest` (reason - optional for USER, required for ADMIN)
-  - Authorization: User can cancel own booking, ADMIN can cancel any
-  - Validation: Booking status must be PENDING or CONFIRMED
-  - Update status to CANCELLED
-  - Set `cancelledBy` to current user
-  - Store cancellation reason
-  - Create status history entry
-  - Create notification for booking owner (if cancelled by admin)
-  - Response: `BookingDto`
+**Dev 1 - Facilities Catalogue:**
 
-- [ ] **GET /api/v1/bookings/all** — List all bookings (ADMIN)
-  - Query params: `page`, `size`, `sort`, `status`, `resourceId`, `userId`, `from`, `to`
-  - Fetch all bookings with filters applied
-  - Response: `Page<BookingDto>`
+- 13 backend tasks (entity, repository, 6 endpoints, tests)
+- 8 frontend tasks (pages, components, services)
+- Database: `resources`, `availability_windows`
 
-- [ ] **PUT /api/v1/bookings/{id}/approve** — Approve booking (ADMIN)
-  - Path param: `id` (UUID)
-  - Validation: Booking status must be PENDING
-  - Check for conflicts again (in case another admin approved a conflicting booking)
-  - If conflict: Return `409 Conflict`
-  - If no conflict: Update status to CONFIRMED
-  - Set `approvedBy` and `approvedAt`
-  - Create status history entry
-  - Create notification for booking requester
-  - Send confirmation email (optional)
-  - Response: `BookingDto`
+**Dev 2 - Booking Management:**
 
-- [ ] **PUT /api/v1/bookings/{id}/reject** — Reject booking (ADMIN)
-  - Path param: `id` (UUID)
-  - Request body: `RejectBookingRequest` (reason - required)
-  - Validation: Booking status must be PENDING, reason not empty
-  - Update status to REJECTED
-  - Set `rejectedBy`, `rejectedAt`, and `rejectionReason`
-  - Create status history entry
-  - Create notification for booking requester with rejection reason
-  - Send rejection email (optional)
-  - Response: `BookingDto`
+- 10 backend tasks (entity, conflict detection, 7 endpoints)
+- 8 frontend tasks (booking flow, approval UI)
+- Database: `bookings` with compound index
 
----
+**Dev 3 - Incident Ticketing:**
 
-### 3.3 Backend — Booking Service Logic
+- 14 backend tasks (entity, multipart upload, 9 endpoints)
+- 8 frontend tasks (report, detail, comments)
+- Database: `tickets`, `ticket_comments`, `ticket_attachments`
 
-- [ ] Create `BookingService`:
-  - Method: `createBooking(CreateBookingRequest request, User currentUser)`:
-    - Validate input
-    - Check resource availability
-    - Detect conflicts
-    - Create booking with status = PENDING
-    - Notify admins
+**Dev 4 - Notifications & Auth:**
 
-  - Method: `approveBooking(UUID bookingId, User admin)`:
-    - Fetch booking
-    - Verify status = PENDING
-    - Re-check conflicts (concurrency safety)
-    - Update to CONFIRMED
-    - Create history entry
-    - Notify requester
+- 16 backend tasks (OAuth 2.0, JWT, notifications)
+- 9 frontend tasks (login, notification bell, dashboards)
+- Database: `users`, `notifications`
 
-  - Method: `rejectBooking(UUID bookingId, String reason, User admin)`:
-    - Fetch booking
-    - Verify status = PENDING
-    - Update to REJECTED
-    - Store reason
-    - Create history entry
-    - Notify requester
+### 🚀 Ready for Execution
 
-  - Method: `cancelBooking(UUID bookingId, String reason, User currentUser)`:
-    - Fetch booking
-    - Verify authorization (owner or admin)
-    - Verify status (PENDING or CONFIRMED)
-    - Update to CANCELLED
-    - Store reason and canceller
-    - Create history entry
-    - Notify affected users
+This document is **production-ready** and includes everything your team needs to:
+✅ Understand their role and responsibilities  
+✅ Know what to build and when  
+✅ Understand database design  
+✅ Follow quality standards  
+✅ Track progress against timeline  
+✅ Submit on deadline (27 April 2026)
+
+### 📁 Files in Repository
+
+**Main Document:**
+
+- `docs/04_full_task_list.md` ← YOU ARE HERE
+
+**Supporting Files:**
+
+- `QUICK_START_GUIDE.md` - Quick reference for team
+- `DEVELOPER_ASSIGNMENTS.md` - Assignment matrix + sprint schedule
+- `README_DOCUMENTATION.md` - Navigation index
+- `docs/04_full_task_list_postgresql.md` - Extended PostgreSQL version
+- `docs/02_api_documentation.md` - API endpoint specs
+- `docs/03_database_schema.sql` - SQL schema
+- `docs/01_use_cases.md` - User stories
+
+### 🎓 How Your Team Uses This
+
+1. **Share this file** with all 4 developers
+2. **Each dev reads their module section** (has personal scenario)
+3. **Week 1:** Setup + database initialization
+4. **Weeks 2-5:** Execute tasks according to timeline
+5. **Final week:** Testing + documentation
+6. **27 April:** Submit using the checklist
 
 ---
 
-### 3.4 Frontend — Booking Form & Flow
-
-- [ ] Create `BookingModal` component:
-  - Opened from facility detail page "Book Now" button
-  - Form fields:
-    - Date picker (minimum: tomorrow, maximum: 90 days ahead)
-    - Start time dropdown (30-minute intervals, 8:00 AM - 5:00 PM)
-    - End time dropdown
-    - Purpose textarea (required)
-  - Real-time validation:
-    - End time must be after start time
-    - Duration check (30 min - 8 hours)
-  - On submit: Call `POST /api/v1/bookings`
-  - On success: Show success toast, close modal, redirect to "My Bookings"
-  - On conflict error: Show conflict details with alternative time suggestions
-  - On validation error: Display inline field errors
-
----
-
-### 3.5 Frontend — My Bookings Page (User)
-
-- [ ] `/bookings` page:
-  - Fetch bookings using `useBookings()` hook
-  - Display bookings grouped by status tabs:
-    - PENDING (awaiting approval)
-    - CONFIRMED (approved)
-    - CANCELLED
-    - REJECTED
-    - COMPLETED (past bookings)
-  - Each booking card shows:
-    - Resource name and thumbnail
-    - Date and time
-    - Purpose
-    - Status badge with color coding
-    - Action buttons: "Cancel" (if PENDING or CONFIRMED), "View Details"
-  - Filter by date range
-  - Search by resource name
-
-- [ ] `BookingCard` component:
-  - Display booking summary
-  - "Cancel" button with confirmation dialog
-  - "View Details" link → navigates to `/bookings/[id]`
-
----
-
-### 3.6 Frontend — Booking Detail Page
-
-- [ ] `/bookings/[id]` page:
-  - Fetch booking detail using `useBooking(id)` hook
-  - Display:
-    - Resource info with image
-    - Booking details (date, time, purpose)
-    - Current status with badge
-    - Status history timeline (if available)
-    - Rejection/cancellation reason (if applicable)
-  - Action buttons:
-    - "Cancel Booking" (if status = PENDING or CONFIRMED and user is owner)
-    - "View Resource" link
-
----
-
-### 3.7 Frontend — Admin Booking Management
-
-- [ ] `/admin/bookings/pending` page (ADMIN only):
-  - Fetch pending bookings using `useBookings({ status: 'PENDING' })` hook
-  - Display pending bookings queue
-  - Each booking card shows:
-    - User name and email
-    - Resource name
-    - Requested date/time
-    - Purpose
-    - "Approve" and "Reject" buttons
-  - On "Approve" click: Confirm, then call PUT `/api/v1/bookings/{id}/approve`
-  - On "Reject" click: Open modal with reason input, then call PUT `/api/v1/bookings/{id}/reject`
-  - On success: Show toast, refresh list
-
-- [ ] `/admin/bookings/all` page (ADMIN only):
-  - Data table with columns: User, Resource, Date/Time, Status, Actions
-  - Filter by status, resource, user
-  - Search by user name or resource name
-  - Actions: View, Approve (if PENDING), Reject (if PENDING), Cancel
-
----
-
-## PHASE 4 — MAINTENANCE & INCIDENT TICKETING (Week 4-5)
-
-> **Goal:** Implement ticket reporting, assignment, status tracking, and comment threads
-
-### 4.1 Backend — Ticket Entities & Repositories
-
-- [ ] Create `Ticket` entity:
-  - Map to `tickets` table
-  - Fields: id, ticketNumber, resourceId, reporterId, assignedTo, title, description, severity, category, status, assignedBy, timestamps
-  - Add `@ManyToOne` relationships to `Resource` and `User` (reporter, assignedTo, assignedBy)
-  - Add `@Enumerated` for severity, category, status enums
-
-- [ ] Create `TicketEvidence` entity:
-  - Map to `ticket_evidence` table
-  - Fields: id, ticketId, url, uploadedBy, uploadedAt
-  - Add `@ManyToOne` relationship to `Ticket`
-
-- [ ] Create `TicketComment` entity:
-  - Map to `ticket_comments` table
-  - Fields: id, ticketId, userId, text, createdAt
-  - Add `@ManyToOne` relationships
-
-- [ ] Create `TicketStatusHistory` entity:
-  - Map to `ticket_status_history` table
-  - Fields: id, ticketId, oldStatus, newStatus, changedBy, notes, createdAt
-
-- [ ] Create `TicketRepository` extends `JpaRepository<Ticket, UUID>`:
-  - Method: `Page<Ticket> findByReporterId(UUID reporterId, Pageable pageable)`
-  - Method: `Page<Ticket> findByAssignedTo(UUID technicianId, Pageable pageable)`
-  - Method: `Page<Ticket> findByStatus(TicketStatus status, Pageable pageable)`
-  - Method: `Page<Ticket> findBySeverity(TicketSeverity severity, Pageable pageable)`
-  - Method: `Optional<Ticket> findByTicketNumber(String ticketNumber)`
-
-- [ ] Create `TicketCommentRepository`, `TicketEvidenceRepository`, `TicketStatusHistoryRepository`
-
----
-
-### 4.2 Backend — Ticket APIs
-
-- [ ] **POST /api/v1/tickets** — Report incident (USER/ADMIN/TECH)
-  - Request body: `CreateTicketRequest` (resourceId, title, description, severity, category)
-  - Validation: All fields required, title 5-100 chars, description 20-1000 chars
-  - Generate unique ticket number: `TICK-YYYYMMDD-NNNN` (e.g., TICK-20260327-0012)
-  - Create ticket with status = OPEN, reporterId = current user
-  - If severity = HIGH or CRITICAL: Create notifications for all ADMIN and TECHNICIAN users
-  - Response: `TicketDto` with 201 Created
-
-- [ ] **POST /api/v1/tickets/evidence** — Upload evidence (USER/ADMIN/TECH)
-  - Content-Type: `multipart/form-data`
-  - Form fields: `ticketId` (UUID), `file` (image file)
-  - Validation: File size max 5MB, format JPEG/PNG
-  - Save file to server/cloud storage
-  - Create `TicketEvidence` record with URL
-  - Response: `{ "ticketId": "...", "evidenceUrl": "...", "uploadedAt": "..." }`
-
-- [ ] **GET /api/v1/tickets** — List tickets (USER/ADMIN/TECH)
-  - Query params: `page`, `size`, `sort`, `status`, `severity`, `category`, `resourceId`, `assignedTo`
-  - Authorization:
-    - USER: Only own tickets (where reporterId = current user)
-    - TECHNICIAN: Only assigned tickets (where assignedTo = current user)
-    - ADMIN: All tickets
-  - Apply filters
-  - Response: `Page<TicketDto>`
-
-- [ ] **GET /api/v1/tickets/{id}** — Get ticket details (USER/ADMIN/TECH)
-  - Path param: `id` (UUID)
-  - Authorization: Reporter, ADMIN, or assigned TECHNICIAN only
-  - Fetch ticket with related resource, reporter, technician
-  - Fetch evidence, comments, status history
-  - Response: `TicketDetailDto`
-
-- [ ] **PUT /api/v1/tickets/{id}/status** — Update ticket status (ADMIN/TECH)
-  - Path param: `id` (UUID)
-  - Request body: `UpdateTicketStatusRequest` (status, notes)
-  - Authorization: ADMIN or assigned TECHNICIAN only
-  - Validation:
-    - Status transitions: OPEN → IN_PROGRESS → RESOLVED
-    - Cannot go backward from RESOLVED
-  - Update ticket status
-  - If new status = RESOLVED: Set `resolvedAt` timestamp
-  - Create status history entry
-  - Create notification for reporter
-  - Response: `TicketDto`
-
-- [ ] **PUT /api/v1/tickets/{id}/assign** — Assign technician (ADMIN)
-  - Path param: `id` (UUID)
-  - Request body: `AssignTechnicianRequest` (technicianId)
-  - Validation:
-    - technicianId must reference a user with TECHNICIAN role
-    - Ticket status must be OPEN or IN_PROGRESS
-  - Update `assignedTo` field
-  - Set `assignedBy` and `assignedAt`
-  - Create notification for assigned technician
-  - Send email to technician (optional)
-  - Response: `TicketDto`
-
-- [ ] **POST /api/v1/tickets/{id}/comments** — Add comment (USER/ADMIN/TECH)
-  - Path param: `id` (UUID)
-  - Request body: `AddCommentRequest` (text)
-  - Authorization: Reporter, ADMIN, or assigned TECHNICIAN only
-  - Validation: Text 5-500 chars
-  - Create comment record
-  - Create notifications:
-    - If commenter is ADMIN/TECH: Notify reporter
-    - If commenter is reporter: Notify assigned technician (if any) and ADMIN
-  - Response: `TicketCommentDto` with 201 Created
-
----
-
-### 4.3 Backend — Ticket Service Logic
-
-- [ ] Create `TicketService`:
-  - Method: `createTicket(CreateTicketRequest request, User reporter)`:
-    - Validate input
-    - Generate ticket number
-    - Create ticket with OPEN status
-    - If severity HIGH/CRITICAL: Notify all admins and technicians
-
-  - Method: `updateTicketStatus(UUID ticketId, TicketStatus newStatus, String notes, User currentUser)`:
-    - Fetch ticket
-    - Verify authorization (ADMIN or assigned tech)
-    - Validate status transition
-    - Update status
-    - Create history entry
-    - Notify reporter
-
-  - Method: `assignTechnician(UUID ticketId, UUID technicianId, User admin)`:
-    - Fetch ticket and technician user
-    - Verify technician role
-    - Update assignment
-    - Notify technician
-
-  - Method: `addComment(UUID ticketId, String text, User commenter)`:
-    - Fetch ticket
-    - Verify authorization
-    - Create comment
-    - Notify relevant users
-
----
-
-### 4.4 Frontend — Report Ticket Page
-
-- [ ] `/tickets/new` page:
-  - Form fields:
-    - Facility (searchable dropdown)
-    - Title (required, max 100 chars)
-    - Description (textarea, required, max 1000 chars)
-    - Severity (dropdown: LOW, MEDIUM, HIGH, CRITICAL)
-    - Category (dropdown: ELECTRICAL, PLUMBING, EQUIPMENT, CLEANING, OTHER)
-    - Photo evidence (file upload, optional, max 5 images)
-  - Form validation using react-hook-form + Zod
-  - Submit → POST `/api/v1/tickets`
-  - On success:
-    - Show success toast with ticket number
-    - Redirect to ticket detail page
-
----
-
-### 4.5 Frontend — My Tickets Page (User)
-
-- [ ] `/tickets` page:
-  - Fetch tickets using `useTickets()` hook
-  - Display tickets in list/card view
-  - Each ticket card shows:
-    - Ticket number
-    - Title
-    - Facility name
-    - Status badge (OPEN/IN_PROGRESS/RESOLVED)
-    - Severity indicator (color-coded)
-    - Created date
-  - Filter by status and severity
-  - Search by title or description
-  - Click card → navigate to `/tickets/[id]`
-
----
-
-### 4.6 Frontend — Ticket Detail Page
-
-- [ ] `/tickets/[id]` page:
-  - Fetch ticket detail using `useTicket(id)` hook
-  - Display:
-    - Ticket number and status badge
-    - Facility info with link
-    - Title and description
-    - Severity and category badges
-    - Reporter info
-    - Assigned technician (if any)
-    - Photo evidence gallery
-    - Status history timeline
-    - Comment thread (oldest first)
-  - Comment section:
-    - Textarea for new comment
-    - "Add Comment" button
-    - Display all comments with user name and timestamp
-  - Action buttons (role-based):
-    - "Update Status" (ADMIN/assigned TECH)
-    - "Assign Technician" (ADMIN)
-
----
-
-### 4.7 Frontend — Admin Ticket Board (Kanban)
-
-- [ ] `/admin/tickets` page (ADMIN/TECH):
-  - Kanban board view with 3 columns:
-    - OPEN (red)
-    - IN_PROGRESS (yellow)
-    - RESOLVED (green)
-  - Fetch all tickets using `useTickets()` hook
-  - Each ticket card shows: ticket number, title, facility, severity, assigned tech avatar
-  - Drag-and-drop between columns to change status:
-    - On drop: Show confirmation modal with notes input
-    - On confirm: Call PUT `/api/v1/tickets/{id}/status`
-  - Filter by severity, category, facility, assigned tech
-  - Switch to list view option (data table)
-
----
-
-## PHASE 5 — NOTIFICATIONS & DASHBOARD (Week 5-6)
-
-> **Goal:** Implement notification system, real-time updates, and role-based dashboards
-
-### 5.1 Backend — Notification Entity & Repository
-
-- [ ] Create `Notification` entity:
-  - Map to `notifications` table
-  - Fields: id, userId, type, title, message, entityType, entityId, isRead, readAt, createdAt
-  - Add `@ManyToOne` relationship to `User`
-  - Add `@Enumerated` for type and entityType enums
-
-- [ ] Create `NotificationRepository` extends `JpaRepository<Notification, UUID>`:
-  - Method: `Page<Notification> findByUserId(UUID userId, Pageable pageable)`
-  - Method: `Page<Notification> findByUserIdAndIsRead(UUID userId, boolean isRead, Pageable pageable)`
-  - Method: `long countByUserIdAndIsReadFalse(UUID userId)` — Unread count
-  - Method: `void markAllAsReadByUserId(UUID userId)`
-
----
-
-### 5.2 Backend — Notification Service
-
-- [ ] Create `NotificationService`:
-  - Method: `createNotification(UUID userId, NotificationType type, String title, String message, String entityType, UUID entityId)`:
-    - Create notification record
-    - Optionally: Send real-time notification via WebSocket/SSE (future enhancement)
-
-  - Method: `getUserNotifications(UUID userId, boolean unreadOnly, Pageable pageable)`:
-    - Fetch notifications for user
-    - Filter by read status if specified
-    - Return paginated results
-
-  - Method: `markAsRead(UUID notificationId, UUID userId)`:
-    - Fetch notification
-    - Verify ownership
-    - Update `isRead` = true, `readAt` = now
-
-  - Method: `markAllAsRead(UUID userId)`:
-    - Update all notifications for user where `isRead` = false
-
-  - Method: `getUnreadCount(UUID userId)`:
-    - Return count of unread notifications
-
----
-
-### 5.3 Backend — Notification Triggers
-
-- [ ] Integrate notification creation into existing services:
-
-  **BookingService:**
-  - When booking created (PENDING): Notify all ADMIN users
-  - When booking approved: Notify booking requester
-  - When booking rejected: Notify booking requester (include reason in message)
-  - When booking cancelled by admin: Notify booking owner
-
-  **TicketService:**
-  - When ticket created with severity HIGH/CRITICAL: Notify all ADMIN and TECHNICIAN users
-  - When technician assigned: Notify assigned technician
-  - When ticket status changed: Notify ticket reporter
-  - When comment added: Notify relevant users (reporter, assigned tech, admins)
-
-  **ResourceService:**
-  - When resource deleted with active bookings: Notify affected booking owners
-
----
-
-### 5.4 Backend — Notification APIs
-
-- [ ] **GET /api/v1/notifications** — List notifications (AUTH)
-  - Query params: `page`, `size`, `read` (boolean, optional)
-  - Fetch notifications for authenticated user
-  - Response: `Page<NotificationDto>` with `unreadCount` in response wrapper
-
-- [ ] **PUT /api/v1/notifications/read-all** — Mark all as read (AUTH)
-  - Update all notifications for user
-  - Response: `{ "updatedCount": 5, "message": "All notifications marked as read" }`
-
-- [ ] **PUT /api/v1/notifications/{id}/read** — Mark single as read (AUTH)
-  - Path param: `id` (UUID)
-  - Verify ownership
-  - Update notification
-  - Response: `NotificationDto`
-
----
-
-### 5.5 Frontend — Notification Bell & Dropdown
-
-- [ ] Add notification bell icon in Navbar:
-  - Fetch unread count using `useNotifications({ unreadOnly: true })` hook
-  - Display count badge if > 0
-  - Polling strategy: Refetch every 30 seconds
-  - On click: Open notification dropdown
-
-- [ ] Notification dropdown:
-  - List last 5 unread notifications
-  - Each notification shows:
-    - Icon (based on type)
-    - Title and message preview
-    - Timestamp (relative, e.g., "2 hours ago")
-    - Click → mark as read, navigate to related entity
-  - "Mark All Read" button
-  - "View All Notifications" link → `/notifications`
-
----
-
-### 5.6 Frontend — Notifications Page
-
-- [ ] `/notifications` page:
-  - Fetch all notifications using `useNotifications()` hook
-  - Tabs: "All", "Unread"
-  - Each notification card shows:
-    - Icon, title, full message
-    - Timestamp
-    - Link to related entity
-    - "Mark as Read" button (if unread)
-  - Pagination at bottom
-
----
-
-### 5.7 Frontend — User Dashboard
-
-- [ ] `/dashboard` page (USER):
-  - Summary cards:
-    - My Bookings (count by status: PENDING, CONFIRMED)
-    - My Tickets (count by status: OPEN, IN_PROGRESS)
-    - Unread Notifications
-  - Upcoming bookings list (next 7 days)
-  - Recent tickets (last 5)
-  - Quick actions: "Book a Facility", "Report an Issue"
-
----
-
-### 5.8 Frontend — Admin Dashboard
-
-- [ ] `/admin/dashboard` page (ADMIN):
-  - KPI cards:
-    - Total Users (count)
-    - Total Resources (count)
-    - Pending Bookings (count)
-    - Open Tickets (count)
-  - Charts (using Recharts):
-    - Booking requests per day (last 30 days) — Line chart
-    - Tickets by severity — Pie chart
-    - Resource utilization — Bar chart
-  - Recent activity feed:
-    - Last 10 bookings (any status)
-    - Last 10 tickets (any status)
-  - Quick actions: "Approve Bookings", "Assign Tickets", "Add Resource"
-
----
-
-### 5.9 Frontend — Technician Dashboard
-
-- [ ] `/tech/dashboard` page (TECHNICIAN):
-  - Summary cards:
-    - Assigned Tickets (count by status)
-    - Resolved This Week (count)
-  - My assigned tickets list with filters
-  - Ticket stats: Total resolved, average resolution time
-  - Quick actions: "View My Tickets"
-
----
-
-## PHASE 6 — TESTING, SECURITY & OPTIMIZATION (Week 6-7)
-
-### 6.1 Backend Testing
-
-- [ ] Setup JUnit 5 and Mockito for unit testing
-- [ ] Unit tests for all service classes:
-  - `AuthServiceTest`
-  - `BookingServiceTest` (conflict detection logic)
-  - `TicketServiceTest` (status transitions)
-  - `NotificationServiceTest`
-
-- [ ] Integration tests for all controllers:
-  - Use `@SpringBootTest` and `MockMvc`
-  - Test all endpoints with different roles
-  - Test authorization (403 when role insufficient)
-  - Test validation errors (400 responses)
-
-- [ ] Repository tests:
-  - Test custom queries
-  - Test pagination
-
-- [ ] Test edge cases:
-  - Booking conflict scenarios
-  - Concurrent booking approval (race condition)
-  - Invalid status transitions
-  - Token expiry and refresh flow
-
----
-
-### 6.2 Frontend Testing
-
-- [ ] Setup Vitest for unit testing
-- [ ] Setup React Testing Library
-- [ ] Unit tests for hooks:
-  - `useAuth.test.ts`
-  - `useBookings.test.ts`
-  - `useTickets.test.ts`
-
-- [ ] Component tests:
-  - `BookingCard.test.tsx`
-  - `TicketCard.test.tsx`
-  - `FacilityCard.test.tsx`
-
-- [ ] Integration tests:
-  - Login flow
-  - Booking creation flow
-  - Ticket reporting flow
-
----
-
-### 6.3 Security Hardening
-
-- [ ] **Rate Limiting:**
-  - Install `bucket4j-spring-boot-starter`
-  - Configure rate limits:
-    - Auth endpoints: 5 requests / 15 minutes
-    - API endpoints: 100 requests / 1 minute
-  - Return `429 Too Many Requests` when exceeded
-
-- [ ] **Input Validation:**
-  - Ensure all DTOs use `@Valid` with JSR-380 validators
-  - Custom validators for business rules (e.g., date ranges)
-
-- [ ] **SQL Injection Protection:**
-  - Use JPA parameterized queries (already handled by Spring Data)
-  - Audit all `@Query` annotations for proper parameter binding
-
-- [ ] **CORS Configuration:**
-  - Whitelist only production frontend domain
-  - No wildcard `*` in production
-
-- [ ] **HTTPS Enforcement:**
-  - Configure Spring Boot to redirect HTTP → HTTPS in production
-  - Use TLS 1.2+ only
-
-- [ ] **JWT Security:**
-  - Use RS256 algorithm (asymmetric keys) instead of HS256
-  - Keep access token expiry short (1 hour)
-  - Implement refresh token rotation
-
-- [ ] **Audit Logging:**
-  - Log all sensitive operations:
-    - User login/logout
-    - Booking approval/rejection
-    - Ticket assignment
-    - Resource deletion
-  - Use Spring AOP for cross-cutting audit logging
-
----
-
-### 6.4 Performance Optimization
-
-- [ ] **Database:**
-  - Verify all indexes are created (see schema)
-  - Run `EXPLAIN ANALYZE` on slow queries
-  - Add missing indexes for frequently queried columns
-  - Configure Hibernate batch fetching: `spring.jpa.properties.hibernate.jdbc.batch_size=20`
-
-- [ ] **API Response Time:**
-  - Add `@Cacheable` annotations for rarely-changing data (e.g., resource list)
-  - Configure Spring Cache with Caffeine or Redis
-  - Cache duration: 5 minutes
-
-- [ ] **Frontend:**
-  - Implement lazy loading for routes (React.lazy())
-  - Optimize images: Compress thumbnails, use WebP format
-  - Bundle size analysis: `npm run build -- --analyze`
-  - Target bundle size: < 400 KB gzipped
-
-- [ ] **Connection Pooling:**
-  - Verify HikariCP settings:
-    - minimum-idle: 5
-    - maximum-pool-size: 20
-    - connection-timeout: 20000
-    - idle-timeout: 30000
-
----
-
-### 6.5 Deployment Preparation
-
-- [ ] **Backend Dockerfile:**
-
-  ```dockerfile
-  FROM eclipse-temurin:17-jdk-alpine AS build
-  WORKDIR /workspace/app
-
-  COPY mvnw .
-  COPY .mvn .mvn
-  COPY pom.xml .
-  RUN ./mvnw dependency:go-offline
-
-  COPY src src
-  RUN ./mvnw package -DskipTests
-
-  FROM eclipse-temurin:17-jre-alpine
-  VOLUME /tmp
-  ARG JAR_FILE=target/*.jar
-  COPY --from=build /workspace/app/${JAR_FILE} app.jar
-  ENTRYPOINT ["java","-jar","/app.jar"]
-  ```
-
-- [ ] **Frontend Dockerfile:**
-
-  ```dockerfile
-  FROM node:18-alpine AS build
-  WORKDIR /app
-  COPY package*.json ./
-  RUN npm ci
-  COPY . .
-  RUN npm run build
-
-  FROM nginx:alpine
-  COPY --from=build /app/dist /usr/share/nginx/html
-  COPY nginx.conf /etc/nginx/conf.d/default.conf
-  EXPOSE 80
-  CMD ["nginx", "-g", "daemon off;"]
-  ```
-
-- [ ] **Docker Compose:**
-
-  ```yaml
-  version: '3.8'
-  services:
-    postgres:
-      image: postgres:14-alpine
-      environment:
-        POSTGRES_DB: smartcampus
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: ${DB_PASSWORD}
-      volumes:
-        - postgres_data:/var/lib/postgresql/data
-      ports:
-        - '5432:5432'
-
-    backend:
-      build: ./backend
-      environment:
-        DATABASE_URL: jdbc:postgresql://postgres:5432/smartcampus
-        DATABASE_USERNAME: postgres
-        DATABASE_PASSWORD: ${DB_PASSWORD}
-        JWT_SECRET: ${JWT_SECRET}
-        GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-        GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-      ports:
-        - '8080:8080'
-      depends_on:
-        - postgres
-
-    frontend:
-      build: ./frontend
-      environment:
-        VITE_API_BASE_URL: http://backend:8080/api/v1
-      ports:
-        - '80:80'
-      depends_on:
-        - backend
-
-  volumes:
-    postgres_data:
-  ```
-
-- [ ] **CI/CD Pipeline (GitHub Actions):**
-
-  ```yaml
-  name: CI/CD Pipeline
-
-  on:
-    push:
-      branches: [main, develop]
-    pull_request:
-      branches: [main]
-
-  jobs:
-    backend-test:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v3
-        - uses: actions/setup-java@v3
-          with:
-            java-version: '17'
-        - name: Run tests
-          run: cd backend && ./mvnw test
-
-    frontend-test:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v3
-        - uses: actions/setup-node@v3
-          with:
-            node-version: '18'
-        - name: Install and test
-          run: cd frontend && npm ci && npm test
-
-    deploy:
-      needs: [backend-test, frontend-test]
-      runs-on: ubuntu-latest
-      if: github.ref == 'refs/heads/main'
-      steps:
-        - uses: actions/checkout@v3
-        - name: Deploy to production
-          run: echo "Deploy to cloud provider"
-  ```
-
----
-
-### 6.6 Database Migration & Backup
-
-- [ ] Setup Flyway for database migrations:
-  - Add dependency: `flyway-core`
-  - Create `db/migration` directory
-  - Baseline migration: `V1__Initial_Schema.sql`
-
-- [ ] Backup strategy:
-  - Daily automated backups using `pg_dump`
-  - Retention: 30 days
-  - Store in cloud storage (S3, Google Cloud Storage)
-
----
-
-### 6.7 Monitoring & Logging
-
-- [ ] Setup application monitoring:
-  - Spring Boot Actuator endpoints: `/actuator/health`, `/actuator/metrics`
-  - Prometheus + Grafana (optional)
-
-- [ ] Centralized logging:
-  - Configure Logback with JSON format
-  - Log levels: INFO in production, DEBUG in dev
-  - Log rotation: Daily, max 30 files
-
----
-
-## DELIVERABLES CHECKLIST
-
-| #   | Deliverable                                               | Status |
-| --- | --------------------------------------------------------- | ------ |
-| 1   | Database schema (11 tables, seed data)                    | ⬜     |
-| 2   | Spring Boot backend foundation                            | ⬜     |
-| 3   | React frontend foundation (Vite + TypeScript)             | ⬜     |
-| 4   | Google OAuth 2.0 authentication + JWT                     | ⬜     |
-| 5   | Facility catalogue (public + admin CRUD)                  | ⬜     |
-| 6   | Booking management (request, approve, conflict detection) | ⬜     |
-| 7   | Ticket system (report, assign, status tracking, comments) | ⬜     |
-| 8   | Notification system (in-app notifications)                | ⬜     |
-| 9   | Role-based dashboards (User, Admin, Technician)           | ⬜     |
-| 10  | Unit + integration tests (backend + frontend)             | ⬜     |
-| 11  | Security hardening (rate limiting, HTTPS, audit logs)     | ⬜     |
-| 12  | Docker containerization                                   | ⬜     |
-| 13  | CI/CD pipeline (GitHub Actions)                           | ⬜     |
-| 14  | Production deployment                                     | ⬜     |
-
----
-
-## PROJECT TIMELINE
-
-### Week 1: Project Initialization
-
-- Day 1-2: Repository setup, environment config, Google OAuth setup
-- Day 3-4: Backend + frontend scaffolding
-- Day 5: Database schema creation and seed data
-
-### Week 2: Authentication Module
-
-- Day 1-3: Backend auth implementation (OAuth + JWT)
-- Day 4-5: Frontend auth pages and flows
-
-### Week 3: Facilities & Bookings (Part 1)
-
-- Day 1-2: Facility entity, repository, APIs
-- Day 3-4: Booking entity, repository, conflict detection
-- Day 5: Frontend facility catalogue
-
-### Week 4: Bookings (Part 2)
-
-- Day 1-2: Booking approval workflow
-- Day 3-4: Frontend booking forms and "My Bookings"
-- Day 5: Admin booking management
-
-### Week 5: Maintenance Ticketing
-
-- Day 1-2: Ticket entity, repository, APIs
-- Day 3-4: Frontend ticket reporting and detail pages
-- Day 5: Admin ticket board (Kanban)
-
-### Week 6: Notifications & Dashboards
-
-- Day 1-2: Notification system backend
-- Day 3-4: Frontend notifications + User dashboard
-- Day 5: Admin + Technician dashboards
-
-### Week 7: Testing & Security
-
-- Day 1-2: Unit + integration tests
-- Day 3-4: Security hardening + performance optimization
-- Day 5: Code review and refactoring
-
-### Week 8-9: Deployment & Documentation
-
-- Day 1-2: Docker + CI/CD setup
-- Day 3-4: Production deployment
-- Day 5: Final testing + documentation
-
----
-
-**End of Task List**
+**Status: ✅ COMPLETE & READY FOR TEAM EXECUTION**
+
+Document created: 6 April 2026  
+Stack: Spring Boot 3.3 + React 18 + PostgreSQL 14 + JPA  
+Team size: 4 developers  
+Execution timeline: 5 weeks
