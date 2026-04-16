@@ -56,6 +56,7 @@ server:
 
 app:
   frontend-url: ${FRONTEND_URL:http://localhost:5173}
+  backend-base-url: ${BACKEND_BASE_URL:http://localhost:8080}
   upload-dir: ${FILE_UPLOAD_DIR:./uploads}
   jwt:
     secret: ${JWT_SECRET:smartcampus-dev-secret-change-me}

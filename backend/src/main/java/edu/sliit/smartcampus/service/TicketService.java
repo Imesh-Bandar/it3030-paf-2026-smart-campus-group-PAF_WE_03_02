@@ -63,6 +63,7 @@ public class TicketService {
     private final TicketEvidenceRepository ticketEvidenceRepository;
     private final TicketStatusHistoryRepository ticketStatusHistoryRepository;
     private final Path uploadRoot;
+    private final String backendBaseUrl;
 
     public TicketService(
             AuthService authService,
@@ -72,7 +73,8 @@ public class TicketService {
             TicketCommentRepository ticketCommentRepository,
             TicketEvidenceRepository ticketEvidenceRepository,
             TicketStatusHistoryRepository ticketStatusHistoryRepository,
-            @Value("${app.upload-dir:./uploads}") String uploadDir) {
+            @Value("${app.upload-dir:./uploads}") String uploadDir,
+            @Value("${app.backend-base-url:http://localhost:8080}") String backendBaseUrl) {
         this.authService = authService;
         this.userRepository = userRepository;
         this.resourceRepository = resourceRepository;
@@ -81,6 +83,7 @@ public class TicketService {
         this.ticketEvidenceRepository = ticketEvidenceRepository;
         this.ticketStatusHistoryRepository = ticketStatusHistoryRepository;
         this.uploadRoot = Paths.get(uploadDir).toAbsolutePath().normalize();
+        this.backendBaseUrl = backendBaseUrl.replaceAll("/+$", "");
     }
 
     @Transactional(readOnly = true)
@@ -347,7 +350,9 @@ public class TicketService {
 
             String originalName = StringUtils.cleanPath(file.getOriginalFilename() == null ? "evidence" : file.getOriginalFilename());
             String extension = StringUtils.getFilenameExtension(originalName);
-            String baseName = StringUtils.getFilename(originalName);
+            String baseName = extension == null || extension.isBlank()
+                    ? originalName
+                    : originalName.substring(0, Math.max(0, originalName.length() - extension.length() - 1));
             String safeBaseName = baseName == null ? "evidence" : baseName.replaceAll("[^a-zA-Z0-9._-]", "_");
             String safeName = UUID.randomUUID() + "-" + safeBaseName;
             if (extension != null && !extension.isBlank()) {
@@ -355,6 +360,9 @@ public class TicketService {
             }
 
             Path target = ticketDirectory.resolve(safeName).normalize();
+            if (!target.startsWith(ticketDirectory)) {
+                throw new ValidationException("Invalid evidence file name");
+            }
             Files.copy(file.getInputStream(), target);
             return "/uploads/" + ticketId + "/" + safeName;
         } catch (IOException ex) {
@@ -438,9 +446,12 @@ public class TicketService {
     }
 
     private TicketEvidenceDto toEvidenceDto(TicketEvidence evidence) {
+        String url = evidence.getUrl().startsWith("http://") || evidence.getUrl().startsWith("https://")
+            ? evidence.getUrl()
+            : backendBaseUrl + evidence.getUrl();
         return new TicketEvidenceDto(
                 evidence.getId(),
-                evidence.getUrl(),
+            url,
                 evidence.getUploadedBy().getId(),
                 evidence.getUploadedBy().getFullName(),
                 evidence.getUploadedAt());

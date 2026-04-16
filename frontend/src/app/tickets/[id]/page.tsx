@@ -14,6 +14,21 @@ import { useAuthStore } from '../../../stores/authStore';
 import { useRole } from '../../../hooks/useRole';
 import type { TicketStatus } from '../../../services/types/ticket';
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080/api/v1';
+const apiOrigin = apiBaseUrl.replace(/\/api\/v1\/?$/, '');
+
+function resolveEvidenceUrl(url: string) {
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+
+  if (url.startsWith('/')) {
+    return `${apiOrigin}${url}`;
+  }
+
+  return `${apiOrigin}/${url}`;
+}
+
 export function TicketDetailsPage() {
   const { id } = useParams();
   const { isAdmin, isTechnician } = useRole();
@@ -28,6 +43,7 @@ export function TicketDetailsPage() {
   const [notes, setNotes] = useState('');
   const [assignedToId, setAssignedToId] = useState('');
   const [evidenceFile, setEvidenceFile] = useState<File | null>(null);
+  const [evidenceInputKey, setEvidenceInputKey] = useState(0);
 
   const ticket = ticketQuery.data;
   const technicians = techniciansQuery.data ?? [];
@@ -184,7 +200,10 @@ export function TicketDetailsPage() {
               disabled={commentMutation.isPending || !comment.trim()}
               onClick={async () => {
                 try {
-                  await commentMutation.mutateAsync({ id: ticket.id, payload: { text: comment } });
+                  await commentMutation.mutateAsync({
+                    id: ticket.id,
+                    payload: { text: comment.trim() },
+                  });
                   toast.success('Comment added');
                   setComment('');
                 } catch {
@@ -199,6 +218,7 @@ export function TicketDetailsPage() {
           <div className="ticket-action-card">
             <h3>Add evidence</h3>
             <input
+              key={evidenceInputKey}
               className="ticket-input"
               type="file"
               accept="image/*,.pdf,.doc,.docx,.txt"
@@ -217,6 +237,7 @@ export function TicketDetailsPage() {
                   await evidenceMutation.mutateAsync({ id: ticket.id, file: evidenceFile });
                   toast.success('Evidence uploaded');
                   setEvidenceFile(null);
+                  setEvidenceInputKey((prev) => prev + 1);
                 } catch {
                   toast.error('Unable to upload evidence');
                 }
@@ -258,7 +279,7 @@ export function TicketDetailsPage() {
                 <a
                   key={entry.id}
                   className="ticket-evidence-item"
-                  href={entry.url}
+                  href={resolveEvidenceUrl(entry.url)}
                   target="_blank"
                   rel="noreferrer"
                 >

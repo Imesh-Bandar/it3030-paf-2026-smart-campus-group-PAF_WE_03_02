@@ -1,6 +1,7 @@
 package edu.sliit.smartcampus.exception;
 
 import java.time.OffsetDateTime;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,18 @@ public class GlobalExceptionHandler {
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .collect(Collectors.joining(", "));
         return build(HttpStatus.BAD_REQUEST, message.isBlank() ? "Invalid request payload" : message);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {
+        String message = ex.getMessage() == null ? "Invalid request" : ex.getMessage();
+        String lowerMessage = message.toLowerCase(Locale.ROOT);
+        HttpStatus status = (lowerMessage.contains("unauthenticated")
+                || lowerMessage.contains("refresh token")
+                || lowerMessage.contains("invalid token"))
+                        ? HttpStatus.UNAUTHORIZED
+                        : HttpStatus.BAD_REQUEST;
+        return build(status, message);
     }
 
     @ExceptionHandler(Exception.class)

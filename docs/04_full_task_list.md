@@ -13,7 +13,7 @@
 | 1     | Authentication Module (Google OAuth) | 🟨 In Progress |
 | 2     | Facilities & Asset Catalogue         | ⬜ Not Started |
 | 3     | Booking Management System            | ⬜ Not Started |
-| 4     | Maintenance & Incident Ticketing     | 🟨 In Progress |
+| 4     | Maintenance & Incident Ticketing     | 🟩 Completed   |
 | 5     | Notifications & Dashboard            | ⬜ Not Started |
 | 6     | Testing, Security & Optimization     | ⬜ Not Started |
 
@@ -1084,6 +1084,14 @@ VITE_GOOGLE_CLIENT_ID=
 - [x] Delivered the frontend ticket workflow with report form, detail view, admin board, comment thread, status updates, evidence upload, and technician assignment.
 - [x] Added supporting admin user lookup and resource lookup endpoints so ticket creation and assignment stay usable in the UI.
 
+### 4.9 Ticket Workflow Completion Notes (2026-04-16)
+
+- [x] Completed end-to-end comments workflow: create, fetch, render thread, and role-safe access in ticket details.
+- [x] Completed end-to-end evidence/attachments workflow: upload endpoint hardening, evidence listing, and frontend file upload UX.
+- [x] Fixed evidence URL handling to use backend-qualified links so uploaded files open correctly from the frontend application.
+- [x] Added upload filename sanitization improvements to prevent duplicate extensions and invalid file-path resolution.
+- [x] Verified workflow readiness with backend test pass and frontend build/lint pass.
+
 ---
 
 ## PHASE 5 — NOTIFICATIONS & DASHBOARD (Week 5-6)
@@ -1531,7 +1539,7 @@ VITE_GOOGLE_CLIENT_ID=
 | 4   | Google OAuth 2.0 authentication + JWT                     | ⬜     |
 | 5   | Facility catalogue (public + admin CRUD)                  | ⬜     |
 | 6   | Booking management (request, approve, conflict detection) | ⬜     |
-| 7   | Ticket system (report, assign, status tracking, comments) | ⬜     |
+| 7   | Ticket system (report, assign, status tracking, comments) | ✅     |
 | 8   | Notification system (in-app notifications)                | ⬜     |
 | 9   | Role-based dashboards (User, Admin, Technician)           | ⬜     |
 | 10  | Unit + integration tests (backend + frontend)             | ⬜     |

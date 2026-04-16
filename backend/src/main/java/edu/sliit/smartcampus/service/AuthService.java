@@ -223,7 +223,7 @@ public class AuthService {
                 user.getId(),
                 user.getEmail(),
                 user.getFullName(),
-                user.getRole().name(),
+            user.getRole().effectiveRoleName(),
                 user.getAvatarUrl(),
                 user.isEmailVerified(),
                 user.getStatus().name(),
