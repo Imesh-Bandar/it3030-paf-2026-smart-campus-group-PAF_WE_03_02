@@ -9,6 +9,7 @@ type RegisterPayload = {
   fullName: string;
   email: string;
   password: string;
+  role: 'STUDENT' | 'STAFF' | 'TECHNICIAN';
 };
 
 export const authApi = {
