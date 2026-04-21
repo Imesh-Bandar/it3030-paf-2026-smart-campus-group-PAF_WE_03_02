@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Propagation;
 import edu.sliit.smartcampus.dto.SecurityActivityLogDto;
 import edu.sliit.smartcampus.model.NotificationType;
 import edu.sliit.smartcampus.model.SecurityActivityLog;
@@ -36,7 +37,7 @@ public class SecurityActivityService {
         this.notificationService = notificationService;
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void logEvent(UUID userId, SecurityEventType eventType, String ipAddress,
             String userAgent, String location, String details) {
         User user = userRepository.findById(userId).orElse(null);
@@ -115,7 +116,7 @@ public class SecurityActivityService {
                 log.getUserAgent(),
                 log.getLocation(),
                 log.isSuspicious(),
-            log.getAcknowledgedAt(),
+                log.getAcknowledgedAt(),
                 log.getDetails(),
                 log.getCreatedAt());
     }
