@@ -2,6 +2,7 @@ package edu.sliit.smartcampus.service;
 
 import java.time.OffsetDateTime;
 import java.time.Duration;
+import java.util.List;
 import java.util.UUID;
 import java.util.Locale;
 import org.springframework.security.core.Authentication;
@@ -60,7 +61,7 @@ public class AuthService {
         user.setEmail(email);
         user.setFullName(request.fullName().trim());
         user.setEmailVerified(false);
-        user.setRole(UserRole.USER);
+        user.setRole(parseSelfRegistrationRole(request.role()));
         user.setStatus(UserStatus.ACTIVE);
         user.setLastLoginAt(OffsetDateTime.now());
 
@@ -107,7 +108,7 @@ public class AuthService {
         user.setGoogleId(googleId);
         user.setEmailVerified(Boolean.TRUE.equals(verified));
         if (user.getRole() == null) {
-            user.setRole(UserRole.USER);
+            user.setRole(UserRole.STUDENT);
         }
         if (user.getStatus() == null) {
             user.setStatus(UserStatus.ACTIVE);
@@ -172,6 +173,26 @@ public class AuthService {
         return UUID.fromString(authentication.getName());
     }
 
+    public List<UserDto> listUsers() {
+        return userRepository.findAll().stream().map(this::toUserDto).toList();
+    }
+
+    @Transactional
+    public UserDto updateUserRole(UUID userId, String role) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        user.setRole(parseAnyRole(role));
+        return toUserDto(userRepository.save(user));
+    }
+
+    @Transactional
+    public UserDto updateUserStatus(UUID userId, String status) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        user.setStatus(parseStatus(status));
+        return toUserDto(userRepository.save(user));
+    }
+
     private void revokeActiveUserTokens(UUID userId) {
         refreshTokenRepository.findByUser_IdAndRevokedFalse(userId).forEach(token -> {
             token.setRevoked(true);
@@ -209,6 +230,38 @@ public class AuthService {
             throw new ValidationException("Email is required");
         }
         return email.trim().toLowerCase(Locale.ROOT);
+    }
+
+    private UserRole parseSelfRegistrationRole(String role) {
+        UserRole parsedRole = parseAnyRole(role);
+        if (parsedRole == UserRole.ADMIN) {
+            throw new ValidationException("ADMIN role cannot be self-registered");
+        }
+        return parsedRole;
+    }
+
+    private UserRole parseAnyRole(String role) {
+        if (role == null || role.isBlank()) {
+            throw new ValidationException("Role is required");
+        }
+
+        try {
+            return UserRole.valueOf(role.trim().toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException ex) {
+            throw new ValidationException("Invalid role. Allowed values: STUDENT, STAFF, TECHNICIAN, ADMIN");
+        }
+    }
+
+    private UserStatus parseStatus(String status) {
+        if (status == null || status.isBlank()) {
+            throw new ValidationException("Status is required");
+        }
+
+        try {
+            return UserStatus.valueOf(status.trim().toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException ex) {
+            throw new ValidationException("Invalid status. Allowed values: ACTIVE, LOCKED, ARCHIVED");
+        }
     }
 
     private void validatePassword(String password) {

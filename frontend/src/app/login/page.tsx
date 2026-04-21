@@ -3,6 +3,7 @@ import type { FormEvent } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../hooks/useAuth';
+import { getRoleHomePath } from '../../hooks/useRole';
 import { useAuthStore } from '../../stores/authStore';
 
 function getApiErrorMessage(error: unknown, fallback: string): string {
@@ -56,6 +57,7 @@ export function LoginPage() {
   const [registerEmail, setRegisterEmail] = useState('');
   const [registerPassword, setRegisterPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [registerRole, setRegisterRole] = useState<'STUDENT' | 'STAFF' | 'TECHNICIAN'>('STUDENT');
 
   // Handle OAuth redirect: only re-runs when the URL search params change
   useEffect(() => {
@@ -74,13 +76,13 @@ export function LoginPage() {
         id: 'temp-id',
         email: 'user@smartcampus.edu',
         fullName: 'Smart Campus User',
-        role: 'USER',
+        role: 'STUDENT',
       },
     });
 
     // Try to hydrate the real user profile; navigate home regardless
     getUser()
-      .then(() => navigate('/', { replace: true }))
+      .then((currentUser) => navigate(getRoleHomePath(currentUser?.role), { replace: true }))
       .catch(() => navigate('/', { replace: true })); // don't clear auth on /me failure
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]); // intentionally omit — only re-run on URL param changes
@@ -88,7 +90,7 @@ export function LoginPage() {
   // Redirect already-authenticated users away from login (mount only)
   useEffect(() => {
     if (isAuthenticated && !params.get('access_token')) {
-      navigate('/', { replace: true });
+      navigate(getRoleHomePath(useAuthStore.getState().user?.role), { replace: true });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // mount-only — avoids looping on isAuthenticated changes
@@ -116,7 +118,7 @@ export function LoginPage() {
 
     setLoading(true);
     try {
-      await registerWithEmailPassword(registerName, registerEmail, registerPassword);
+      await registerWithEmailPassword(registerName, registerEmail, registerPassword, registerRole);
       toast.success('Registration successful. Welcome to Smart Campus!');
     } catch (error: unknown) {
       toast.error(getApiErrorMessage(error, 'Unable to create account'));
@@ -291,6 +293,21 @@ export function LoginPage() {
                   placeholder="At least 8 characters"
                   autoComplete="new-password"
                 />
+              </label>
+              <label htmlFor="register-role">
+                Register As
+                <select
+                  id="register-role"
+                  value={registerRole}
+                  onChange={(e) =>
+                    setRegisterRole(e.target.value as 'STUDENT' | 'STAFF' | 'TECHNICIAN')
+                  }
+                  required
+                >
+                  <option value="STUDENT">Student</option>
+                  <option value="STAFF">Staff</option>
+                  <option value="TECHNICIAN">Technician</option>
+                </select>
               </label>
               <label htmlFor="register-confirm">
                 Confirm Password

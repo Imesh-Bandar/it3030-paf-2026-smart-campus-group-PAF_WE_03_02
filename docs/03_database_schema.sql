@@ -1,9 +1,9 @@
 # Smart Campus Operations Hub — PostgreSQL Database Schema
 
-> **Database:** PostgreSQL 14+  
-> **Encoding:** UTF-8  
-> **Timezone:** UTC  
-> **Version:** 1.0  
+> **Database:** PostgreSQL 14+
+> **Encoding:** UTF-8
+> **Timezone:** UTC
+> **Version:** 1.0
 > **Date:** March 2026
 
 ---
@@ -58,8 +58,8 @@ CREATE TABLE users (
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   last_login_at TIMESTAMP WITH TIME ZONE,
   deleted_at TIMESTAMP WITH TIME ZONE,
-  
-  CONSTRAINT users_role_check CHECK (role IN ('USER', 'ADMIN', 'TECHNICIAN')),
+
+  CONSTRAINT users_role_check CHECK (role IN ('USER', 'STUDENT', 'STAFF', 'ADMIN', 'TECHNICIAN')),
   CONSTRAINT users_status_check CHECK (status IN ('ACTIVE', 'LOCKED', 'ARCHIVED'))
 );
 
@@ -75,7 +75,7 @@ CREATE INDEX idx_users_status ON users(status) WHERE deleted_at IS NULL;
 - `email` — User email from Google OAuth (unique)
 - `full_name` — Full name from Google profile
 - `avatar_url` — Profile picture URL from Google
-- `role` — User role: `USER`, `ADMIN`, `TECHNICIAN`
+- `role` — User role: `USER`, `STUDENT`, `STAFF`, `ADMIN`, `TECHNICIAN`
 - `status` — Account status: `ACTIVE`, `LOCKED`, `ARCHIVED`
 - `email_verified` — Whether email is verified (always true for Google OAuth)
 - `google_id` — Google OAuth subject identifier (unique)
@@ -99,7 +99,7 @@ CREATE TABLE refresh_tokens (
   revoked BOOLEAN NOT NULL DEFAULT FALSE,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   revoked_at TIMESTAMP WITH TIME ZONE,
-  
+
   CONSTRAINT refresh_tokens_user_id_fk FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
@@ -140,7 +140,7 @@ CREATE TABLE resources (
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   deleted_at TIMESTAMP WITH TIME ZONE,
-  
+
   CONSTRAINT resources_type_check CHECK (type IN ('LAB', 'CLASSROOM', 'HALL', 'EQUIPMENT', 'SPORTS_FACILITY')),
   CONSTRAINT resources_status_check CHECK (status IN ('AVAILABLE', 'OCCUPIED', 'UNDER_MAINTENANCE')),
   CONSTRAINT resources_capacity_check CHECK (capacity > 0 AND capacity <= 1000)
@@ -227,7 +227,7 @@ CREATE TABLE bookings (
   cancelled_at TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-  
+
   CONSTRAINT bookings_status_check CHECK (status IN ('PENDING', 'CONFIRMED', 'CANCELLED', 'REJECTED', 'COMPLETED')),
   CONSTRAINT bookings_time_check CHECK (end_time > start_time),
   CONSTRAINT bookings_duration_check CHECK (
@@ -244,7 +244,7 @@ CREATE INDEX idx_bookings_end_time ON bookings(end_time);
 CREATE INDEX idx_bookings_date_range ON bookings(resource_id, start_time, end_time);
 
 -- Index for conflict detection (overlapping bookings)
-CREATE INDEX idx_bookings_overlap ON bookings(resource_id, start_time, end_time) 
+CREATE INDEX idx_bookings_overlap ON bookings(resource_id, start_time, end_time)
   WHERE status IN ('CONFIRMED', 'PENDING');
 ```
 
@@ -283,7 +283,7 @@ CREATE TABLE booking_status_history (
   changed_by UUID NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
   notes TEXT,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-  
+
   CONSTRAINT booking_status_history_old_status_check CHECK (
     old_status IN ('PENDING', 'CONFIRMED', 'CANCELLED', 'REJECTED', 'COMPLETED')
   ),
@@ -329,7 +329,7 @@ CREATE TABLE tickets (
   resolved_at TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-  
+
   CONSTRAINT tickets_severity_check CHECK (severity IN ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL')),
   CONSTRAINT tickets_category_check CHECK (category IN ('ELECTRICAL', 'PLUMBING', 'EQUIPMENT', 'CLEANING', 'OTHER')),
   CONSTRAINT tickets_status_check CHECK (status IN ('OPEN', 'IN_PROGRESS', 'RESOLVED'))
@@ -431,7 +431,7 @@ CREATE TABLE ticket_status_history (
   changed_by UUID NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
   notes TEXT,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-  
+
   CONSTRAINT ticket_status_history_old_status_check CHECK (
     old_status IN ('OPEN', 'IN_PROGRESS', 'RESOLVED')
   ),
@@ -472,8 +472,8 @@ CREATE TABLE notifications (
   is_read BOOLEAN NOT NULL DEFAULT FALSE,
   read_at TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-  
-  CONSTRAINT notifications_type_check CHECK (type IN ('BOOKING', 'TICKET', 'SYSTEM')),
+
+  CONSTRAINT notifications_type_check CHECK (type IN ('GENERAL', 'USER_ROLE_CHANGED', 'ACCOUNT_SECURITY_ALERT', 'BOOKING_APPROVED', 'BOOKING_REJECTED', 'BOOKING_CANCELLED', 'BOOKING_PENDING', 'TICKET_CREATED', 'TICKET_ASSIGNED', 'TICKET_STATUS_UPDATED', 'TICKET_RESOLVED', 'TICKET_COMMENT_ADDED')),
   CONSTRAINT notifications_entity_type_check CHECK (entity_type IN ('BOOKING', 'TICKET', 'RESOURCE', NULL))
 );
 
@@ -498,6 +498,75 @@ CREATE INDEX idx_notifications_entity ON notifications(entity_type, entity_id);
 
 ---
 
+### 12. notification_preferences
+
+Stores user preferences for receiving notifications.
+
+```sql
+CREATE TABLE notification_preferences (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+  booking_notifications BOOLEAN NOT NULL DEFAULT TRUE,
+  ticket_notifications BOOLEAN NOT NULL DEFAULT TRUE,
+  security_notifications BOOLEAN NOT NULL DEFAULT TRUE,
+  reminder_notifications BOOLEAN NOT NULL DEFAULT TRUE,
+  general_notifications BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_notification_preferences_user_id ON notification_preferences(user_id);
+```
+
+**Field Descriptions:**
+
+- `id` — Preference record identifier
+- `user_id` — Reference to user (unique per user)
+- `booking_notifications` — Toggle for booking-related alerts
+- `ticket_notifications` — Toggle for ticket-related alerts
+- `security_notifications` — Toggle for security alerts
+- `reminder_notifications` — Toggle for reminders
+- `general_notifications` — Toggle for general system updates
+- `created_at` — Preference creation timestamp
+- `updated_at` — Last preference update timestamp
+
+---
+
+### 13. security_activity_logs
+
+Stores security events for user accounts.
+
+```sql
+CREATE TABLE security_activity_logs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  event_type VARCHAR(50) NOT NULL,
+  ip_address VARCHAR(45),
+  user_agent TEXT,
+  location VARCHAR(255),
+  is_suspicious BOOLEAN NOT NULL DEFAULT FALSE,
+  details TEXT,
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_security_activity_logs_user_id ON security_activity_logs(user_id);
+CREATE INDEX idx_security_activity_logs_created_at ON security_activity_logs(created_at DESC);
+```
+
+**Field Descriptions:**
+
+- `id` — Log record identifier
+- `user_id` — Reference to user (can be null for failed unknown logins)
+- `event_type` — Type of security event (LOGIN_SUCCESS, LOGIN_FAILED, etc.)
+- `ip_address` — IP address of the request
+- `user_agent` — Browser/device identifier
+- `location` — Geo-location estimate
+- `is_suspicious` — Flag for potential security threats
+- `details` — Additional event context
+- `created_at` — Timestamp of the event
+
+---
+
 ## Relationships Diagram
 
 ```
@@ -506,6 +575,8 @@ users (1) ──────────────< (N) tickets (as reporter)
 users (1) ──────────────< (N) tickets (as assigned_to)
 users (1) ──────────────< (N) refresh_tokens
 users (1) ──────────────< (N) notifications
+users (1) ─────────────── (1) notification_preferences
+users (1) ──────────────< (N) security_activity_logs
 
 resources (1) ──────────< (N) bookings
 resources (1) ──────────< (N) tickets
@@ -551,8 +622,9 @@ tickets (1) ────────────< (N) ticket_status_history
 | ticket_comments | 2 | |
 | ticket_status_history | 2 | |
 | notifications | 4 | Composite index on user_id + is_read |
+| security_activity_logs | 2 | |
 
-**Total:** 41 indexes
+**Total:** 43 indexes
 
 ---
 
@@ -689,6 +761,8 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- DROP TABLES (for clean re-run)
 -- ============================================================
 
+DROP TABLE IF EXISTS security_activity_logs CASCADE;
+DROP TABLE IF EXISTS notification_preferences CASCADE;
 DROP TABLE IF EXISTS notifications CASCADE;
 DROP TABLE IF EXISTS ticket_status_history CASCADE;
 DROP TABLE IF EXISTS ticket_comments CASCADE;
@@ -719,7 +793,7 @@ CREATE TABLE users (
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   last_login_at TIMESTAMP WITH TIME ZONE,
   deleted_at TIMESTAMP WITH TIME ZONE,
-  
+
   CONSTRAINT users_role_check CHECK (role IN ('USER', 'ADMIN', 'TECHNICIAN')),
   CONSTRAINT users_status_check CHECK (status IN ('ACTIVE', 'LOCKED', 'ARCHIVED'))
 );
@@ -751,7 +825,7 @@ CREATE TABLE resources (
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   deleted_at TIMESTAMP WITH TIME ZONE,
-  
+
   CONSTRAINT resources_type_check CHECK (type IN ('LAB', 'CLASSROOM', 'HALL', 'EQUIPMENT', 'SPORTS_FACILITY')),
   CONSTRAINT resources_status_check CHECK (status IN ('AVAILABLE', 'OCCUPIED', 'UNDER_MAINTENANCE')),
   CONSTRAINT resources_capacity_check CHECK (capacity > 0 AND capacity <= 1000)
@@ -787,7 +861,7 @@ CREATE TABLE bookings (
   cancelled_at TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-  
+
   CONSTRAINT bookings_status_check CHECK (status IN ('PENDING', 'CONFIRMED', 'CANCELLED', 'REJECTED', 'COMPLETED')),
   CONSTRAINT bookings_time_check CHECK (end_time > start_time),
   CONSTRAINT bookings_duration_check CHECK (
@@ -805,7 +879,7 @@ CREATE TABLE booking_status_history (
   changed_by UUID NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
   notes TEXT,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-  
+
   CONSTRAINT booking_status_history_old_status_check CHECK (
     old_status IN ('PENDING', 'CONFIRMED', 'CANCELLED', 'REJECTED', 'COMPLETED')
   ),
@@ -831,7 +905,7 @@ CREATE TABLE tickets (
   resolved_at TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-  
+
   CONSTRAINT tickets_severity_check CHECK (severity IN ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL')),
   CONSTRAINT tickets_category_check CHECK (category IN ('ELECTRICAL', 'PLUMBING', 'EQUIPMENT', 'CLEANING', 'OTHER')),
   CONSTRAINT tickets_status_check CHECK (status IN ('OPEN', 'IN_PROGRESS', 'RESOLVED'))
@@ -864,7 +938,7 @@ CREATE TABLE ticket_status_history (
   changed_by UUID NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
   notes TEXT,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-  
+
   CONSTRAINT ticket_status_history_old_status_check CHECK (
     old_status IN ('OPEN', 'IN_PROGRESS', 'RESOLVED')
   ),
@@ -885,7 +959,7 @@ CREATE TABLE notifications (
   is_read BOOLEAN NOT NULL DEFAULT FALSE,
   read_at TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-  
+
   CONSTRAINT notifications_type_check CHECK (type IN ('BOOKING', 'TICKET', 'SYSTEM')),
   CONSTRAINT notifications_entity_type_check CHECK (entity_type IN ('BOOKING', 'TICKET', 'RESOURCE', NULL))
 );
@@ -924,7 +998,7 @@ CREATE INDEX idx_bookings_status ON bookings(status);
 CREATE INDEX idx_bookings_start_time ON bookings(start_time);
 CREATE INDEX idx_bookings_end_time ON bookings(end_time);
 CREATE INDEX idx_bookings_date_range ON bookings(resource_id, start_time, end_time);
-CREATE INDEX idx_bookings_overlap ON bookings(resource_id, start_time, end_time) 
+CREATE INDEX idx_bookings_overlap ON bookings(resource_id, start_time, end_time)
   WHERE status IN ('CONFIRMED', 'PENDING');
 
 -- Booking Status History Indexes
@@ -958,6 +1032,10 @@ CREATE INDEX idx_notifications_is_read ON notifications(user_id, is_read);
 CREATE INDEX idx_notifications_created_at ON notifications(created_at DESC);
 CREATE INDEX idx_notifications_entity ON notifications(entity_type, entity_id);
 
+-- Security Activity Logs Indexes
+CREATE INDEX idx_security_activity_logs_user_id ON security_activity_logs(user_id);
+CREATE INDEX idx_security_activity_logs_created_at ON security_activity_logs(created_at DESC);
+
 -- ============================================================
 -- SEED DATA
 -- ============================================================
@@ -988,7 +1066,7 @@ VALUES (
 
 -- Sample Resources
 INSERT INTO resources (id, name, type, capacity, status, location, description, amenities, created_by, created_at)
-VALUES 
+VALUES
 (
   '11111111-1111-1111-1111-111111111111',
   'Computer Lab 3A',
@@ -1055,7 +1133,7 @@ VALUES
 -- ============================================================
 
 -- Count tables
-SELECT 
+SELECT
   schemaname,
   COUNT(*) as table_count
 FROM pg_tables
@@ -1063,7 +1141,7 @@ WHERE schemaname = 'public'
 GROUP BY schemaname;
 
 -- List all tables with row counts
-SELECT 
+SELECT
   relname as table_name,
   n_live_tup as row_count
 FROM pg_stat_user_tables
@@ -1079,7 +1157,11 @@ SELECT 'Bookings', COUNT(*) FROM bookings
 UNION ALL
 SELECT 'Tickets', COUNT(*) FROM tickets
 UNION ALL
-SELECT 'Notifications', COUNT(*) FROM notifications;
+SELECT 'Notifications', COUNT(*) FROM notifications
+UNION ALL
+SELECT 'Security Activity Logs', COUNT(*) FROM security_activity_logs
+UNION ALL
+SELECT 'Notification Preferences', COUNT(*) FROM notification_preferences;
 
 -- ============================================================
 -- END OF SCHEMA

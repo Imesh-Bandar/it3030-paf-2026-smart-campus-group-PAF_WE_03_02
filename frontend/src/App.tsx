@@ -13,7 +13,14 @@ import { AdminBookingsPage } from './app/admin/bookings/page';
 import { AdminFacilitiesPage } from './app/admin/facilities/page';
 import { AdminTicketsPage } from './app/admin/tickets/page';
 import { AdminUsersPage } from './app/admin/users/page';
-import { useRole } from './hooks/useRole';
+import { AdminDashboardPage } from './app/admin/page';
+import { StudentDashboardPage } from './app/dashboard/student/page';
+import { StaffDashboardPage } from './app/dashboard/staff/page';
+import { TechnicianDashboardPage } from './app/dashboard/technician/page';
+import { NotificationPreferencesPage } from './app/notifications/preferences/page';
+import { SecurityActivityPage } from './app/account/security/page';
+import { NotificationBell } from './components/notifications/NotificationBell';
+import { getRoleHomePath, useRole } from './hooks/useRole';
 import { useTheme } from './hooks/useTheme';
 import type { UserRole } from './services/types/user';
 
@@ -222,7 +229,9 @@ function ProtectedRoute({ children, roles }: { children: JSX.Element; roles?: Us
   const user = useAuthStore((state) => state.user);
 
   if (!isAuthenticated) return <Navigate to="/login" replace />;
-  if (roles && user && !roles.includes(user.role)) return <Navigate to="/" replace />;
+  if (roles && user && !roles.includes(user.role)) {
+    return <Navigate to={getRoleHomePath(user.role)} replace />;
+  }
   return children;
 }
 
@@ -320,6 +329,9 @@ function AppLayout() {
               Sign In <IconChevron />
             </Link>
           )}
+
+          {/* Notification Bell */}
+          <NotificationBell />
 
           {/* Hamburger — mobile only */}
           <button
@@ -424,6 +436,47 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
 
         <Route
+          path="/dashboard/student"
+          element={
+            <ProtectedRoute roles={['STUDENT']}>
+              <StudentDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/staff"
+          element={
+            <ProtectedRoute roles={['STAFF']}>
+              <StaffDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/technician"
+          element={
+            <ProtectedRoute roles={['TECHNICIAN']}>
+              <TechnicianDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/notifications/preferences"
+          element={
+            <ProtectedRoute>
+              <NotificationPreferencesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/account/security"
+          element={
+            <ProtectedRoute>
+              <SecurityActivityPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/home"
           element={
             <ProtectedRoute>
@@ -480,6 +533,14 @@ function App() {
           }
         />
 
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute roles={['ADMIN']}>
+              <AdminDashboardPage />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/admin/bookings"
           element={

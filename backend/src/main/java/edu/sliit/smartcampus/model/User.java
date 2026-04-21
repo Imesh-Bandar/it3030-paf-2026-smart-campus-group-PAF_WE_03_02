@@ -65,7 +65,7 @@ public class User {
         createdAt = now;
         updatedAt = now;
         if (role == null) {
-            role = UserRole.USER;
+            role = UserRole.STUDENT;
         }
         if (status == null) {
             status = UserStatus.ACTIVE;

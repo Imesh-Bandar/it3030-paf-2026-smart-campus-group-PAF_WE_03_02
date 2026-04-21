@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../lib/axios';
 import { useAuthStore } from '../stores/authStore';
 import { authApi } from '../services/api/authApi';
+import { getRoleHomePath } from './useRole';
 
 export function useAuth() {
   const navigate = useNavigate();
@@ -36,15 +37,20 @@ export function useAuth() {
         accessToken: nextAccessToken,
         refreshToken: nextRefreshToken,
       });
-      navigate('/', { replace: true });
+      navigate(getRoleHomePath(nextUser.role), { replace: true });
       return nextUser;
     },
     [navigate, setAuth],
   );
 
   const registerWithEmailPassword = useCallback(
-    async (fullName: string, email: string, password: string) => {
-      const response = await authApi.register({ fullName, email, password });
+    async (
+      fullName: string,
+      email: string,
+      password: string,
+      role: 'STUDENT' | 'STAFF' | 'TECHNICIAN',
+    ) => {
+      const response = await authApi.register({ fullName, email, password, role });
       const nextUser = response?.user;
       const nextAccessToken = response?.accessToken;
       const nextRefreshToken = response?.refreshToken;
@@ -58,7 +64,7 @@ export function useAuth() {
         accessToken: nextAccessToken,
         refreshToken: nextRefreshToken,
       });
-      navigate('/', { replace: true });
+      navigate(getRoleHomePath(nextUser.role), { replace: true });
       return nextUser;
     },
     [navigate, setAuth],
