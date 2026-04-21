@@ -11,20 +11,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import edu.sliit.smartcampus.dto.AuthResponse;
+import edu.sliit.smartcampus.dto.DashboardBootstrapDto;
 import edu.sliit.smartcampus.dto.LoginRequest;
 import edu.sliit.smartcampus.dto.RefreshRequest;
 import edu.sliit.smartcampus.dto.RegisterRequest;
 import edu.sliit.smartcampus.dto.UserDto;
 import edu.sliit.smartcampus.service.AuthService;
+import edu.sliit.smartcampus.service.NotificationService;
 
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
     private final AuthService authService;
+    private final NotificationService notificationService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, NotificationService notificationService) {
         this.authService = authService;
+        this.notificationService = notificationService;
     }
 
     @PostMapping("/register")
@@ -49,6 +53,24 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<UserDto> me() {
         return ResponseEntity.ok(authService.getCurrentUser());
+    }
+
+    /** D4-B20: Bootstrap endpoint returning user + dashboard config */
+    @GetMapping("/bootstrap")
+    public ResponseEntity<DashboardBootstrapDto> bootstrap() {
+        UserDto user = authService.getCurrentUser();
+        String dashboardPath = getDashboardPath(user.role());
+        long unreadNotifications = notificationService.getUnreadCount();
+        return ResponseEntity.ok(new DashboardBootstrapDto(user, dashboardPath, unreadNotifications));
+    }
+
+    private String getDashboardPath(String role) {
+        return switch (role) {
+            case "ADMIN" -> "/admin";
+            case "TECHNICIAN" -> "/dashboard/technician";
+            case "STAFF" -> "/dashboard/staff";
+            default -> "/dashboard/student";
+        };
     }
 
     @PostMapping("/logout")

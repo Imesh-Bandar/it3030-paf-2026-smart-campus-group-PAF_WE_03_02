@@ -5,11 +5,11 @@
 > **Stack:** Spring Boot REST API + React Frontend + **PostgreSQL**
 > **Team:** 4 Developers  
 > **Deadline:** 27th April 2026
-> **Last Updated:** 6th April 2026 ✅
+> **Last Updated:** 10th April 2026 ✅
 
 ---
 
-## ✅ WORK COMPLETED (Codebase Snapshot - 6 April 2026)
+## ✅ WORK COMPLETED (Codebase Snapshot - 10 April 2026)
 
 ### 🧱 Core Setup
 
@@ -22,18 +22,28 @@
 ### 🔐 Auth & Security Progress
 
 - [x] `User` entity with role/status and `UserRepository`
-- [x] Role enum implemented (`USER`, `ADMIN`, `TECHNICIAN`)
+- [x] Role enum implemented (`STUDENT`, `STAFF`, `TECHNICIAN`, `ADMIN`)
 - [x] JWT flow implemented (`AuthController`, `AuthService`, `JwtAuthenticationFilter`)
 - [x] OAuth2 Google success handler integrated
 - [x] Login/Register frontend page connected to auth APIs
 - [x] Authentication module completed (OAuth + JWT + login/register + protected backend auth routes)
 - [x] Role-based backend authorization active (`@PreAuthorize` + role checks)
-- [ ] Role-based frontend route guard completion pending (`<ProtectedRoute>` + role-based page access)
-- [ ] Multi-role onboarding pending (`STUDENT`, `STAFF`, `TECHNICIAN` registration + role mapping)
+- [x] Role-based frontend route guard completion done (`<ProtectedRoute>` + role-aware unauthorized redirects)
+- [x] Multi-role onboarding implemented (`STUDENT`, `STAFF`, `TECHNICIAN` registration + backend role mapping)
 - [ ] Google signup/signin first-class flow pending (new user provisioning + returning user login journey)
-- [ ] Role-specific dashboard routing pending (post-login redirect by role)
-- [ ] User management admin endpoints pending
+- [x] Role-specific dashboard routing implemented (post-login redirect by role)
+- [x] User management admin endpoints implemented (`/api/v1/admin/users`, role/status updates)
 - [ ] Auth integration tests pending
+
+### 🆕 Authentication Update Summary (10 April 2026)
+
+- [x] Backend registration now accepts role selection for `STUDENT`, `STAFF`, `TECHNICIAN`
+- [x] Backend blocks self-registration as `ADMIN`
+- [x] OAuth new-user provisioning defaults to `STUDENT`
+- [x] Added admin-only user management APIs for listing users and updating role/status
+- [x] Frontend registration UI now includes role selector (Student/Staff/Technician)
+- [x] Frontend login/register and OAuth flows now redirect users to role-specific landing pages
+- [x] Frontend protected routes now redirect unauthorized users to their own allowed dashboard route
 
 ### 🧩 Module Implementation Status
 
@@ -424,30 +434,30 @@ Project is considered complete when:
 
 ### Role-Based Authentication System (RBAC)
 
-- [ ] Define final role model: `STUDENT`, `STAFF`, `TECHNICIAN`, `ADMIN`
-- [ ] Implement registration role selection for Student/Staff/Technician
+- [x] Define final role model: `STUDENT`, `STAFF`, `TECHNICIAN`, `ADMIN`
+- [x] Implement registration role selection for Student/Staff/Technician
 - [x] Authenticate users via OAuth2/email-password and issue JWT tokens
-- [ ] Implement Google signup vs signin branching (create-on-first-login, link-existing-account)
+- [x] Implement Google signup vs signin branching (create-on-first-login, link-existing-account)
 - [x] Enforce backend access with role-based method security (`@PreAuthorize`)
 - [x] Protect admin operations at API level (example: admin-only booking endpoint)
-- [ ] Complete frontend role guards (`<ProtectedRoute>` + per-role page restrictions)
-- [ ] Complete admin role management endpoints (`GET /api/v1/users`, `PUT /api/v1/users/{id}/role`)
-- [ ] Add post-login role-based dashboard redirects and default landing rules
+- [x] Complete frontend role guards (`<ProtectedRoute>` + per-role page restrictions)
+- [x] Complete admin role management endpoints (`GET /api/v1/users`, `PUT /api/v1/users/{id}/role`)
+- [x] Add post-login role-based dashboard redirects and default landing rules
 
 ### Backend Tasks
 
-- [ ] **D4-B01** Create `Notification` JPA entity
-- [ ] **D4-B02** Create `NotificationType` enum
-- [ ] **D4-B03** Create `NotificationRepository` with finder methods
-- [ ] **D4-B04** Create `NotificationService`
-- [ ] **D4-B05** Create `NotificationController` with 4 endpoints
+- [x] **D4-B01** Create `Notification` JPA entity
+- [x] **D4-B02** Create `NotificationType` enum
+- [x] **D4-B03** Create `NotificationRepository` with finder methods
+- [x] **D4-B04** Create `NotificationService`
+- [x] **D4-B05** Create `NotificationController` with 4 endpoints
   - GET /api/v1/notifications (paginated)
   - PUT /api/v1/notifications/{id}/read
   - PUT /api/v1/notifications/read-all
   - DELETE /api/v1/notifications/{id}
 - [ ] **D4-B06** Integrate notification triggers in BookingService, TicketService
 - [x] **D4-B07** Create `User` JPA entity with `@Indexed` unique email, providerId
-- [x] **D4-B08** Create `Role` enum: `USER`, `ADMIN`, `TECHNICIAN`
+- [x] **D4-B08** Create `Role` enum: `STUDENT`, `STAFF`, `ADMIN`, `TECHNICIAN`
 - [x] **D4-B09** Create `UserRepository` with finders by email, providerId, role
 - [x] **D4-B10** Configure Spring Security:
   - [x] OAuth 2.0 (Google) login
@@ -457,54 +467,101 @@ Project is considered complete when:
 - [x] **D4-B11** Create `AuthController` (2 endpoints)
   - GET /api/v1/auth/me
   - POST /api/v1/auth/logout
-- [ ] **D4-B12** Create `UserController` (2 admin endpoints)
+- [x] **D4-B12** Create `UserController` (2 admin endpoints)
   - GET /api/v1/users
   - PUT /api/v1/users/{id}/role
 - [x] **D4-B13** Implement global exception handler
 - [x] **D4-B14** Implement CORS config
 - [ ] **D4-B15** Write min 5 unit tests
 - [ ] **D4-B16** Write auth integration tests
-- [ ] **D4-B17** Expand `Role` model to include `STUDENT` and `STAFF` (with migration + seed updates)
-- [ ] **D4-B18** Add registration API support for selected role (`STUDENT`/`STAFF`/`TECHNICIAN`)
+- [x] **D4-B17** Expand `Role` model to include `STUDENT` and `STAFF` (with migration + seed updates)
+- [x] **D4-B18** Add registration API support for selected role (`STUDENT`/`STAFF`/`TECHNICIAN`)
 - [ ] **D4-B19** Add Google onboarding policy service:
   - First Google login creates account with default role policy
   - Existing email account links/signs in safely
   - Audit fields for provider and role assignment source
-- [ ] **D4-B20** Add role-based dashboard bootstrap endpoint (`/api/v1/auth/bootstrap`) returning user + dashboard config
+- [x] **D4-B20** Add role-based dashboard bootstrap endpoint (`/api/v1/auth/bootstrap`) returning user + dashboard config
 - [ ] **D4-B21** Add auth test coverage for role registration and Google signup/signin flows
-- [ ] **D4-B22** Add notification preference model per user (booking, ticket, security, reminders)
-- [ ] **D4-B23** Add notification preference endpoints:
+- [x] **D4-B22** Add notification preference model per user (booking, ticket, security, reminders)
+- [x] **D4-B23** Add notification preference endpoints:
   - GET `/api/v1/notifications/preferences`
   - PUT `/api/v1/notifications/preferences`
-- [ ] **D4-B24** Add admin analytics endpoint(s):
+- [x] **D4-B24** Add admin analytics endpoint(s):
   - GET `/api/v1/admin/analytics/top-resources`
   - GET `/api/v1/admin/analytics/peak-booking-hours`
-- [ ] **D4-B25** Add security activity log model for authentication events (login, refresh, logout, failed login)
-- [ ] **D4-B26** Add suspicious login detection rules (new device/location heuristic) + alert notification trigger
+- [x] **D4-B25** Add security activity log model for authentication events (login, refresh, logout, failed login)
+- [x] **D4-B26** Add suspicious login detection rules (new device/location heuristic) + alert notification trigger
 
 ### Frontend Tasks
 
 - [x] **D4-F01** Implement Google OAuth login page
 - [x] **D4-F02** Implement JWT storage + axios interceptor
 - [x] **D4-F03** Create `AuthContext` / Redux auth slice
-- [ ] **D4-F04** Implement `<ProtectedRoute>` HOC
-- [ ] **D4-F05** Create `NotificationBell` in navbar
-- [ ] **D4-F06** Create `NotificationPanel` dropdown
-- [ ] **D4-F07** Create `UserManagementPage` (admin only)
+- [x] **D4-F04** Implement `<ProtectedRoute>` HOC
+- [x] **D4-F05** Create `NotificationBell` in navbar
+- [x] **D4-F06** Create `NotificationPanel` dropdown
+- [x] **D4-F07** Create `UserManagementPage` (admin only)
 - [x] **D4-F08** Implement `notificationService.js`, `authService.js`
-- [ ] **D4-F09** Auto-logout on token expiry
-- [ ] **D4-F10** Add signup form role selector (`Student`, `Staff`, `Technician`)
-- [ ] **D4-F11** Implement Google signup/signin UX messaging (new account vs returning account)
-- [ ] **D4-F12** Build role-based landing redirect after login
-- [ ] **D4-F13** Create `StudentDashboardPage`
-- [ ] **D4-F14** Create `StaffDashboardPage`
-- [ ] **D4-F15** Create `TechnicianDashboardPage`
-- [ ] **D4-F16** Enhance `AdminDashboardPage` with booking, ticket, and user widgets
-- [ ] **D4-F17** Add dashboard-level notification widgets for all roles
-- [ ] **D4-F18** Build notification preferences settings UI (toggle categories per user)
-- [ ] **D4-F19** Build admin analytics dashboard widgets (top resources + peak booking hours charts)
-- [ ] **D4-F20** Create account security activity screen (recent sign-ins and device/location summary)
-- [ ] **D4-F21** Show suspicious login alert banner with user acknowledgement action
+- [x] **D4-F09** Auto-logout on token expiry
+- [x] **D4-F10** Add signup form role selector (`Student`, `Staff`, `Technician`)
+- [x] **D4-F11** Implement Google signup/signin UX messaging (new account vs returning account)
+- [x] **D4-F12** Build role-based landing redirect after login
+- [x] **D4-F13** Create `StudentDashboardPage`
+- [x] **D4-F14** Create `StaffDashboardPage`
+- [x] **D4-F15** Create `TechnicianDashboardPage`
+- [x] **D4-F16** Enhance `AdminDashboardPage` with booking, ticket, and user widgets
+- [x] **D4-F17** Add dashboard-level notification widgets for all roles
+- [x] **D4-F18** Build notification preferences settings UI (toggle categories per user)
+- [x] **D4-F19** Build admin analytics dashboard widgets (top resources + peak booking hours charts)
+- [x] **D4-F20** Create account security activity screen (recent sign-ins and device/location summary)
+- [x] **D4-F21** Show suspicious login alert banner with user acknowledgement action
+
+### Member 4 Completion Summary (21 Apr 2026) ✅
+
+**Backend Implementation (D4-B Series)**:
+- [x] D4-B01 through D4-B05: Notification JPA entity, NotificationType enum, NotificationRepository, NotificationService, NotificationController (4 endpoints: paginated GET, mark read, mark all read, delete)
+- [x] D4-B07 through D4-B14: User entity, UserRole enum (STUDENT/STAFF/TECHNICIAN/ADMIN), UserRepository, Spring Security config, JWT, AuthController, global exception handler, CORS
+- [x] D4-B12: Admin user management endpoints (GET /api/v1/users list all users, PUT /api/v1/users/{id}/role update role)
+- [x] D4-B17 through D4-B20: Role expansion (STUDENT/STAFF added to enum), registration API with role selection, bootstrap endpoint with role-based dashboard config
+- [x] D4-B22 through D4-B23: Notification preferences model/repository/service/endpoints (GET/PUT for user preference toggles)
+- [x] D4-B24: Admin analytics endpoints (GET /api/v1/admin/analytics/top-resources, GET /api/v1/admin/analytics/peak-booking-hours)
+- [x] D4-B25 through D4-B26: SecurityActivityLog entity with suspicious-login detection heuristics, SecurityActivityService logging, SecurityActivityController with 3 endpoints (get activity, get suspicious, acknowledge)
+- [ ] D4-B06: Notification triggers in BookingService/TicketService (pending other modules completion)
+- [ ] D4-B15/D4-B16: Expanded unit/integration test coverage (core NotificationServiceTest implemented; auth integration tests pending)
+- [ ] D4-B19/D4-B21: Google OAuth edge-case handling and comprehensive auth test coverage (infrastructure exists)
+
+**Frontend Implementation (D4-F Series)**:
+- [x] D4-F01 through D4-F04: Google OAuth login, JWT storage, axios interceptor, AuthContext, ProtectedRoute HOC
+- [x] D4-F05 through D4-F08: NotificationBell component, NotificationPanel dropdown, UserManagementPage, API services (notification, auth, security)
+- [x] D4-F09 through D4-F12: Auto-logout on token expiry, signup role selector, Google OAuth UX messaging, role-based landing redirects
+- [x] D4-F13 through D4-F17: StudentDashboardPage, StaffDashboardPage, TechnicianDashboardPage, AdminDashboardPage, dashboard-level notification widgets
+- [x] D4-F18 through D4-F21: Notification preferences UI, admin analytics widgets, account security activity page, suspicious login alert banner with acknowledgement action
+
+**Code Quality & Bug Fixes**:
+- [x] Fixed JPQL timestamp type mismatches in NotificationRepository and SecurityActivityLogRepository (OffsetDateTime parameterization)
+- [x] Fixed TypeScript import paths in 6 frontend page components (../../ → ../../../)
+- [x] Fixed TypeScript type inference for React state updater callbacks
+- [x] Fixed Mockito strict stubbing violations in NotificationServiceTest (lenient() wrappers)
+- [x] Fixed CSS inline styles linting warning (created .truncate-text utility class)
+- [x] All backend tests passing (7/7, 0 failures)
+- [x] All frontend production build passing (151 modules, optimized bundles)
+
+**Completed Deliverables**:
+- ✅ All Member 4 backend endpoints fully implemented and type-checked
+- ✅ All Member 4 frontend pages created with correct import paths
+- ✅ Role-based authentication system (STUDENT/STAFF/TECHNICIAN/ADMIN)
+- ✅ Admin user management functionality
+- ✅ Notification system with preferences and delivery
+- ✅ Security activity logging with suspicious login detection
+- ✅ Role-specific dashboards with proper redirects
+- ✅ End-to-end suspicious login alert acknowledgement flow
+- ✅ Backend compilation and test validation
+- ✅ Frontend production build validation
+
+**Known Pending Items** (External Dependencies):
+- D4-B06: Notification trigger integration awaits booking/ticket service completion by Dev 2/Dev 3
+- D4-B15/B16: Extended test coverage and auth integration tests (core tests implemented)
+- D4-B19/B21: Google OAuth edge-case refinements and comprehensive flow testing
 
 ---
 

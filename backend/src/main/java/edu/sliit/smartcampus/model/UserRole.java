@@ -1,7 +1,8 @@
 package edu.sliit.smartcampus.model;
 
 public enum UserRole {
-    USER,
+    STUDENT,
+    STAFF,
     ADMIN,
     TECHNICIAN
 }

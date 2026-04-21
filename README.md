@@ -34,6 +34,7 @@
 - [Team](#-team)
 - [Tech Stack](#-tech-stack)
 - [Features](#-features)
+- [Database Schema](#-database-schema)
 - [Prerequisites](#-prerequisites)
 - [Quick Start](#-quick-start)
 - [API Overview](#-api-overview)
@@ -77,6 +78,30 @@
 | 🔔 **Notification System** | In-app notifications for all key lifecycle events |
 | 🔐 **Role-Based Access** | `USER`, `ADMIN`, `TECHNICIAN` roles with secured endpoints |
 | 🔑 **Google Sign-In** | Seamless OAuth 2.0 authentication via Google |
+
+---
+
+## 📊 Database Schema
+
+The complete database schema for all modules is documented in two files:
+
+### [COMPLETE_DATABASE_SCHEMA.sql](docs/COMPLETE_DATABASE_SCHEMA.sql)
+Complete production-ready SQL schema with:
+- **16 Tables** covering all 4 modules (Dev 1-4)
+- **40+ Indexes** for optimal query performance
+- **25+ Foreign Key Relationships** with constraints
+- **23 Useful Queries** for each module
+- Soft-delete strategy for data recovery
+- Full audit trail for security events
+
+### [DATABASE_QUICK_REFERENCE.md](docs/DATABASE_QUICK_REFERENCE.md)
+Quick reference guide with:
+- **Per-developer implementation checklist**
+- **API endpoints** each module must support
+- **Key constraints & indexes** explained
+- **ER Diagram** showing relationships
+- **Security & compliance** guidelines
+- **Query performance tips**
 
 ---
 
