@@ -25,6 +25,7 @@ import edu.sliit.smartcampus.model.UserStatus;
 import edu.sliit.smartcampus.repository.RefreshTokenRepository;
 import edu.sliit.smartcampus.repository.UserRepository;
 import edu.sliit.smartcampus.security.JwtTokenProvider;
+import edu.sliit.smartcampus.model.SecurityEventType;
 
 @Service
 public class AuthService {
@@ -34,18 +35,21 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final LocalCredentialService localCredentialService;
     private final PasswordEncoder passwordEncoder;
+    private final SecurityActivityService securityActivityService;
 
     public AuthService(
             UserRepository userRepository,
             RefreshTokenRepository refreshTokenRepository,
             JwtTokenProvider jwtTokenProvider,
             LocalCredentialService localCredentialService,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder,
+            SecurityActivityService securityActivityService) {
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.localCredentialService = localCredentialService;
         this.passwordEncoder = passwordEncoder;
+        this.securityActivityService = securityActivityService;
     }
 
     @Transactional
@@ -78,18 +82,29 @@ public class AuthService {
                 .orElseThrow(() -> new ValidationException("Invalid email or password"));
 
         if (user.getStatus() != UserStatus.ACTIVE) {
+            securityActivityService.logEvent(user.getId(), SecurityEventType.LOGIN_FAILED, null, null, null,
+                    "Account is not active");
             throw new ValidationException("Account is not active");
         }
 
         String passwordHash = localCredentialService.findPasswordHash(user.getId())
-                .orElseThrow(() -> new ValidationException("This account uses Google sign-in"));
+                .orElse(null);
+        if (passwordHash == null) {
+            securityActivityService.logEvent(user.getId(), SecurityEventType.LOGIN_FAILED, null, null, null,
+                    "Google sign-in only");
+            throw new ValidationException("This account uses Google sign-in");
+        }
 
         if (!passwordEncoder.matches(request.password(), passwordHash)) {
+            securityActivityService.logEvent(user.getId(), SecurityEventType.LOGIN_FAILED, null, null, null,
+                    "Invalid password");
             throw new ValidationException("Invalid email or password");
         }
 
         user.setLastLoginAt(OffsetDateTime.now());
         User saved = userRepository.save(user);
+        securityActivityService.logEvent(saved.getId(), SecurityEventType.LOGIN_SUCCESS, null, null, null,
+                "Email/password login");
         return issueSession(saved);
     }
 
@@ -116,6 +131,8 @@ public class AuthService {
         user.setLastLoginAt(OffsetDateTime.now());
 
         User saved = userRepository.save(user);
+        securityActivityService.logEvent(saved.getId(), SecurityEventType.OAUTH_LOGIN, null, null, null,
+                "Google OAuth login");
         return issueSession(saved);
     }
 
@@ -136,6 +153,9 @@ public class AuthService {
         tokenRecord.setRevoked(true);
         tokenRecord.setRevokedAt(OffsetDateTime.now());
         refreshTokenRepository.save(tokenRecord);
+
+        securityActivityService.logEvent(user.getId(), SecurityEventType.TOKEN_REFRESH, null, null, null,
+                "Refresh token rotated");
 
         String newAccessToken = jwtTokenProvider.generateAccessToken(user);
         String newRefreshToken = jwtTokenProvider.generateRefreshToken(user);
@@ -162,6 +182,8 @@ public class AuthService {
             token.setRevoked(true);
             token.setRevokedAt(OffsetDateTime.now());
             refreshTokenRepository.save(token);
+            securityActivityService.logEvent(token.getUser().getId(), SecurityEventType.LOGOUT, null, null, null,
+                    "User logout");
         });
     }
 

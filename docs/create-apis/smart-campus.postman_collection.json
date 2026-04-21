@@ -1,0 +1,986 @@
+﻿{
+    "info":  {
+                 "_postman_id":  "f1f6c5d2-1e4a-4c3d-8f9b-8a2f7c9fdc21",
+                 "name":  "Smart Campus Operations Hub - Backend APIs",
+                 "description":  "Postman collection for the current backend implementation. It includes dummy payloads and variables for the existing Auth, Users, Notifications, Security Activity, Analytics, Health, Booking, and Ticket endpoints.",
+                 "schema":  "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+             },
+    "auth":  {
+                 "type":  "bearer",
+                 "bearer":  [
+                                {
+                                    "key":  "token",
+                                    "value":  "{{accessToken}}",
+                                    "type":  "string"
+                                }
+                            ]
+             },
+    "item":  [
+                 {
+                     "name":  "Health",
+                     "item":  [
+                                  {
+                                      "name":  "Get API Health",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrlHealth}}/health",
+                                                      "description":  "Public health check endpoint."
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Auth",
+                     "item":  [
+                                  {
+                                      "name":  "Initiate Google OAuth",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/auth/google",
+                                                      "description":  "Starts the Google OAuth flow and returns a redirect."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Register User",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"fullName\": \"Asha Perera\",\n  \"email\": \"asha.perera@student.smartcampus.edu\",\n  \"password\": \"Password123!\",\n  \"role\": \"STUDENT\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/auth/register",
+                                                      "description":  "Registers a new Student, Staff, or Technician account."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Login",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"email\": \"asha.perera@student.smartcampus.edu\",\n  \"password\": \"Password123!\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/auth/login",
+                                                      "description":  "Logs in a user with email and password. Save the returned accessToken and refreshToken into the environment."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Refresh Token",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/auth/refresh",
+                                                      "description":  "Exchanges a refresh token for a new access token."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Get Current User",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/auth/me",
+                                                      "description":  "Returns the authenticated user\u0027s profile. Uses bearer auth from the collection."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Bootstrap Dashboard",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/auth/bootstrap",
+                                                      "description":  "Returns the current user plus the dashboard path and unread notification count."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Logout",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/auth/logout",
+                                                      "description":  "Revokes the current refresh token and ends the session."
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Users",
+                     "auth":  {
+                                  "type":  "bearer",
+                                  "bearer":  [
+                                                 {
+                                                     "key":  "token",
+                                                     "value":  "{{accessToken}}",
+                                                     "type":  "string"
+                                                 }
+                                             ]
+                              },
+                     "item":  [
+                                  {
+                                      "name":  "List Users (ADMIN)",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/users",
+                                                      "description":  "Admin-only user directory."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Update User Role (ADMIN)",
+                                      "request":  {
+                                                      "method":  "PUT",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"role\": \"TECHNICIAN\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/users/{{userId}}/role",
+                                                      "description":  "Updates a user\u0027s role using the legacy /users endpoint."
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Admin Users",
+                     "auth":  {
+                                  "type":  "bearer",
+                                  "bearer":  [
+                                                 {
+                                                     "key":  "token",
+                                                     "value":  "{{accessToken}}",
+                                                     "type":  "string"
+                                                 }
+                                             ]
+                              },
+                     "item":  [
+                                  {
+                                      "name":  "List Users",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/admin/users",
+                                                      "description":  "Returns all users for admin management screens."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Update User Role",
+                                      "request":  {
+                                                      "method":  "PATCH",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"role\": \"ADMIN\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/admin/users/{{adminUserId}}/role",
+                                                      "description":  "Promotes or reassigns a user\u0027s role."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Update User Status",
+                                      "request":  {
+                                                      "method":  "PATCH",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"status\": \"LOCKED\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/admin/users/{{adminUserId}}/status",
+                                                      "description":  "Locks or archives a user account."
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Admin Analytics",
+                     "auth":  {
+                                  "type":  "bearer",
+                                  "bearer":  [
+                                                 {
+                                                     "key":  "token",
+                                                     "value":  "{{accessToken}}",
+                                                     "type":  "string"
+                                                 }
+                                             ]
+                              },
+                     "item":  [
+                                  {
+                                      "name":  "Top Resources",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/admin/analytics/top-resources?limit=10",
+                                                      "description":  "Returns the top booked resources."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Peak Booking Hours",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/admin/analytics/peak-booking-hours",
+                                                      "description":  "Returns a map of hour -\u003e booking count."
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Notifications",
+                     "auth":  {
+                                  "type":  "bearer",
+                                  "bearer":  [
+                                                 {
+                                                     "key":  "token",
+                                                     "value":  "{{accessToken}}",
+                                                     "type":  "string"
+                                                 }
+                                             ]
+                              },
+                     "item":  [
+                                  {
+                                      "name":  "List Notifications",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/notifications?page=0\u0026size=20",
+                                                      "description":  "Paginated notification feed for the signed-in user."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Unread Count",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/notifications/unread-count",
+                                                      "description":  "Returns the unread notification count."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Mark Notification Read",
+                                      "request":  {
+                                                      "method":  "PUT",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/notifications/{{notificationId}}/read",
+                                                      "description":  "Marks one notification as read."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Mark All Notifications Read",
+                                      "request":  {
+                                                      "method":  "PUT",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/notifications/read-all",
+                                                      "description":  "Marks the user\u0027s notification feed as read."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Delete Notification",
+                                      "request":  {
+                                                      "method":  "DELETE",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/notifications/{{notificationId}}",
+                                                      "description":  "Deletes a single notification for the current user."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Get Notification Preferences",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/notifications/preferences",
+                                                      "description":  "Returns the current notification category preferences."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Update Notification Preferences",
+                                      "request":  {
+                                                      "method":  "PUT",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"bookingNotifications\": true,\n  \"ticketNotifications\": true,\n  \"securityNotifications\": true,\n  \"reminderNotifications\": false,\n  \"generalNotifications\": true\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/notifications/preferences",
+                                                      "description":  "Updates the user\u0027s notification category toggles."
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Security Activity",
+                     "auth":  {
+                                  "type":  "bearer",
+                                  "bearer":  [
+                                                 {
+                                                     "key":  "token",
+                                                     "value":  "{{accessToken}}",
+                                                     "type":  "string"
+                                                 }
+                                             ]
+                              },
+                     "item":  [
+                                  {
+                                      "name":  "My Security Activity",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/auth/security-activity?page=0\u0026size=20",
+                                                      "description":  "Lists the authenticated user\u0027s security log entries."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Suspicious Logins",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/auth/security-activity/suspicious",
+                                                      "description":  "Lists suspicious login events for the current user."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Acknowledge Suspicious Logins",
+                                      "request":  {
+                                                      "method":  "PUT",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/auth/security-activity/suspicious/acknowledge",
+                                                      "description":  "Marks suspicious security events as acknowledged."
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Dev 1 - Facilities \u0026 Resources (Check APIs)",
+                     "auth":  {
+                                  "type":  "bearer",
+                                  "bearer":  [
+                                                 {
+                                                     "key":  "token",
+                                                     "value":  "{{accessToken}}",
+                                                     "type":  "string"
+                                                 }
+                                             ]
+                              },
+                     "item":  [
+                                  {
+                                      "name":  "List Resources",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/resources?type=LAB\u0026status=ACTIVE\u0026capacityMin=20",
+                                                      "description":  "Dev 1 check endpoint for filtered resource listing."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Get Resource By ID",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/resources/{{resourceId}}",
+                                                      "description":  "Dev 1 check endpoint to fetch a single resource."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Create Resource (ADMIN)",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"resourceCode\": \"LAB-COM-01\",\n  \"name\": \"Computer Lab 01\",\n  \"resourceType\": \"LAB\",\n  \"status\": \"ACTIVE\",\n  \"location\": \"Engineering Building - L2\",\n  \"capacity\": 40\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/resources",
+                                                      "description":  "Dev 1 check endpoint to create a new resource."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Update Resource (ADMIN)",
+                                      "request":  {
+                                                      "method":  "PUT",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"name\": \"Computer Lab 01 - Updated\",\n  \"status\": \"UNDER_MAINTENANCE\",\n  \"location\": \"Engineering Building - L3\",\n  \"capacity\": 35\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/resources/{{resourceId}}",
+                                                      "description":  "Dev 1 check endpoint to update resource details."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Delete Resource (ADMIN)",
+                                      "request":  {
+                                                      "method":  "DELETE",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/resources/{{resourceId}}",
+                                                      "description":  "Dev 1 check endpoint to soft-delete a resource."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Get Resource Availability",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/resources/{{resourceId}}/availability",
+                                                      "description":  "Dev 1 check endpoint to view availability windows."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Create Maintenance Blackout",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"startDate\": \"2026-05-02\",\n  \"endDate\": \"2026-05-05\",\n  \"reason\": \"Network and power maintenance\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/resources/{{resourceId}}/maintenance-blackouts",
+                                                      "description":  "Dev 1 planned blackout API check."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "List Maintenance Blackouts",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/resources/{{resourceId}}/maintenance-blackouts",
+                                                      "description":  "Dev 1 planned blackout listing API check."
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Dev 2 - Bookings (Check APIs)",
+                     "auth":  {
+                                  "type":  "bearer",
+                                  "bearer":  [
+                                                 {
+                                                     "key":  "token",
+                                                     "value":  "{{accessToken}}",
+                                                     "type":  "string"
+                                                 }
+                                             ]
+                              },
+                     "item":  [
+                                  {
+                                      "name":  "Create Booking",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"resourceId\": \"{{resourceId}}\",\n  \"bookingDate\": \"2026-05-10\",\n  \"startTime\": \"09:00\",\n  \"endTime\": \"11:00\",\n  \"purpose\": \"Software project workshop\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/bookings",
+                                                      "description":  "Dev 2 booking creation API check."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "List Bookings",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/bookings?status=PENDING\u0026page=0\u0026size=20",
+                                                      "description":  "Dev 2 booking listing API check."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Get Booking By ID",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/bookings/{{bookingId}}",
+                                                      "description":  "Dev 2 booking details API check."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Approve Booking (ADMIN)",
+                                      "request":  {
+                                                      "method":  "PUT",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/bookings/{{bookingId}}/approve",
+                                                      "description":  "Dev 2 booking approval workflow API check."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Reject Booking (ADMIN)",
+                                      "request":  {
+                                                      "method":  "PUT",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"reason\": \"Time slot already allocated to exam schedule\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/bookings/{{bookingId}}/reject",
+                                                      "description":  "Dev 2 booking rejection workflow API check."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Cancel Booking",
+                                      "request":  {
+                                                      "method":  "PUT",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/bookings/{{bookingId}}/cancel",
+                                                      "description":  "Dev 2 booking cancellation API check."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Resource Booking Calendar",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/resources/{{resourceId}}/bookings?date=2026-05-10",
+                                                      "description":  "Dev 2 per-resource calendar API check."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "QR Check-In",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"qrToken\": \"dummy-qr-token-2026\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/bookings/{{bookingId}}/check-in",
+                                                      "description":  "Dev 2 QR check-in API check."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Join Waitlist",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/bookings/{{bookingId}}/waitlist",
+                                                      "description":  "Dev 2 waitlist join API check."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "View Waitlist",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/bookings/{{bookingId}}/waitlist",
+                                                      "description":  "Dev 2 waitlist listing API check."
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Dev 3 - Tickets \u0026 Maintenance (Check APIs)",
+                     "auth":  {
+                                  "type":  "bearer",
+                                  "bearer":  [
+                                                 {
+                                                     "key":  "token",
+                                                     "value":  "{{accessToken}}",
+                                                     "type":  "string"
+                                                 }
+                                             ]
+                              },
+                     "item":  [
+                                  {
+                                      "name":  "Create Ticket",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"title\": \"Projector not working\",\n  \"description\": \"Projector in LAB-COM-01 powers on but no display output.\",\n  \"category\": \"IT_EQUIPMENT\",\n  \"priority\": \"HIGH\",\n  \"resourceId\": \"{{resourceId}}\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/tickets",
+                                                      "description":  "Dev 3 ticket creation API check (placeholder payload for multipart endpoint)."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "List Tickets",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/tickets?status=OPEN\u0026page=0\u0026size=20",
+                                                      "description":  "Dev 3 ticket listing API check."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Get Ticket By ID",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/tickets/{{ticketId}}",
+                                                      "description":  "Dev 3 ticket details API check."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Update Ticket Status",
+                                      "request":  {
+                                                      "method":  "PUT",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"status\": \"IN_PROGRESS\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/tickets/{{ticketId}}/status",
+                                                      "description":  "Dev 3 status workflow API check."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Assign Ticket (ADMIN)",
+                                      "request":  {
+                                                      "method":  "PUT",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"assigneeId\": \"{{adminUserId}}\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/tickets/{{ticketId}}/assign",
+                                                      "description":  "Dev 3 technician assignment API check."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Delete Ticket",
+                                      "request":  {
+                                                      "method":  "DELETE",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/tickets/{{ticketId}}",
+                                                      "description":  "Dev 3 soft-delete ticket API check."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Add Ticket Comment",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"content\": \"Technician dispatched. ETA 20 minutes.\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/tickets/{{ticketId}}/comments",
+                                                      "description":  "Dev 3 comment creation API check."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Update Ticket Comment",
+                                      "request":  {
+                                                      "method":  "PUT",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"content\": \"Technician arrived on-site.\"\n}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/tickets/{{ticketId}}/comments/{{commentId}}",
+                                                      "description":  "Dev 3 comment update API check."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Delete Ticket Comment",
+                                      "request":  {
+                                                      "method":  "DELETE",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/tickets/{{ticketId}}/comments/{{commentId}}",
+                                                      "description":  "Dev 3 comment delete API check."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "List Ticket Attachments",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/tickets/{{ticketId}}/attachments",
+                                                      "description":  "Dev 3 attachment list API check."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Admin SLA Metrics",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/admin/tickets/sla-metrics",
+                                                      "description":  "Dev 3 SLA dashboard API check."
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Admin Technician Workload",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/admin/technician-workload",
+                                                      "description":  "Dev 3 workload dashboard API check."
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Bookings",
+                     "auth":  {
+                                  "type":  "bearer",
+                                  "bearer":  [
+                                                 {
+                                                     "key":  "token",
+                                                     "value":  "{{accessToken}}",
+                                                     "type":  "string"
+                                                 }
+                                             ]
+                              },
+                     "item":  [
+                                  {
+                                      "name":  "Admin Booking View Placeholder",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/bookings/admin/all",
+                                                      "description":  "Current backend placeholder for admin booking view."
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Tickets",
+                     "auth":  {
+                                  "type":  "bearer",
+                                  "bearer":  [
+                                                 {
+                                                     "key":  "token",
+                                                     "value":  "{{accessToken}}",
+                                                     "type":  "string"
+                                                 }
+                                             ]
+                              },
+                     "item":  [
+                                  {
+                                      "name":  "Update Ticket Status Placeholder",
+                                      "request":  {
+                                                      "method":  "PUT",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/tickets/{{ticketId}}/status",
+                                                      "description":  "Current backend placeholder for updating ticket status."
+                                                  }
+                                  }
+                              ]
+                 }
+             ],
+    "variable":  [
+                     {
+                         "key":  "baseUrl",
+                         "value":  "http://localhost:8080/api/v1"
+                     },
+                     {
+                         "key":  "baseUrlHealth",
+                         "value":  "http://localhost:8080/api"
+                     },
+                     {
+                         "key":  "accessToken",
+                         "value":  "eyJhbGciOiJIUzI1NiJ9.dummy.access.token"
+                     },
+                     {
+                         "key":  "refreshToken",
+                         "value":  "dummy-refresh-token"
+                     },
+                     {
+                         "key":  "userId",
+                         "value":  "123e4567-e89b-12d3-a456-426614174000"
+                     },
+                     {
+                         "key":  "adminUserId",
+                         "value":  "123e4567-e89b-12d3-a456-426614174001"
+                     },
+                     {
+                         "key":  "notificationId",
+                         "value":  "123e4567-e89b-12d3-a456-426614174002"
+                     },
+                     {
+                         "key":  "ticketId",
+                         "value":  "123e4567-e89b-12d3-a456-426614174003"
+                     },
+                     {
+                         "key":  "resourceId",
+                         "value":  "123e4567-e89b-12d3-a456-426614174004"
+                     },
+                     {
+                         "key":  "bookingId",
+                         "value":  "123e4567-e89b-12d3-a456-426614174005"
+                     },
+                     {
+                         "key":  "commentId",
+                         "value":  "123e4567-e89b-12d3-a456-426614174006"
+                     }
+                 ]
+}
