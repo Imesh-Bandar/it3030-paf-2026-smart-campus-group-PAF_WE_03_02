@@ -377,13 +377,13 @@ Project is considered complete when:
 
 ### Backend Tasks
 
-- [ ] **D3-B01** Create `Ticket` JPA entity (main table)
-- [ ] **D3-B02** Create `TicketStatus` enum: `OPEN`, `IN_PROGRESS`, `RESOLVED`, `CLOSED`, `REJECTED`
-- [ ] **D3-B03** Create `TicketPriority` enum: `LOW`, `MEDIUM`, `HIGH`, `CRITICAL`
-- [ ] **D3-B04** Create `TicketCategory` enum: `ELECTRICAL`, `PLUMBING`, `IT_EQUIPMENT`, `HVAC`, `STRUCTURAL`, `OTHER`
+- [x] **D3-B01** Create `Ticket` JPA entity (main table)
+- [x] **D3-B02** Create `TicketStatus` enum: `OPEN`, `IN_PROGRESS`, `RESOLVED`, `CLOSED`, `REJECTED`
+- [x] **D3-B03** Create `TicketPriority` enum: `LOW`, `MEDIUM`, `HIGH`, `CRITICAL`
+- [x] **D3-B04** Create `TicketCategory` enum: `ELECTRICAL`, `PLUMBING`, `IT_EQUIPMENT`, `HVAC`, `STRUCTURAL`, `OTHER`
 - [ ] **D3-B05** Create `TicketAttachment` JPA entity (separate table with FK to Ticket)
 - [ ] **D3-B06** Create `TicketComment` JPA entity (separate table with FK to Ticket, User)
-- [ ] **D3-B07** Create `TicketRepository` with finders for reporter, assigned tech, status
+- [x] **D3-B07** Create `TicketRepository` with finders for reporter, assigned tech, status
 - [ ] **D3-B08** Create `TicketService` with:
   - [ ] Status workflow validation (OPEN → IN_PROGRESS → RESOLVED)
   - [ ] Attachment upload (max 3 files)
@@ -519,6 +519,7 @@ Project is considered complete when:
 ### Member 4 Completion Summary (21 Apr 2026) ✅
 
 **Backend Implementation (D4-B Series)**:
+
 - [x] D4-B01 through D4-B05: Notification JPA entity, NotificationType enum, NotificationRepository, NotificationService, NotificationController (4 endpoints: paginated GET, mark read, mark all read, delete)
 - [x] D4-B07 through D4-B14: User entity, UserRole enum (STUDENT/STAFF/TECHNICIAN/ADMIN), UserRepository, Spring Security config, JWT, AuthController, global exception handler, CORS
 - [x] D4-B12: Admin user management endpoints (GET /api/v1/users list all users, PUT /api/v1/users/{id}/role update role)
@@ -531,6 +532,7 @@ Project is considered complete when:
 - [ ] D4-B19/D4-B21: Google OAuth edge-case handling and comprehensive auth test coverage (infrastructure exists)
 
 **Frontend Implementation (D4-F Series)**:
+
 - [x] D4-F01 through D4-F04: Google OAuth login, JWT storage, axios interceptor, AuthContext, ProtectedRoute HOC
 - [x] D4-F05 through D4-F08: NotificationBell component, NotificationPanel dropdown, UserManagementPage, API services (notification, auth, security)
 - [x] D4-F09 through D4-F12: Auto-logout on token expiry, signup role selector, Google OAuth UX messaging, role-based landing redirects
@@ -538,6 +540,7 @@ Project is considered complete when:
 - [x] D4-F18 through D4-F21: Notification preferences UI, admin analytics widgets, account security activity page, suspicious login alert banner with acknowledgement action
 
 **Code Quality & Bug Fixes**:
+
 - [x] Fixed JPQL timestamp type mismatches in NotificationRepository and SecurityActivityLogRepository (OffsetDateTime parameterization)
 - [x] Fixed TypeScript import paths in 6 frontend page components (../../ → ../../../)
 - [x] Fixed TypeScript type inference for React state updater callbacks
@@ -547,6 +550,7 @@ Project is considered complete when:
 - [x] All frontend production build passing (151 modules, optimized bundles)
 
 **Completed Deliverables**:
+
 - ✅ All Member 4 backend endpoints fully implemented and type-checked
 - ✅ All Member 4 frontend pages created with correct import paths
 - ✅ Role-based authentication system (STUDENT/STAFF/TECHNICIAN/ADMIN)
@@ -559,6 +563,7 @@ Project is considered complete when:
 - ✅ Frontend production build validation
 
 **Known Pending Items** (External Dependencies):
+
 - D4-B06: Notification trigger integration awaits booking/ticket service completion by Dev 2/Dev 3
 - D4-B15/B16: Extended test coverage and auth integration tests (core tests implemented)
 - D4-B19/B21: Google OAuth edge-case refinements and comprehensive flow testing

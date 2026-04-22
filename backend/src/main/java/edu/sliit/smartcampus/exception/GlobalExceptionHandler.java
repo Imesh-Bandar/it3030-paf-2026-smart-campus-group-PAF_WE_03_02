@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -40,6 +41,11 @@ public class GlobalExceptionHandler {
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .collect(Collectors.joining(", "));
         return build(HttpStatus.BAD_REQUEST, message.isBlank() ? "Invalid request payload" : message);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, Object>> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+        return build(HttpStatus.BAD_REQUEST, "Invalid JSON payload or enum value");
     }
 
     @ExceptionHandler(Exception.class)
