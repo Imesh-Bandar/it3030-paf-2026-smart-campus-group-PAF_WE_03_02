@@ -51,4 +51,11 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
             @Param("bookingId") UUID bookingId);
 
     List<Booking> findByResource_IdAndBookingDateOrderByStartTimeAsc(UUID resourceId, LocalDate bookingDate);
+    List<Booking> findByResource_IdAndBookingDateBetweenAndStatusInOrderByBookingDateAscStartTimeAsc(
+            UUID resourceId,
+            LocalDate from,
+            LocalDate to,
+            List<BookingStatus> statuses);
+
+    boolean existsByResource_IdAndStatusIn(UUID resourceId, List<BookingStatus> statuses);
 }
