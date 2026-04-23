@@ -23,4 +23,6 @@ export const facilityApi = {
     (await api.get(`/resources/${id}/maintenance-blackouts`)).data,
   createBlackout: async (id: string, payload: MaintenanceBlackoutPayload): Promise<MaintenanceBlackout> =>
     (await api.post(`/resources/${id}/maintenance-blackouts`, payload)).data,
+  removeBlackout: async (id: string, blackoutId: string) =>
+    (await api.delete(`/resources/${id}/maintenance-blackouts/${blackoutId}`)).data,
 };

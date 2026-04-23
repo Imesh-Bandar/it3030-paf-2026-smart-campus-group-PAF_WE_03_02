@@ -62,21 +62,45 @@ export function FacilityDetailsPage() {
 
   const createBlackout = async () => {
     if (!id) return;
+    if (!blackoutStart || !blackoutEnd || !blackoutReason.trim()) {
+      toast.error('Start, end, and reason are required');
+      return;
+    }
+    if (new Date(blackoutEnd) <= new Date(blackoutStart)) {
+      toast.error('Blackout end must be after the start');
+      return;
+    }
     try {
       await facilityApi.createBlackout(id, {
         startDate: new Date(blackoutStart).toISOString(),
         endDate: new Date(blackoutEnd).toISOString(),
-        reason: blackoutReason,
+        reason: blackoutReason.trim(),
       });
       toast.success('Maintenance blackout added');
-      const [availabilityResponse, blackoutResponse] = await Promise.all([
-        facilityApi.getAvailability(id, from, to),
-        facilityApi.getBlackouts(id),
-      ]);
-      setAvailability(availabilityResponse);
-      setBlackouts(blackoutResponse);
+      await refreshSchedule();
     } catch {
       toast.error('Failed to add maintenance blackout');
+    }
+  };
+
+  const refreshSchedule = async () => {
+    if (!id) return;
+    const [availabilityResponse, blackoutResponse] = await Promise.all([
+      facilityApi.getAvailability(id, from, to),
+      facilityApi.getBlackouts(id),
+    ]);
+    setAvailability(availabilityResponse);
+    setBlackouts(blackoutResponse);
+  };
+
+  const removeBlackout = async (blackoutId: string) => {
+    if (!id) return;
+    try {
+      await facilityApi.removeBlackout(id, blackoutId);
+      toast.success('Maintenance blackout removed');
+      await refreshSchedule();
+    } catch {
+      toast.error('Failed to remove maintenance blackout');
     }
   };
 
@@ -152,12 +176,25 @@ export function FacilityDetailsPage() {
                 {blackouts.map((blackout) => (
                   <article key={blackout.id} className="dashboard-info-card">
                     <div className="dashboard-info-card-body">
-                      <strong>{blackout.reason}</strong>
-                      <p>
-                        {new Date(blackout.startDate).toLocaleString()} -{' '}
-                        {new Date(blackout.endDate).toLocaleString()}
-                      </p>
-                      <p>Created by {blackout.createdByName}</p>
+                      <div className="facility-card-top">
+                        <div>
+                          <strong>{blackout.reason}</strong>
+                          <p>
+                            {new Date(blackout.startDate).toLocaleString()} -{' '}
+                            {new Date(blackout.endDate).toLocaleString()}
+                          </p>
+                          <p>Created by {blackout.createdByName}</p>
+                        </div>
+                        {isAdmin() ? (
+                          <button
+                            type="button"
+                            className="btn-ghost"
+                            onClick={() => void removeBlackout(blackout.id)}
+                          >
+                            Remove
+                          </button>
+                        ) : null}
+                      </div>
                     </div>
                   </article>
                 ))}
