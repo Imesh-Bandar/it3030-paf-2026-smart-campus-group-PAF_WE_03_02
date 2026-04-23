@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -131,6 +132,17 @@ class FacilityControllerTest {
                         """))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.reason").value("Electrical maintenance"));
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void deleteMaintenanceBlackout_allowsAdmin() throws Exception {
+        mockMvc.perform(delete("/api/v1/resources/{id}/maintenance-blackouts/{blackoutId}",
+                UUID.randomUUID(),
+                UUID.randomUUID())
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Maintenance blackout deleted"));
     }
 
     private ResourceDto resourceDto() {
