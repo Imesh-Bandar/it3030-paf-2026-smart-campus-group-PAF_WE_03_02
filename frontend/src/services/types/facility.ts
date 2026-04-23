@@ -5,3 +5,8 @@ export type Facility = {
   type: string;
   location?: string;
 };
+
+export type ResourceOption = {
+  id: string;
+  name: string;
+};

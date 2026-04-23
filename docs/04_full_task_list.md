@@ -47,12 +47,12 @@
 
 ### 🧩 Module Implementation Status
 
-| Module                       | Current Status | Notes                                                                                                       |
-| ---------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------- |
-| Facilities (Dev 1)           | 🟡 In Progress | Entity/repository/service/controller and basic UI scaffolds exist; CRUD logic + full endpoints pending      |
-| Bookings (Dev 2)             | 🟡 In Progress | Entity/repository/service/controller and UI placeholders exist; conflict logic + workflow endpoints pending |
-| Tickets (Dev 3)              | 🟡 In Progress | Entity/repository/service/controller and UI placeholders exist; comments/attachments workflows pending      |
-| Notifications & Auth (Dev 4) | 🟡 In Progress | Authentication core complete; multi-role onboarding + role dashboards + notification integration pending    |
+| Module                       | Current Status      | Notes                                                                                                                                        |
+| ---------------------------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Facilities (Dev 1)           | 🟡 In Progress      | Entity/repository/service/controller and basic UI scaffolds exist; CRUD logic + full endpoints pending                                       |
+| Bookings (Dev 2)             | 🟢 Core Implemented | Booking entity/service/controller now include conflict detection, approval/rejection, cancellation, QR check-in, and waitlist auto-promotion |
+| Tickets (Dev 3)              | 🟡 In Progress      | Entity/repository/service/controller and UI placeholders exist; comments/attachments workflows pending                                       |
+| Notifications & Auth (Dev 4) | 🟡 In Progress      | Authentication core complete; multi-role onboarding + role dashboards + notification integration pending                                     |
 
 ### 🧪 Testing Progress
 
@@ -327,13 +327,13 @@ Project is considered complete when:
 
 ### Backend Tasks
 
-- [ ] **D2-B01** Create `Booking` JPA entity with compound index on `(resource_id, booking_date, status)`
-- [ ] **D2-B02** Create `BookingStatus` enum: `PENDING`, `APPROVED`, `REJECTED`, `CANCELLED`
-- [ ] **D2-B03** Create `BookingRepository extends JpaRepository<Booking, Long>`
-  - [ ] Custom JPQL @Query for conflict detection
-  - [ ] Finders by userId, status, resource
-- [ ] **D2-B04** Create `BookingService` with conflict detection logic
-- [ ] **D2-B05** Create `BookingController` with 7 endpoints
+- [x] **D2-B01** Create `Booking` JPA entity with compound index on `(resource_id, booking_date, status)`
+- [x] **D2-B02** Create `BookingStatus` enum: `PENDING`, `APPROVED`, `REJECTED`, `CANCELLED`
+- [x] **D2-B03** Create `BookingRepository extends JpaRepository<Booking, Long>`
+  - [x] Custom JPQL @Query for conflict detection
+  - [x] Finders by userId, status, resource
+- [x] **D2-B04** Create `BookingService` with conflict detection logic
+- [x] **D2-B05** Create `BookingController` with 7 endpoints
   - POST /api/v1/bookings
   - GET /api/v1/bookings (filtered)
   - GET /api/v1/bookings/{id}
@@ -341,31 +341,31 @@ Project is considered complete when:
   - PUT /api/v1/bookings/{id}/reject (ADMIN)
   - PUT /api/v1/bookings/{id}/cancel
   - GET /api/v1/resources/{id}/bookings (for calendar)
-- [ ] **D2-B06** Create DTOs: BookingDTO, BookingRequestDTO
-- [ ] **D2-B07** Add date/time validation (no past dates)
-- [ ] **D2-B08** Write min 5 unit tests for conflict detection
-- [ ] **D2-B09** Write integration tests for approval workflow
+- [x] **D2-B06** Create DTOs: BookingDTO, BookingRequestDTO
+- [x] **D2-B07** Add date/time validation (no past dates)
+- [x] **D2-B08** Write min 5 unit tests for conflict detection
+- [x] **D2-B09** Write integration tests for approval workflow
 - [ ] **D2-B10** Add Swagger annotations
-- [ ] **D2-B11** Add QR check-in token generation for approved bookings
-- [ ] **D2-B12** Add QR check-in verification endpoint (`POST /api/v1/bookings/{id}/check-in`)
-- [ ] **D2-B13** Add booking check-in audit fields (checked-in-by, checked-in-at, verification-status)
-- [ ] **D2-B14** Add waitlist model and repository for fully booked resource slots
-- [ ] **D2-B15** Implement waitlist auto-promotion logic when approved booking is cancelled/rejected
+- [x] **D2-B11** Add QR check-in token generation for approved bookings
+- [x] **D2-B12** Add QR check-in verification endpoint (`POST /api/v1/bookings/{id}/check-in`)
+- [x] **D2-B13** Add booking check-in audit fields (checked-in-by, checked-in-at, verification-status)
+- [x] **D2-B14** Add waitlist model and repository for fully booked resource slots
+- [x] **D2-B15** Implement waitlist auto-promotion logic when approved booking is cancelled/rejected
 
 ### Frontend Tasks
 
-- [ ] **D2-F01** Create `BookingRequestPage` with form (date, time, purpose)
-- [ ] **D2-F02** Create `MyBookingsPage` with status tabs
-- [ ] **D2-F03** Create `AdminBookingsPage` (approval queue)
-- [ ] **D2-F04** Create `BookingCard` component
-- [ ] **D2-F05** Implement date/time picker with conflict preview
-- [ ] **D2-F06** Implement `bookingService.js` (axios)
-- [ ] **D2-F07** Show conflict errors with alternative times
-- [ ] **D2-F08** Add approve/reject buttons for admins
-- [ ] **D2-F09** Build QR code display on approved booking details
-- [ ] **D2-F10** Build QR verification screen for staff/admin check-in validation
-- [ ] **D2-F11** Add waitlist join action on booking conflict screen
-- [ ] **D2-F12** Show waitlist status and promotion updates in My Bookings
+- [x] **D2-F01** Create `BookingRequestPage` with form (date, time, purpose)
+- [x] **D2-F02** Create `MyBookingsPage` with status tabs
+- [x] **D2-F03** Create `AdminBookingsPage` (approval queue)
+- [x] **D2-F04** Create `BookingCard` component
+- [x] **D2-F05** Implement date/time picker with conflict preview
+- [x] **D2-F06** Implement `bookingService.js` (axios)
+- [x] **D2-F07** Show conflict errors with alternative times
+- [x] **D2-F08** Add approve/reject buttons for admins
+- [x] **D2-F09** Build QR code display on approved booking details
+- [x] **D2-F10** Build QR verification screen for staff/admin check-in validation
+- [x] **D2-F11** Add waitlist join action on booking conflict screen
+- [x] **D2-F12** Show waitlist status and promotion updates in My Bookings
 
 ---
 
@@ -519,6 +519,7 @@ Project is considered complete when:
 ### Member 4 Completion Summary (21 Apr 2026) ✅
 
 **Backend Implementation (D4-B Series)**:
+
 - [x] D4-B01 through D4-B05: Notification JPA entity, NotificationType enum, NotificationRepository, NotificationService, NotificationController (4 endpoints: paginated GET, mark read, mark all read, delete)
 - [x] D4-B07 through D4-B14: User entity, UserRole enum (STUDENT/STAFF/TECHNICIAN/ADMIN), UserRepository, Spring Security config, JWT, AuthController, global exception handler, CORS
 - [x] D4-B12: Admin user management endpoints (GET /api/v1/users list all users, PUT /api/v1/users/{id}/role update role)
@@ -531,6 +532,7 @@ Project is considered complete when:
 - [ ] D4-B19/D4-B21: Google OAuth edge-case handling and comprehensive auth test coverage (infrastructure exists)
 
 **Frontend Implementation (D4-F Series)**:
+
 - [x] D4-F01 through D4-F04: Google OAuth login, JWT storage, axios interceptor, AuthContext, ProtectedRoute HOC
 - [x] D4-F05 through D4-F08: NotificationBell component, NotificationPanel dropdown, UserManagementPage, API services (notification, auth, security)
 - [x] D4-F09 through D4-F12: Auto-logout on token expiry, signup role selector, Google OAuth UX messaging, role-based landing redirects
@@ -538,6 +540,7 @@ Project is considered complete when:
 - [x] D4-F18 through D4-F21: Notification preferences UI, admin analytics widgets, account security activity page, suspicious login alert banner with acknowledgement action
 
 **Code Quality & Bug Fixes**:
+
 - [x] Fixed JPQL timestamp type mismatches in NotificationRepository and SecurityActivityLogRepository (OffsetDateTime parameterization)
 - [x] Fixed TypeScript import paths in 6 frontend page components (../../ → ../../../)
 - [x] Fixed TypeScript type inference for React state updater callbacks
@@ -547,6 +550,7 @@ Project is considered complete when:
 - [x] All frontend production build passing (151 modules, optimized bundles)
 
 **Completed Deliverables**:
+
 - ✅ All Member 4 backend endpoints fully implemented and type-checked
 - ✅ All Member 4 frontend pages created with correct import paths
 - ✅ Role-based authentication system (STUDENT/STAFF/TECHNICIAN/ADMIN)
@@ -559,6 +563,7 @@ Project is considered complete when:
 - ✅ Frontend production build validation
 
 **Known Pending Items** (External Dependencies):
+
 - D4-B06: Notification trigger integration awaits booking/ticket service completion by Dev 2/Dev 3
 - D4-B15/B16: Extended test coverage and auth integration tests (core tests implemented)
 - D4-B19/B21: Google OAuth edge-case refinements and comprehensive flow testing
