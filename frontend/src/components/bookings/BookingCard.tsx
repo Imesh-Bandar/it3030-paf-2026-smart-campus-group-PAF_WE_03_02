@@ -45,7 +45,7 @@ export function BookingCard({
           <p>Waitlist position: #{booking.waitlistPosition}</p>
         ) : null}
         {booking.rejectedReason ? <p>Reason: {booking.rejectedReason}</p> : null}
-        {booking.qrToken ? <p>QR token: {booking.qrToken}</p> : null}
+        {booking.status === 'APPROVED' && booking.qrToken ? <p>QR code ready for check-in.</p> : null}
 
         <div className="booking-card-actions">
           <Link to={`/bookings/${booking.id}`} className="btn-ghost">

@@ -192,6 +192,14 @@ public class FacilityService {
         return toBlackoutDto(maintenanceBlackoutRepository.save(blackout));
     }
 
+    @Transactional
+    public void deleteMaintenanceBlackout(UUID resourceId, UUID blackoutId) {
+        getActiveResource(resourceId);
+        MaintenanceBlackout blackout = maintenanceBlackoutRepository.findByIdAndResource_Id(blackoutId, resourceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Maintenance blackout not found"));
+        maintenanceBlackoutRepository.delete(blackout);
+    }
+
     public void assertSlotBookable(UUID resourceId, LocalDate date, LocalTime startTime, LocalTime endTime) {
         Resource resource = getActiveResource(resourceId);
         if (resource.getStatus() != ResourceStatus.ACTIVE) {
