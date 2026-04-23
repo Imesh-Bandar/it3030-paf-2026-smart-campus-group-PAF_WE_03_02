@@ -34,13 +34,14 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        AuthResponse authResponse = authService.handleOAuthLogin(oAuth2User);
+        AuthResponse authResponse = authService.handleOAuthLogin(oAuth2User, getRequestedRole(request));
 
         Cookie cookie = new Cookie("refresh_token", authResponse.refreshToken());
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         cookie.setMaxAge(7 * 24 * 60 * 60);
         response.addCookie(cookie);
+        response.addCookie(expireCookie(OAuth2RoleCaptureFilter.ROLE_COOKIE_NAME));
 
         String redirectUrl = String.format(
                 "%s/login?access_token=%s&refresh_token=%s",
@@ -53,5 +54,26 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private String urlEncode(String value) {
         return URLEncoder.encode(value, StandardCharsets.UTF_8);
+    }
+
+    private String getRequestedRole(HttpServletRequest request) {
+        if (request.getCookies() == null) {
+            return null;
+        }
+
+        for (Cookie cookie : request.getCookies()) {
+            if (OAuth2RoleCaptureFilter.ROLE_COOKIE_NAME.equals(cookie.getName())) {
+                return cookie.getValue();
+            }
+        }
+        return null;
+    }
+
+    private Cookie expireCookie(String name) {
+        Cookie cookie = new Cookie(name, "");
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        return cookie;
     }
 }
