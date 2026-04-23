@@ -110,6 +110,11 @@ public class AuthService {
 
     @Transactional
     public AuthResponse handleOAuthLogin(OAuth2User oAuth2User) {
+        return handleOAuthLogin(oAuth2User, null);
+    }
+
+    @Transactional
+    public AuthResponse handleOAuthLogin(OAuth2User oAuth2User, String requestedRole) {
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
         String avatarUrl = oAuth2User.getAttribute("picture");
@@ -117,13 +122,14 @@ public class AuthService {
         Boolean verified = oAuth2User.getAttribute("email_verified");
 
         User user = userRepository.findByEmail(email).orElseGet(User::new);
+        boolean newUser = user.getId() == null;
         user.setEmail(email);
         user.setFullName(name == null ? email : name);
         user.setAvatarUrl(avatarUrl);
         user.setGoogleId(googleId);
         user.setEmailVerified(Boolean.TRUE.equals(verified));
-        if (user.getRole() == null) {
-            user.setRole(UserRole.STUDENT);
+        if (newUser || user.getRole() == null) {
+            user.setRole(parseOAuthRegistrationRole(requestedRole));
         }
         if (user.getStatus() == null) {
             user.setStatus(UserStatus.ACTIVE);
@@ -260,6 +266,15 @@ public class AuthService {
             throw new ValidationException("ADMIN role cannot be self-registered");
         }
         return parsedRole;
+    }
+
+    private UserRole parseOAuthRegistrationRole(String role) {
+        if (role == null || role.isBlank()) {
+            return UserRole.STUDENT;
+        }
+
+        UserRole parsedRole = parseAnyRole(role);
+        return parsedRole == UserRole.ADMIN ? UserRole.STUDENT : parsedRole;
     }
 
     private UserRole parseAnyRole(String role) {
