@@ -26,6 +26,21 @@ public class Booking {
     @Id
     private UUID id;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "resource_id", nullable = false)
+    private Resource resource;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "booker_id", nullable = false)
+    private User booker;
+
+    @Column(name = "booking_date", nullable = false)
+    private LocalDate bookingDate;
+
+    @Column(name = "start_time", nullable = false)
+    private LocalTime startTime;
+
+    @Column(name = "end_time", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resource_id")
     private Resource resource;
@@ -50,6 +65,30 @@ public class Booking {
     @Column(nullable = false)
     private BookingStatus status;
 
+    @ManyToOne
+    @JoinColumn(name = "approved_by")
+    private User approvedBy;
+
+    @Column(name = "approved_at")
+    private OffsetDateTime approvedAt;
+
+    @Column(name = "rejected_reason", length = 500)
+    private String rejectedReason;
+
+    @Column(name = "qr_token", unique = true)
+    private String qrToken;
+
+    @Column(name = "checked_in_at")
+    private OffsetDateTime checkedInAt;
+
+    @ManyToOne
+    @JoinColumn(name = "checked_in_by")
+    private User checkedInBy;
+
+    @Column(name = "created_at", nullable = false)
+    private OffsetDateTime createdAt;
+
+    @Column(name = "updated_at", nullable = false)
     @Column(name = "created_at")
     private OffsetDateTime createdAt;
 

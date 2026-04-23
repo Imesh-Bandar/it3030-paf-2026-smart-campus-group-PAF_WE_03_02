@@ -82,4 +82,8 @@ export type MaintenanceBlackoutPayload = {
   reason: string;
 };
 
+export type ResourceOption = {
+  id: string;
+  name: string;
+};
 export type ResourceOption = Pick<Facility, 'id' | 'name'>;
