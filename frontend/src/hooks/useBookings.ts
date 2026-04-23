@@ -1,12 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { api } from '../lib/axios';
+import { bookingApi } from '../services/api/bookingApi';
+import type { Booking } from '../services/types/booking';
 
 export function useBookings() {
-  return useQuery({
+  return useQuery<Booking[]>({
     queryKey: ['bookings'],
-    queryFn: async () => {
-      const response = await api.get('/bookings');
-      return response.data;
-    },
+    queryFn: bookingApi.getAll,
   });
 }

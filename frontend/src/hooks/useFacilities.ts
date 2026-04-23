@@ -1,12 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { api } from '../lib/axios';
+import { facilityApi } from '../services/api/facilityApi';
+import type { Facility, FacilityFilters } from '../services/types/facility';
 
-export function useFacilities() {
-  return useQuery({
-    queryKey: ['facilities'],
-    queryFn: async () => {
-      const response = await api.get('/resources');
-      return response.data;
-    },
+export function useFacilities(filters?: FacilityFilters) {
+  return useQuery<Facility[]>({
+    queryKey: ['facilities', filters ?? {}],
+    queryFn: () => facilityApi.getAll(filters),
   });
 }
