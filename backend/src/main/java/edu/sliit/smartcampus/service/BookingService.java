@@ -39,6 +39,7 @@ public class BookingService {
     private final BookingRepository bookingRepository;
     private final WaitlistEntryRepository waitlistEntryRepository;
     private final NotificationService notificationService;
+    private final FacilityService facilityService;
 
     public BookingService(
             AuthService authService,
@@ -46,19 +47,23 @@ public class BookingService {
             ResourceRepository resourceRepository,
             BookingRepository bookingRepository,
             WaitlistEntryRepository waitlistEntryRepository,
-            NotificationService notificationService) {
+            NotificationService notificationService,
+            FacilityService facilityService) {
         this.authService = authService;
         this.userRepository = userRepository;
         this.resourceRepository = resourceRepository;
         this.bookingRepository = bookingRepository;
         this.waitlistEntryRepository = waitlistEntryRepository;
         this.notificationService = notificationService;
+        this.facilityService = facilityService;
     }
 
     @Transactional
     public BookingDto createBooking(BookingRequestDto request) {
         validateDateTime(request.bookingDate(), request.startTime(), request.endTime());
         String purpose = normalizePurpose(request.purpose());
+        facilityService.assertSlotBookable(request.resourceId(), request.bookingDate(), request.startTime(),
+                request.endTime());
 
         User currentUser = getCurrentUser();
         Resource resource = resourceRepository.findById(request.resourceId())
@@ -273,6 +278,8 @@ public class BookingService {
 
     public BookingConflictPreviewDto previewConflict(BookingRequestDto request) {
         validateDateTime(request.bookingDate(), request.startTime(), request.endTime());
+        facilityService.assertSlotBookable(request.resourceId(), request.bookingDate(), request.startTime(),
+                request.endTime());
 
         Resource resource = resourceRepository.findById(request.resourceId())
                 .orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
