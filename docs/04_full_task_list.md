@@ -49,7 +49,7 @@
 
 | Module                       | Current Status      | Notes                                                                                                                                        |
 | ---------------------------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| Facilities (Dev 1)           | 🟡 In Progress      | Entity/repository/service/controller and basic UI scaffolds exist; CRUD logic + full endpoints pending                                       |
+| Facilities (Dev 1)           | 🟢 Core Implemented | Resource catalogue CRUD, filters, availability windows, blackout management, booking eligibility validation, and React workflows complete     |
 | Bookings (Dev 2)             | 🟢 Core Implemented | Booking entity/service/controller now include conflict detection, approval/rejection, cancellation, QR check-in, and waitlist auto-promotion |
 | Tickets (Dev 3)              | 🟢 Core Implemented | Ticket entities/service/controllers, comments, attachments, SLA/workload metrics, assignment suggestions, and React ticket workflows complete |
 | Notifications & Auth (Dev 4) | 🟡 In Progress      | Authentication core complete; multi-role onboarding + role dashboards + notification integration pending                                     |
@@ -280,42 +280,42 @@ Project is considered complete when:
 
 ### Backend Tasks
 
-- [ ] **D1-B01** Create `Resource` JPA entity with `@Entity @Table("resources")`
-- [ ] **D1-B02** Create `ResourceType` enum: `LECTURE_HALL`, `LAB`, `MEETING_ROOM`, `EQUIPMENT`
-- [ ] **D1-B03** Create `ResourceStatus` enum: `ACTIVE`, `OUT_OF_SERVICE`, `UNDER_MAINTENANCE`
-- [ ] **D1-B04** Create `AvailabilityWindow` JPA entity with `@ManyToOne` to Resource
-- [ ] **D1-B05** Create `ResourceRepository extends JpaRepository<Resource, Long>`
-  - [ ] Custom finder methods for type, status, capacity
-  - [ ] JPQL @Query for location search
-- [ ] **D1-B06** Create `ResourceService` with validation logic
-- [ ] **D1-B07** Create `ResourceController` with 6 endpoints
+- [x] **D1-B01** Create `Resource` JPA entity with `@Entity @Table("resources")`
+- [x] **D1-B02** Create `ResourceType` enum: `LECTURE_HALL`, `LAB`, `MEETING_ROOM`, `EQUIPMENT`
+- [x] **D1-B03** Create `ResourceStatus` enum: `ACTIVE`, `OUT_OF_SERVICE`, `UNDER_MAINTENANCE`
+- [x] **D1-B04** Create `AvailabilityWindow` JPA entity with `@ManyToOne` to Resource
+- [x] **D1-B05** Create `ResourceRepository extends JpaRepository<Resource, Long>`
+  - [x] Custom finder methods for type, status, capacity
+  - [x] JPQL @Query for location search
+- [x] **D1-B06** Create `ResourceService` with validation logic
+- [x] **D1-B07** Create `ResourceController` with 6 endpoints
   - GET /api/v1/resources (with filters)
   - GET /api/v1/resources/{id}
   - POST /api/v1/resources (ADMIN)
   - PUT /api/v1/resources/{id} (ADMIN)
   - DELETE /api/v1/resources/{id} (ADMIN soft-delete)
   - GET /api/v1/resources/{id}/availability
-- [ ] **D1-B08** Create DTOs: ResourceDTO, ResourceRequestDTO, ResourceResponseDTO
-- [ ] **D1-B09** Add `@Valid` validation annotations
-- [ ] **D1-B10** Write min 5 unit tests using `@DataJpaTest`
-- [ ] **D1-B11** Write integration tests using `MockMvc`
-- [ ] **D1-B12** Add Swagger/OpenAPI annotations
-- [ ] **D1-B13** Seed initial test data via `CommandLineRunner`
-- [ ] **D1-B14** Add resource maintenance blackout model and API to mark blocked periods
-- [ ] **D1-B15** Enforce blackout validation in availability query and booking eligibility checks
+- [x] **D1-B08** Create DTOs: ResourceDTO, ResourceRequestDTO, ResourceResponseDTO
+- [x] **D1-B09** Add `@Valid` validation annotations
+- [x] **D1-B10** Write min 5 unit tests using `@DataJpaTest`
+- [x] **D1-B11** Write integration tests using `MockMvc`
+- [x] **D1-B12** Add Swagger/OpenAPI annotations
+- [x] **D1-B13** Seed initial test data via `CommandLineRunner`
+- [x] **D1-B14** Add resource maintenance blackout model and API to mark blocked periods
+- [x] **D1-B15** Enforce blackout validation in availability query and booking eligibility checks
 
 ### Frontend Tasks
 
-- [ ] **D1-F01** Create `ResourcesPage` with list/grid view + search
-- [ ] **D1-F02** Create `ResourceCard` component
-- [ ] **D1-F03** Create `ResourceDetailPage` with availability calendar
-- [ ] **D1-F04** Create `ResourceForm` (Add/Edit) for admins
-- [ ] **D1-F05** Create `ResourceFilter` component
-- [ ] **D1-F06** Implement `resourceService.js` (axios calls)
-- [ ] **D1-F07** Add admin-only buttons/links
-- [ ] **D1-F08** Handle loading/error states
-- [ ] **D1-F09** Create maintenance blackout calendar UI for admins on resource detail page
-- [ ] **D1-F10** Show blocked/unavailable slot badges in facility availability view
+- [x] **D1-F01** Create `ResourcesPage` with list/grid view + search
+- [x] **D1-F02** Create `ResourceCard` component
+- [x] **D1-F03** Create `ResourceDetailPage` with availability calendar
+- [x] **D1-F04** Create `ResourceForm` (Add/Edit) for admins
+- [x] **D1-F05** Create `ResourceFilter` component
+- [x] **D1-F06** Implement `resourceService.js` (axios calls)
+- [x] **D1-F07** Add admin-only buttons/links
+- [x] **D1-F08** Handle loading/error states
+- [x] **D1-F09** Create maintenance blackout calendar UI for admins on resource detail page
+- [x] **D1-F10** Show blocked/unavailable slot badges in facility availability view
 
 ---
 

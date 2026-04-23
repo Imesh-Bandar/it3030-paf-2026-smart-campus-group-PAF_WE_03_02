@@ -52,6 +52,19 @@ export function ResourceForm({
   );
 
   const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const addWindow = () =>
+    setForm((prev) => ({
+      ...prev,
+      availabilityWindows: [
+        ...prev.availabilityWindows,
+        { dayOfWeek: 1, startTime: '08:00', endTime: '17:00' },
+      ],
+    }));
+  const removeWindow = (index: number) =>
+    setForm((prev) => ({
+      ...prev,
+      availabilityWindows: prev.availabilityWindows.filter((_, entryIndex) => entryIndex !== index),
+    }));
 
   return (
     <form
@@ -184,7 +197,23 @@ export function ResourceForm({
       <div className="facility-window-grid">
         {form.availabilityWindows.map((window, index) => (
           <div key={`${window.dayOfWeek}-${index}`} className="facility-window-row">
-            <span>{weekdays[window.dayOfWeek]}</span>
+            <select
+              value={window.dayOfWeek}
+              onChange={(event) =>
+                setForm((prev) => ({
+                  ...prev,
+                  availabilityWindows: prev.availabilityWindows.map((entry, entryIndex) =>
+                    entryIndex === index ? { ...entry, dayOfWeek: Number(event.target.value) } : entry,
+                  ),
+                }))
+              }
+            >
+              {weekdays.map((day, dayIndex) => (
+                <option key={day} value={dayIndex}>
+                  {day}
+                </option>
+              ))}
+            </select>
             <input
               type="time"
               value={window.startTime}
@@ -209,9 +238,21 @@ export function ResourceForm({
                 }))
               }
             />
+            <button
+              type="button"
+              className="btn-ghost"
+              onClick={() => removeWindow(index)}
+              disabled={form.availabilityWindows.length === 1}
+            >
+              Remove
+            </button>
           </div>
         ))}
       </div>
+
+      <button type="button" className="btn-ghost" onClick={addWindow}>
+        Add Availability Window
+      </button>
 
       <div className="booking-form-submit-wrap">
         <button type="submit" className="btn-primary" disabled={loading}>

@@ -41,7 +41,9 @@ public interface ResourceRepository extends JpaRepository<Resource, UUID> {
               AND (:capacityMin IS NULL OR r.capacity >= :capacityMin)
               AND (:capacityMax IS NULL OR r.capacity <= :capacityMax)
                                          AND (LOWER(r.name) LIKE CONCAT('%', COALESCE(:query, ''), '%')
-                                                 OR LOWER(r.location) LIKE CONCAT('%', COALESCE(:query, ''), '%'))
+                                                 OR LOWER(r.resourceCode) LIKE CONCAT('%', COALESCE(:query, ''), '%')
+                                                 OR LOWER(r.location) LIKE CONCAT('%', COALESCE(:query, ''), '%')
+                                                 OR LOWER(COALESCE(r.description, '')) LIKE CONCAT('%', COALESCE(:query, ''), '%'))
             ORDER BY r.name ASC
             """)
     List<Resource> searchResources(
