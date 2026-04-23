@@ -1,7 +1,55 @@
+import { useState } from 'react';
+import toast from 'react-hot-toast';
+import { useBookings } from '../../hooks/useBookings';
+import { BookingCard } from '../../components/bookings/BookingCard';
+import { BookingForm } from '../../components/bookings/BookingForm';
+import { bookingApi } from '../../services/api/bookingApi';
+import type { Booking, BookingFilterStatus } from '../../services/types/booking';
 import { useRole } from '../../hooks/useRole';
 
 export function BookingsPage() {
   const { isAdmin } = useRole();
+  const { data, isLoading, refetch } = useBookings();
+  const [creating, setCreating] = useState(false);
+  const [activeStatus, setActiveStatus] = useState<BookingFilterStatus>('ALL');
+
+  const handleCreate = async (payload: {
+    resourceId: string;
+    bookingDate: string;
+    startTime: string;
+    endTime: string;
+    purpose: string;
+  }) => {
+    setCreating(true);
+    try {
+      const created = await bookingApi.create(payload);
+      if (created.waitlisted) {
+        toast.success(`Booking added to waitlist (position #${created.waitlistPosition ?? '-'})`);
+      } else {
+        toast.success('Booking request submitted');
+      }
+      await refetch();
+    } catch {
+      toast.error('Failed to create booking. Check resource ID and time range.');
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const handleCancel = async (bookingId: string) => {
+    try {
+      await bookingApi.cancel(bookingId, { reason: 'Cancelled by user' });
+      toast.success('Booking cancelled');
+      await refetch();
+    } catch {
+      toast.error('Failed to cancel booking');
+    }
+  };
+
+  const bookings: Booking[] = data ?? [];
+  const statusTabs: BookingFilterStatus[] = ['ALL', 'PENDING', 'APPROVED', 'COMPLETED', 'REJECTED', 'CANCELLED'];
+  const filteredBookings =
+    activeStatus === 'ALL' ? bookings : bookings.filter((booking) => booking.status === activeStatus);
 
   return (
     <main className="page-shell animate-fade-up" id="bookings-page">
@@ -10,67 +58,54 @@ export function BookingsPage() {
           <p className="section-eyebrow">Reservations</p>
           <h1>Bookings</h1>
         </div>
-        {isAdmin() && (
-          <button type="button" className="btn-primary" id="btn-approve-booking">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-            Approve Booking
-          </button>
-        )}
+        {isAdmin() ? (
+          <a href="/admin/bookings" className="btn-primary">
+            Open Approval Queue
+          </a>
+        ) : null}
       </div>
 
-      <div className="coming-soon-card">
-        <div className="coming-soon-icon" aria-hidden="true">
-          <svg
-            width="36"
-            height="36"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-            <line x1="16" y1="2" x2="16" y2="6" />
-            <line x1="8" y1="2" x2="8" y2="6" />
-            <line x1="3" y1="10" x2="21" y2="10" />
-          </svg>
+      <BookingForm loading={creating} onSubmit={handleCreate} />
+
+      <section className="dashboard-section booking-section-gap">
+        <div className="section-header booking-header-compact">
+          <div>
+            <p className="section-eyebrow">History</p>
+            <h2 className="booking-tight-title">My Bookings</h2>
+          </div>
+          <button type="button" className="btn-ghost" onClick={() => void refetch()}>
+            Refresh
+          </button>
         </div>
-        <span className="phase-badge">
-          <svg
-            width="13"
-            height="13"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <polyline points="12 6 12 12 16 14" />
-          </svg>
-          Phase 3
-        </span>
-        <h2>Booking Screens are Coming</h2>
-        <p>
-          Plan and manage reservations with fast approvals, clear status tracking, and calendar
-          views. Full booking workflows launch in Phase 3.
-        </p>
-      </div>
+
+        <div className="booking-tab-row" role="tablist" aria-label="Booking status filters">
+          {statusTabs.map((status) => (
+            <button
+              key={status}
+              type="button"
+              role="tab"
+              aria-selected={activeStatus === status}
+              className={`booking-tab-chip ${activeStatus === status ? 'is-active' : ''}`}
+              onClick={() => setActiveStatus(status)}
+            >
+              {status === 'ALL'
+                ? `All (${bookings.length})`
+                : `${status} (${bookings.filter((booking) => booking.status === status).length})`}
+            </button>
+          ))}
+        </div>
+
+        {isLoading ? <p>Loading bookings...</p> : null}
+        {!isLoading && bookings.length === 0 ? (
+          <p>No bookings yet. Submit your first request.</p>
+        ) : null}
+        {!isLoading && bookings.length > 0 && filteredBookings.length === 0 ? (
+          <p>No bookings in the {activeStatus.toLowerCase()} state.</p>
+        ) : null}
+        {filteredBookings.map((booking) => (
+          <BookingCard key={booking.id} booking={booking} onCancel={handleCancel} />
+        ))}
+      </section>
     </main>
   );
 }
