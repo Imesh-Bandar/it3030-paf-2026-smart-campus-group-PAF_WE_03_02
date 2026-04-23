@@ -26,11 +26,11 @@ public class Booking {
     @Id
     private UUID id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "resource_id", nullable = false)
     private Resource resource;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "booker_id", nullable = false)
     private User booker;
 
@@ -41,21 +41,6 @@ public class Booking {
     private LocalTime startTime;
 
     @Column(name = "end_time", nullable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "resource_id")
-    private Resource resource;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "booker_id")
-    private User booker;
-
-    @Column(name = "booking_date")
-    private LocalDate bookingDate;
-
-    @Column(name = "start_time")
-    private LocalTime startTime;
-
-    @Column(name = "end_time")
     private LocalTime endTime;
 
     @Column(length = 500)
@@ -65,7 +50,7 @@ public class Booking {
     @Column(nullable = false)
     private BookingStatus status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "approved_by")
     private User approvedBy;
 
@@ -81,7 +66,7 @@ public class Booking {
     @Column(name = "checked_in_at")
     private OffsetDateTime checkedInAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "checked_in_by")
     private User checkedInBy;
 
@@ -89,10 +74,6 @@ public class Booking {
     private OffsetDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
-    @Column(name = "created_at")
-    private OffsetDateTime createdAt;
-
-    @Column(name = "updated_at")
     private OffsetDateTime updatedAt;
 
     @PrePersist
