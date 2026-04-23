@@ -5,7 +5,7 @@
 > **Stack:** Spring Boot REST API + React Frontend + **PostgreSQL**
 > **Team:** 4 Developers  
 > **Deadline:** 27th April 2026
-> **Last Updated:** 10th April 2026 ✅
+> **Last Updated:** 23rd April 2026 ✅
 
 ---
 
@@ -51,13 +51,13 @@
 | ---------------------------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
 | Facilities (Dev 1)           | 🟡 In Progress      | Entity/repository/service/controller and basic UI scaffolds exist; CRUD logic + full endpoints pending                                       |
 | Bookings (Dev 2)             | 🟢 Core Implemented | Booking entity/service/controller now include conflict detection, approval/rejection, cancellation, QR check-in, and waitlist auto-promotion |
-| Tickets (Dev 3)              | 🟡 In Progress      | Entity/repository/service/controller and UI placeholders exist; comments/attachments workflows pending                                       |
+| Tickets (Dev 3)              | 🟢 Core Implemented | Ticket entities/service/controllers, comments, attachments, SLA/workload metrics, assignment suggestions, and React ticket workflows complete |
 | Notifications & Auth (Dev 4) | 🟡 In Progress      | Authentication core complete; multi-role onboarding + role dashboards + notification integration pending                                     |
 
 ### 🧪 Testing Progress
 
 - [x] Base Spring Boot context test exists
-- [ ] Module-level unit tests pending
+- [x] Developer 3 module-level unit tests added (`TicketServiceTest` - 5 passing tests)
 - [ ] Repository/controller integration tests pending
 
 ### 📚 Documentation Progress
@@ -375,54 +375,56 @@ Project is considered complete when:
 
 **"Students report facility issues with photos. Admins assign technicians. Technicians update status and comment. I manage tickets, comments, attachments with embedded relationships."**
 
+**Implementation update (23 Apr 2026):** Core Developer 3 backend and frontend workflows are implemented. Comment endpoints are grouped under `TicketController`, and create/my-ticket workflows are combined in `TicketsPage`. Focused unit coverage exists in `TicketServiceTest`; comment/attachment integration tests remain pending.
+
 ### Backend Tasks
 
-- [ ] **D3-B01** Create `Ticket` JPA entity (main table)
-- [ ] **D3-B02** Create `TicketStatus` enum: `OPEN`, `IN_PROGRESS`, `RESOLVED`, `CLOSED`, `REJECTED`
-- [ ] **D3-B03** Create `TicketPriority` enum: `LOW`, `MEDIUM`, `HIGH`, `CRITICAL`
-- [ ] **D3-B04** Create `TicketCategory` enum: `ELECTRICAL`, `PLUMBING`, `IT_EQUIPMENT`, `HVAC`, `STRUCTURAL`, `OTHER`
-- [ ] **D3-B05** Create `TicketAttachment` JPA entity (separate table with FK to Ticket)
-- [ ] **D3-B06** Create `TicketComment` JPA entity (separate table with FK to Ticket, User)
-- [ ] **D3-B07** Create `TicketRepository` with finders for reporter, assigned tech, status
-- [ ] **D3-B08** Create `TicketService` with:
-  - [ ] Status workflow validation (OPEN → IN_PROGRESS → RESOLVED)
-  - [ ] Attachment upload (max 3 files)
-  - [ ] Comment CRUD operations
-  - [ ] Comment ownership rules (user can edit/delete own)
-- [ ] **D3-B09** Create `TicketController` with 6 endpoints
+- [x] **D3-B01** Create `Ticket` JPA entity (main table)
+- [x] **D3-B02** Create `TicketStatus` enum: `OPEN`, `IN_PROGRESS`, `RESOLVED`, `CLOSED`, `REJECTED`
+- [x] **D3-B03** Create `TicketPriority` enum: `LOW`, `MEDIUM`, `HIGH`, `CRITICAL`
+- [x] **D3-B04** Create `TicketCategory` enum: `ELECTRICAL`, `PLUMBING`, `IT_EQUIPMENT`, `HVAC`, `STRUCTURAL`, `OTHER`
+- [x] **D3-B05** Create `TicketAttachment` JPA entity (separate table with FK to Ticket)
+- [x] **D3-B06** Create `TicketComment` JPA entity (separate table with FK to Ticket, User)
+- [x] **D3-B07** Create `TicketRepository` with finders for reporter, assigned tech, status
+- [x] **D3-B08** Create `TicketService` with:
+  - [x] Status workflow validation (OPEN → IN_PROGRESS → RESOLVED)
+  - [x] Attachment upload (max 3 files)
+  - [x] Comment CRUD operations
+  - [x] Comment ownership rules (user can edit/delete own)
+- [x] **D3-B09** Create `TicketController` with 6 endpoints
   - POST /api/v1/tickets (multipart for attachments)
   - GET /api/v1/tickets (with filters)
   - GET /api/v1/tickets/{id}
   - PUT /api/v1/tickets/{id}/status (ADMIN/TECH)
   - PUT /api/v1/tickets/{id}/assign (ADMIN)
   - DELETE /api/v1/tickets/{id} (soft-delete)
-- [ ] **D3-B10** Create `TicketCommentController` with 3 endpoints
+- [x] **D3-B10** Create ticket comment endpoints (implemented in `TicketController`)
   - POST /api/v1/tickets/{id}/comments
   - PUT /api/v1/tickets/{id}/comments/{commentId}
   - DELETE /api/v1/tickets/{id}/comments/{commentId}
-- [ ] **D3-B11** Implement MultipartFile upload with file validation
-- [ ] **D3-B12** Write min 5 unit tests
+- [x] **D3-B11** Implement MultipartFile upload with file validation
+- [x] **D3-B12** Write min 5 unit tests
 - [ ] **D3-B13** Write integration tests for comment/attachment ops
-- [ ] **D3-B14** Add Swagger annotations
-- [ ] **D3-B15** Add SLA timer fields to ticket model (`first_response_at`, `resolved_at`, `sla_breached`)
-- [ ] **D3-B16** Implement service-level timer calculations (time-to-first-response, time-to-resolution)
-- [ ] **D3-B17** Add ticket SLA metrics endpoint for dashboard consumption
-- [ ] **D3-B18** Add technician workload metrics endpoint (active tickets, priority mix, overdue count)
-- [ ] **D3-B19** Implement assignment suggestion service based on workload balancing rules
+- [x] **D3-B14** Add Swagger annotations
+- [x] **D3-B15** Add SLA timer fields to ticket model (`first_response_at`, `resolved_at`, `sla_breached`)
+- [x] **D3-B16** Implement service-level timer calculations (time-to-first-response, time-to-resolution)
+- [x] **D3-B17** Add ticket SLA metrics endpoint for dashboard consumption
+- [x] **D3-B18** Add technician workload metrics endpoint (active tickets, priority mix, overdue count)
+- [x] **D3-B19** Implement assignment suggestion service based on workload balancing rules
 
 ### Frontend Tasks
 
-- [ ] **D3-F01** Create `CreateTicketPage` with image upload (max 3)
-- [ ] **D3-F02** Create `MyTicketsPage` (user's reported tickets)
-- [ ] **D3-F03** Create `AdminTicketsPage` (all tickets, with assign UI)
-- [ ] **D3-F04** Create `TicketDetailPage` with comments, attachments, timeline
-- [ ] **D3-F05** Create `CommentSection` with edit/delete
-- [ ] **D3-F06** Create `ImageUploadPreview` (drag-drop)
-- [ ] **D3-F07** Create status/priority badge components
-- [ ] **D3-F08** Implement `ticketService.js` (axios)
-- [ ] **D3-F09** Show SLA indicators and elapsed timers on technician and admin ticket views
-- [ ] **D3-F10** Add assignment suggestion panel to admin ticket assignment view
-- [ ] **D3-F11** Show technician workload indicators (load chips/heat status) in ticket board
+- [x] **D3-F01** Create ticket creation flow with image upload (max 3) in `TicketsPage`
+- [x] **D3-F02** Create user's ticket queue in `TicketsPage`
+- [x] **D3-F03** Create `AdminTicketsPage` (all tickets, with assign UI)
+- [x] **D3-F04** Create `TicketDetailPage` with comments and attachments
+- [x] **D3-F05** Create `CommentSection` with edit/delete
+- [x] **D3-F06** Create `ImageUploadPreview` (drag-drop)
+- [x] **D3-F07** Create status/priority badge components
+- [x] **D3-F08** Implement `ticketApi.ts` (axios)
+- [x] **D3-F09** Show SLA indicators and elapsed timers on technician and admin ticket views
+- [x] **D3-F10** Add assignment suggestion panel to admin ticket assignment view
+- [x] **D3-F11** Show technician workload indicators (load chips/heat status) in ticket board
 
 ---
 

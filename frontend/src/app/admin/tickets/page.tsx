@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+import { Link } from 'react-router-dom';
 import { TicketBoard } from '../../../components/tickets/TicketBoard';
 import { TicketPriorityBadge, TicketStatusBadge } from '../../../components/tickets/TicketBadges';
 import { ticketApi } from '../../../services/api/ticketApi';
@@ -24,13 +25,21 @@ export function AdminTicketsPage() {
 
   const assign = async (technicianId: string) => {
     if (!selectedTicketId) return;
-    await ticketApi.assign(selectedTicketId, technicianId);
-    toast.success('Technician assigned');
-    await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ['tickets'] }),
-      queryClient.invalidateQueries({ queryKey: ['technician-workload'] }),
-      queryClient.invalidateQueries({ queryKey: ['assignment-suggestion'] }),
-    ]);
+    try {
+      await ticketApi.assign(selectedTicketId, technicianId);
+      toast.success('Technician assigned');
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['tickets'] }),
+        queryClient.invalidateQueries({ queryKey: ['technician-workload'] }),
+        queryClient.invalidateQueries({ queryKey: ['assignment-suggestion'] }),
+      ]);
+    } catch (error) {
+      const message =
+        error && typeof error === 'object' && 'response' in error
+          ? (error as { response?: { data?: { message?: string } } }).response?.data?.message
+          : undefined;
+      toast.error(message ?? 'Could not assign technician');
+    }
   };
 
   return (
@@ -83,17 +92,25 @@ export function AdminTicketsPage() {
               )}
             </div>
           )}
-          <div className="technician-list">
-            {technicians.map((tech) => {
-              const load = workloads.find((item) => item.technicianId === tech.id);
-              return (
-                <button type="button" key={tech.id} onClick={() => assign(tech.id)} disabled={!selectedTicketId}>
-                  <span>{tech.fullName}</span>
-                  <small>{load ? `${load.activeTickets} active / ${load.loadStatus}` : 'No load data'}</small>
-                </button>
-              );
-            })}
-          </div>
+          {technicians.length > 0 ? (
+            <div className="technician-list">
+              {technicians.map((tech) => {
+                const load = workloads.find((item) => item.technicianId === tech.id);
+                return (
+                  <button type="button" key={tech.id} onClick={() => assign(tech.id)} disabled={!selectedTicketId}>
+                    <span>{tech.fullName}</span>
+                    <small>{load ? `${load.activeTickets} active / ${load.loadStatus}` : 'No load data'}</small>
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="ticket-empty-state">
+              <strong>No technicians available</strong>
+              <p>Create a technician account or change an existing user's role to Technician before assigning tickets.</p>
+              <Link to="/admin/users" className="btn-primary">Manage users</Link>
+            </div>
+          )}
         </aside>
       </section>
     </main>

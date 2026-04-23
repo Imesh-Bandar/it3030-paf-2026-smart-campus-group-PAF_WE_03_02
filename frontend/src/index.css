@@ -2915,6 +2915,7 @@ body {
 .ticket-card,
 .ticket-comment,
 .suggestion-box,
+.ticket-empty-state,
 .ticket-metric-grid article,
 .technician-list button {
   border: 1px solid var(--border);
@@ -2930,6 +2931,7 @@ body {
 
 .ticket-card p,
 .suggestion-box p,
+.ticket-empty-state p,
 .ticket-comment p {
   color: var(--text-secondary);
   overflow-wrap: anywhere;
@@ -3012,6 +3014,15 @@ body {
 .technician-list small {
   display: block;
   color: var(--text-secondary);
+}
+
+.ticket-empty-state {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.ticket-empty-state .btn-primary {
+  width: max-content;
 }
 
 .ticket-facts {
