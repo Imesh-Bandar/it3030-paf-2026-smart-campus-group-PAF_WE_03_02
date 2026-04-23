@@ -2021,17 +2021,56 @@ body {
   border-radius: var(--r-md);
   border: 1px dashed var(--border);
   background: var(--bg-card);
+  display: grid;
+  gap: 10px;
+  width: max-content;
+  max-width: 100%;
 }
 
 .booking-qr-label {
-  margin: 0 0 6px;
+  margin: 0 0 4px;
   font-size: 13px;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
+}
+
+.booking-qr-help {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.booking-qr-image {
+  width: 220px;
+  max-width: 100%;
+  aspect-ratio: 1;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.booking-qr-placeholder {
+  display: grid;
+  place-items: center;
+  width: 220px;
+  max-width: 100%;
+  aspect-ratio: 1;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  background: var(--surface);
+}
+
+.booking-qr-token-details {
+  color: var(--text-secondary);
+}
+
+.booking-qr-token-details summary {
+  cursor: pointer;
 }
 
 .booking-qr-token {
   display: inline-block;
+  margin-top: 8px;
   white-space: pre-wrap;
   word-break: break-all;
 }
