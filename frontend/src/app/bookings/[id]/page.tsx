@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { bookingApi } from '../../../services/api/bookingApi';
 import { useRole } from '../../../hooks/useRole';
+import { BookingQrCode } from '../../../components/bookings/BookingQrCode';
 import type { Booking } from '../../../services/types/booking';
 
 export function BookingDetailsPage() {
@@ -31,13 +32,15 @@ export function BookingDetailsPage() {
   const canVerify = isAdmin() || isStaff();
 
   const handleCheckIn = async () => {
-    if (!id || !token) {
+    const qrToken = token.trim();
+    if (!id || !qrToken) {
       toast.error('Enter QR token to verify');
       return;
     }
     try {
-      const updated = await bookingApi.checkIn(id, { qrToken: token });
+      const updated = await bookingApi.checkIn(id, { qrToken });
       setBooking(updated);
+      setToken('');
       toast.success('Check-in verified');
     } catch {
       toast.error('Check-in failed');
@@ -63,11 +66,8 @@ export function BookingDetailsPage() {
           {booking.waitlisted && booking.waitlistPosition ? (
             <p>Waitlisted at position #{booking.waitlistPosition}</p>
           ) : null}
-          {booking.qrToken ? (
-            <div className="booking-qr-panel">
-              <p className="booking-qr-label">QR check-in token</p>
-              <code className="booking-qr-token">{booking.qrToken}</code>
-            </div>
+          {booking.status === 'APPROVED' && booking.qrToken ? (
+            <BookingQrCode token={booking.qrToken} bookingId={booking.id} resourceName={booking.resourceName} />
           ) : null}
           {booking.rejectedReason ? <p>Reason: {booking.rejectedReason}</p> : null}
 

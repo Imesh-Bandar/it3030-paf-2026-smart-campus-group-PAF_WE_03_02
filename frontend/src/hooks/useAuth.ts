@@ -17,9 +17,13 @@ export function useAuth() {
   const backendBase =
     import.meta.env.VITE_API_BASE_URL?.replace('/api/v1', '') ?? 'http://localhost:8008';
 
-  const login = useCallback(() => {
-    window.location.href = `${backendBase}/auth/google`;
-  }, [backendBase]);
+  const login = useCallback(
+    (role: 'STUDENT' | 'STAFF' | 'TECHNICIAN' = 'STUDENT') => {
+      const params = new URLSearchParams({ role });
+      window.location.href = `${backendBase}/auth/google?${params.toString()}`;
+    },
+    [backendBase],
+  );
 
   const loginWithEmailPassword = useCallback(
     async (email: string, password: string) => {

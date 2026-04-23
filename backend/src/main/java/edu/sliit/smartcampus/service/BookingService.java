@@ -247,7 +247,8 @@ public class BookingService {
         if (booking.getCheckedInAt() != null) {
             throw new ValidationException("Booking is already checked in");
         }
-        if (booking.getQrToken() == null || !booking.getQrToken().equals(request.qrToken())) {
+        String scannedToken = request.qrToken() == null ? "" : request.qrToken().trim();
+        if (booking.getQrToken() == null || !booking.getQrToken().equals(scannedToken)) {
             throw new ValidationException("Invalid QR token");
         }
 

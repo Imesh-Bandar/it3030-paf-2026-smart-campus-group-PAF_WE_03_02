@@ -49,12 +49,14 @@ export function AdminBookingsPage() {
   };
 
   const checkIn = async () => {
-    if (!checkInBookingId || !checkInToken) {
+    const bookingId = checkInBookingId.trim();
+    const qrToken = checkInToken.trim();
+    if (!bookingId || !qrToken) {
       toast.error('Booking ID and QR token are required');
       return;
     }
     try {
-      await bookingApi.checkIn(checkInBookingId, { qrToken: checkInToken });
+      await bookingApi.checkIn(bookingId, { qrToken });
       toast.success('Check-in verified');
       setCheckInBookingId('');
       setCheckInToken('');
