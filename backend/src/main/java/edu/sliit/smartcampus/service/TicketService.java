@@ -5,6 +5,7 @@ import edu.sliit.smartcampus.dto.TechnicianWorkloadDto;
 import edu.sliit.smartcampus.dto.TicketAttachmentDto;
 import edu.sliit.smartcampus.dto.TicketCommentDto;
 import edu.sliit.smartcampus.dto.TicketCommentRequestDto;
+import edu.sliit.smartcampus.dto.TicketCreateRequestDto;
 import edu.sliit.smartcampus.dto.TicketDto;
 import edu.sliit.smartcampus.dto.TicketSlaMetricsDto;
 import edu.sliit.smartcampus.dto.TicketStatusUpdateRequestDto;
@@ -76,15 +77,9 @@ public class TicketService {
     }
 
     @Transactional
-    public TicketDto createTicket(
-            String title,
-            String description,
-            String category,
-            String priority,
-            String location,
-            List<MultipartFile> files) {
+    public TicketDto createTicket(TicketCreateRequestDto request) {
         User reporter = getCurrentUser();
-        List<MultipartFile> attachments = files == null ? List.of() : files.stream()
+        List<MultipartFile> attachments = request.getFiles() == null ? List.of() : request.getFiles().stream()
                 .filter(file -> file != null && !file.isEmpty())
                 .toList();
         if (attachments.size() > fileStorageService.maxFiles()) {
@@ -93,12 +88,12 @@ public class TicketService {
 
         Ticket ticket = new Ticket();
         ticket.setTicketNumber(nextTicketNumber());
-        ticket.setTitle(required(title, "Title"));
-        ticket.setDescription(required(description, "Description"));
-        ticket.setCategory(parseEnum(TicketCategory.class, category, TicketCategory.OTHER));
-        ticket.setPriority(parseEnum(TicketPriority.class, priority, TicketPriority.MEDIUM));
+        ticket.setTitle(required(request.getTitle(), "Title"));
+        ticket.setDescription(required(request.getDescription(), "Description"));
+        ticket.setCategory(parseEnum(TicketCategory.class, request.getCategory(), TicketCategory.OTHER));
+        ticket.setPriority(parseEnum(TicketPriority.class, request.getPriority(), null));
         ticket.setStatus(TicketStatus.OPEN);
-        ticket.setLocation(blankToNull(location));
+        ticket.setLocation(blankToNull(request.getLocation()));
         ticket.setReporter(reporter);
         updateSlaState(ticket, OffsetDateTime.now());
 
@@ -173,12 +168,14 @@ public class TicketService {
         if (next == null) {
             throw new ValidationException("Invalid ticket status");
         }
+        ensureSupportedStatus(next);
+        ensureValidStatusTransition(ticket.getStatus(), next);
         OffsetDateTime now = OffsetDateTime.now();
         ticket.setStatus(next);
-        if (ticket.getFirstResponseAt() == null && (next == TicketStatus.IN_PROGRESS || next == TicketStatus.RESOLVED)) {
+        if (ticket.getFirstResponseAt() == null && next == TicketStatus.IN_PROGRESS) {
             ticket.setFirstResponseAt(now);
         }
-        if (next == TicketStatus.RESOLVED || next == TicketStatus.CLOSED) {
+        if (next == TicketStatus.RESOLVED && ticket.getResolvedAt() == null) {
             ticket.setResolvedAt(now);
         }
         updateSlaState(ticket, now);
@@ -333,6 +330,25 @@ public class TicketService {
 
     private boolean isAssignedTo(Ticket ticket, User user) {
         return ticket.getAssignee() != null && ticket.getAssignee().getId().equals(user.getId());
+    }
+
+    private void ensureSupportedStatus(TicketStatus status) {
+        if (status != TicketStatus.OPEN && status != TicketStatus.IN_PROGRESS && status != TicketStatus.RESOLVED) {
+            throw new ValidationException("Status must be one of OPEN, IN_PROGRESS, RESOLVED");
+        }
+    }
+
+    private void ensureValidStatusTransition(TicketStatus current, TicketStatus next) {
+        if (current == next) {
+            return;
+        }
+        if (current == TicketStatus.OPEN && next == TicketStatus.IN_PROGRESS) {
+            return;
+        }
+        if (current == TicketStatus.IN_PROGRESS && next == TicketStatus.RESOLVED) {
+            return;
+        }
+        throw new ValidationException("Invalid status transition: " + current + " -> " + next);
     }
 
     private void requireAdmin(User user) {

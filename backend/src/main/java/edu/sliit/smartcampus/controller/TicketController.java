@@ -5,6 +5,7 @@ import edu.sliit.smartcampus.dto.TicketAssignRequestDto;
 import edu.sliit.smartcampus.dto.TicketAttachmentDto;
 import edu.sliit.smartcampus.dto.TicketCommentDto;
 import edu.sliit.smartcampus.dto.TicketCommentRequestDto;
+import edu.sliit.smartcampus.dto.TicketCreateRequestDto;
 import edu.sliit.smartcampus.dto.TicketDto;
 import edu.sliit.smartcampus.dto.TicketStatusUpdateRequestDto;
 import edu.sliit.smartcampus.model.TicketStatus;
@@ -27,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/tickets")
@@ -41,15 +41,9 @@ public class TicketController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Create a maintenance ticket with up to 3 image attachments")
-    public ResponseEntity<TicketDto> createTicket(
-            @RequestParam String title,
-            @RequestParam String description,
-            @RequestParam String category,
-            @RequestParam(defaultValue = "MEDIUM") String priority,
-            @RequestParam(required = false) String location,
-            @RequestParam(name = "files", required = false) List<MultipartFile> files) {
+    public ResponseEntity<TicketDto> createTicket(@Valid @ModelAttribute TicketCreateRequestDto request) {
         return ResponseEntity.status(201)
-                .body(ticketService.createTicket(title, description, category, priority, location, files));
+                .body(ticketService.createTicket(request));
     }
 
     @GetMapping
