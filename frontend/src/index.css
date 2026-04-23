@@ -114,6 +114,10 @@
   --t-fast: 150ms ease;
   --t-normal: 250ms ease;
   --t-slow: 400ms ease;
+  --surface: var(--bg-card);
+  --surface-2: var(--bg-card-2);
+  --text: var(--text-primary);
+  --accent: var(--text-accent);
 }
 
 /* ─── Reset ──────────────────────────────────────── */
@@ -2744,6 +2748,309 @@ body {
 
 @media (max-width: 768px) {
   .facility-window-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Developer 3: Maintenance tickets */
+.ticket-layout,
+.ticket-admin-grid,
+.ticket-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.75fr) minmax(0, 1.25fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.ticket-admin-grid {
+  grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.55fr);
+}
+
+.ticket-create-panel,
+.ticket-list-panel,
+.ticket-assignment-panel,
+.ticket-detail-main,
+.ticket-detail-section {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  padding: 1rem;
+}
+
+.section-header.compact {
+  margin-bottom: 0.75rem;
+}
+
+.section-header.compact h2 {
+  font-size: 1rem;
+}
+
+.ticket-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.ticket-form label,
+.ticket-comment-form,
+.ticket-status-control label {
+  display: grid;
+  gap: 0.4rem;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.ticket-form input,
+.ticket-form select,
+.ticket-form textarea,
+.ticket-comment-form textarea,
+.ticket-status-control select,
+.ticket-assignment-panel select,
+.ticket-comment textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+  color: var(--text);
+  padding: 0.75rem 0.85rem;
+}
+
+.ticket-form-wide,
+.ticket-form button[type='submit'],
+.ticket-upload-zone {
+  grid-column: 1 / -1;
+}
+
+.ticket-upload-zone {
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  padding: 0.85rem;
+  background: var(--surface-2);
+}
+
+.ticket-upload-zone input {
+  display: none;
+}
+
+.ticket-upload-zone label {
+  cursor: pointer;
+  color: var(--accent);
+}
+
+.ticket-upload-grid,
+.ticket-attachment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 0.7rem;
+  margin-top: 0.75rem;
+}
+
+.ticket-upload-grid figure,
+.ticket-attachment-grid a {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.ticket-upload-grid img,
+.ticket-attachment-grid img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+.ticket-upload-grid figcaption,
+.ticket-attachment-grid span {
+  display: block;
+  padding: 0.45rem;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.ticket-board {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(210px, 1fr));
+  gap: 0.8rem;
+  overflow-x: auto;
+  padding-bottom: 0.35rem;
+}
+
+.ticket-column {
+  min-height: 280px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+  padding: 0.75rem;
+}
+
+.ticket-column-header,
+.ticket-card-topline,
+.ticket-card-footer,
+.ticket-card-meta,
+.ticket-detail-badges,
+.ticket-inline-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.ticket-column-header h2 {
+  font-size: 0.86rem;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.ticket-column-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.ticket-card,
+.ticket-comment,
+.suggestion-box,
+.ticket-metric-grid article,
+.technician-list button {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  padding: 0.85rem;
+}
+
+.ticket-card h3 {
+  margin: 0.45rem 0;
+  font-size: 1rem;
+}
+
+.ticket-card p,
+.suggestion-box p,
+.ticket-comment p {
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.ticket-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.75rem;
+  border-radius: 999px;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.status-open,
+.priority-medium {
+  color: #2563eb;
+}
+
+.status-in_progress,
+.priority-high,
+.sla-breached {
+  color: #dc2626;
+}
+
+.status-resolved,
+.status-closed,
+.sla-ok {
+  color: #16a34a;
+}
+
+.priority-critical {
+  background: #7f1d1d;
+  color: #fff;
+}
+
+.priority-low {
+  color: #0f766e;
+}
+
+.internal-note {
+  color: #9333ea;
+}
+
+.ticket-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.9rem;
+  margin-bottom: 1.25rem;
+}
+
+.ticket-metric-grid span {
+  color: var(--text-secondary);
+}
+
+.ticket-metric-grid strong {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 1.65rem;
+}
+
+.ticket-assignment-panel,
+.technician-list,
+.ticket-comments,
+.ticket-comment-form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.technician-list button {
+  text-align: left;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.technician-list small {
+  display: block;
+  color: var(--text-secondary);
+}
+
+.ticket-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.ticket-facts dt {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.ticket-facts dd {
+  margin: 0.2rem 0 0;
+  font-weight: 800;
+}
+
+.ticket-detail-section {
+  margin-bottom: 1rem;
+}
+
+.ticket-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 980px) {
+  .ticket-layout,
+  .ticket-admin-grid,
+  .ticket-detail-grid,
+  .ticket-metric-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ticket-form,
+  .ticket-facts {
     grid-template-columns: 1fr;
   }
 }
