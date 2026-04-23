@@ -11,9 +11,11 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import edu.sliit.smartcampus.security.OAuth2RoleCaptureFilter;
 import edu.sliit.smartcampus.security.OAuth2SuccessHandler;
 import edu.sliit.smartcampus.security.JwtAuthenticationFilter;
 
@@ -22,14 +24,17 @@ import edu.sliit.smartcampus.security.JwtAuthenticationFilter;
 public class SecurityConfig {
 
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final OAuth2RoleCaptureFilter oAuth2RoleCaptureFilter;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final String frontendUrl;
 
     public SecurityConfig(
             OAuth2SuccessHandler oAuth2SuccessHandler,
+            OAuth2RoleCaptureFilter oAuth2RoleCaptureFilter,
             JwtAuthenticationFilter jwtAuthenticationFilter,
             @Value("${app.frontend-url:http://localhost:5173}") String frontendUrl) {
         this.oAuth2SuccessHandler = oAuth2SuccessHandler;
+        this.oAuth2RoleCaptureFilter = oAuth2RoleCaptureFilter;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.frontendUrl = frontendUrl;
     }
@@ -58,6 +63,7 @@ public class SecurityConfig {
                         .authorizationEndpoint(authorization -> authorization.baseUri("/auth"))
                         .redirectionEndpoint(redirection -> redirection.baseUri("/login/oauth2/code/*"))
                         .successHandler(oAuth2SuccessHandler))
+                .addFilterBefore(oAuth2RoleCaptureFilter, OAuth2AuthorizationRequestRedirectFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
