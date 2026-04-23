@@ -175,7 +175,6 @@ class BookingServiceTest {
                 pending.getEndTime(),
                 pending.getId())).thenReturn(List.of());
         when(bookingRepository.save(any(Booking.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(waitlistEntryRepository.findByBooking_Id(pending.getId())).thenReturn(Optional.empty());
         when(waitlistEntryRepository.findByBooking_Id(any(UUID.class))).thenReturn(Optional.empty());
 
         var dto = bookingService.approveBooking(pending.getId());
