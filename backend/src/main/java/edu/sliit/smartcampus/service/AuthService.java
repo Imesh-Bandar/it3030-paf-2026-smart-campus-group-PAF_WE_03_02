@@ -69,7 +69,7 @@ public class AuthService {
         user.setStatus(UserStatus.ACTIVE);
         user.setLastLoginAt(OffsetDateTime.now());
 
-        User saved = userRepository.save(user);
+        User saved = userRepository.saveAndFlush(user);
         localCredentialService.upsertPasswordHash(saved.getId(), passwordEncoder.encode(request.password()));
 
         return issueSession(saved);
