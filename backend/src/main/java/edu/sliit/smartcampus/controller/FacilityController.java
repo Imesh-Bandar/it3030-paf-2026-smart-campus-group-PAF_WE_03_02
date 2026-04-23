@@ -103,4 +103,14 @@ public class FacilityController {
             @Valid @RequestBody MaintenanceBlackoutRequestDto request) {
         return ResponseEntity.status(201).body(facilityService.createMaintenanceBlackout(id, request));
     }
+
+    @DeleteMapping("/{id}/maintenance-blackouts/{blackoutId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Delete maintenance blackout")
+    public ResponseEntity<ApiMessage> deleteMaintenanceBlackout(
+            @PathVariable UUID id,
+            @PathVariable UUID blackoutId) {
+        facilityService.deleteMaintenanceBlackout(id, blackoutId);
+        return ResponseEntity.ok(new ApiMessage("Maintenance blackout deleted"));
+    }
 }
