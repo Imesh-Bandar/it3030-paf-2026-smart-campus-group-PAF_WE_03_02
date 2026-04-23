@@ -46,12 +46,17 @@ spring:
             token-uri: https://oauth2.googleapis.com/token
             user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
             user-name-attribute: sub
+  servlet:
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE:5MB}
+      max-request-size: 16MB
 
 server:
   port: ${SERVER_PORT:8080}
 
 app:
   frontend-url: ${FRONTEND_URL:http://localhost:5173}
+  file-upload-dir: ${FILE_UPLOAD_DIR:./uploads}
   jwt:
     secret: ${JWT_SECRET:smartcampus-dev-secret-change-me}
     expiration: ${JWT_EXPIRATION:3600000}
