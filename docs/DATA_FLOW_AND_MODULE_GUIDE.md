@@ -526,7 +526,79 @@ Documented but not fully represented by current Java entities:
 | `booking_status_history` | Dev 2 | Mentioned in documentation, but no current Java entity found |
 | `ticket_status_history` | Dev 3 | Mentioned in documentation, but no current Java entity found |
 
-## 10. End-to-End Examples
+## 10. Developer Innovation File Paths
+
+Use this table when explaining exactly where each developer's innovation is implemented in the code.
+
+| Developer | Innovation Feature | Main File Paths | What to Explain |
+| --- | --- | --- | --- |
+| Dev 1 | Dynamic facility availability calendar | `backend/src/main/java/edu/sliit/smartcampus/service/FacilityService.java` | `getAvailability()` builds day-by-day slots by combining availability windows, maintenance blackouts, and bookings. |
+| Dev 1 | Maintenance blackout blocking | `backend/src/main/java/edu/sliit/smartcampus/service/FacilityService.java`, `backend/src/main/java/edu/sliit/smartcampus/controller/FacilityController.java` | Admin can block resources for maintenance. Bookings are rejected if the selected slot overlaps a blackout. |
+| Dev 1 | Resource filtering and search | `backend/src/main/java/edu/sliit/smartcampus/repository/ResourceRepository.java`, `frontend/src/services/api/facilityApi.ts` | Resources can be filtered by type, status, capacity, and search query. |
+| Dev 1 | Soft delete with active-booking protection | `backend/src/main/java/edu/sliit/smartcampus/service/FacilityService.java` | Resource deletion checks active bookings first, then marks `deletedAt` instead of permanently deleting. |
+| Dev 2 | Booking conflict preview | `backend/src/main/java/edu/sliit/smartcampus/service/BookingService.java`, `frontend/src/services/api/bookingApi.ts` | `previewConflict()` checks approved bookings before the user submits or confirms a slot. |
+| Dev 2 | Alternative slot suggestion | `backend/src/main/java/edu/sliit/smartcampus/service/BookingService.java` | `findAlternativeSlots()` searches the same day for available time slots. |
+| Dev 2 | Waitlist management | `backend/src/main/java/edu/sliit/smartcampus/service/BookingService.java`, `backend/src/main/java/edu/sliit/smartcampus/model/WaitlistEntry.java` | Conflicting booking requests can be placed into a waitlist with position tracking. |
+| Dev 2 | Automatic waitlist promotion | `backend/src/main/java/edu/sliit/smartcampus/service/BookingService.java` | `autoPromoteWaitlist()` approves the next waiting booking when an approved booking is cancelled. |
+| Dev 2 | QR check-in | `backend/src/main/java/edu/sliit/smartcampus/service/BookingService.java`, `frontend/src/components/bookings/BookingQrCode.tsx` | Approval generates a `qrToken`; check-in validates the token before marking booking as completed. |
+| Dev 3 | Ticket image evidence upload | `frontend/src/components/tickets/ImageUploadPreview.tsx`, `frontend/src/components/tickets/TicketForm.tsx`, `frontend/src/services/api/ticketApi.ts`, `backend/src/main/java/edu/sliit/smartcampus/controller/TicketController.java`, `backend/src/main/java/edu/sliit/smartcampus/service/TicketFileStorageService.java` | User uploads up to 3 evidence images; backend validates type/size and stores file metadata in `ticket_attachments`. |
+| Dev 3 | SLA tracking | `backend/src/main/java/edu/sliit/smartcampus/service/TicketService.java` | `updateSlaState()` calculates response/resolution breach status based on priority and time. |
+| Dev 3 | Technician workload analytics | `backend/src/main/java/edu/sliit/smartcampus/service/TicketService.java`, `backend/src/main/java/edu/sliit/smartcampus/controller/AdminTicketMetricsController.java` | Admin can view technician workload and active/overdue ticket counts. |
+| Dev 3 | Assignment suggestion | `backend/src/main/java/edu/sliit/smartcampus/service/TicketService.java` | `suggestAssignee()` selects a technician using the lowest active ticket load. |
+| Dev 3 | Internal technician/admin comments | `backend/src/main/java/edu/sliit/smartcampus/service/TicketService.java`, `frontend/src/components/tickets/CommentSection.tsx` | Internal comments are visible only to admins and technicians. |
+| Dev 4 | JWT login and refresh flow | `backend/src/main/java/edu/sliit/smartcampus/controller/AuthController.java`, `backend/src/main/java/edu/sliit/smartcampus/service/AuthService.java`, `frontend/src/lib/axios.ts`, `frontend/src/stores/authStore.ts` | Frontend stores tokens and Axios automatically refreshes access tokens after `401` responses. |
+| Dev 4 | Role-based access control | `backend/src/main/java/edu/sliit/smartcampus/config/SecurityConfig.java`, `backend/src/main/java/edu/sliit/smartcampus/security/JwtAuthenticationFilter.java` | Endpoints are protected by JWT and role checks such as `ADMIN`, `TECHNICIAN`, `STAFF`, and `STUDENT`. |
+| Dev 4 | Dashboard bootstrap by role | `backend/src/main/java/edu/sliit/smartcampus/controller/AuthController.java` | `/api/v1/auth/bootstrap` returns current user, dashboard path, and unread notification count. |
+| Dev 4 | Notifications and preferences | `backend/src/main/java/edu/sliit/smartcampus/controller/NotificationController.java`, `backend/src/main/java/edu/sliit/smartcampus/service/NotificationService.java`, `frontend/src/services/api/notificationApi.ts` | Users receive booking/ticket/security notifications and can manage preference settings. |
+| Dev 4 | Security activity tracking | `backend/src/main/java/edu/sliit/smartcampus/controller/SecurityActivityController.java`, `backend/src/main/java/edu/sliit/smartcampus/service/SecurityActivityService.java`, `frontend/src/services/api/securityApi.ts` | Login/logout/token events can be logged and suspicious activity can be reviewed. |
+| Shared/Admin | Admin analytics | `backend/src/main/java/edu/sliit/smartcampus/controller/AdminAnalyticsController.java`, `backend/src/main/java/edu/sliit/smartcampus/service/AnalyticsService.java`, `backend/src/main/java/edu/sliit/smartcampus/dto/AnalyticsDto.java` | Admin analytics exposes top resources and peak booking hours. Current service contains placeholder logic for some analytics until booking data is complete. |
+
+## 11. HTTP Status Code Meanings
+
+The backend returns HTTP status codes to tell the frontend whether a request succeeded or failed. The common status codes in this project are:
+
+| Status Code | Meaning | Used When |
+| --- | --- | --- |
+| `200 OK` | Request succeeded and data is returned | Listing resources, getting bookings, updating status, logging in successfully |
+| `201 Created` | New data was created successfully | Creating a resource, booking, ticket, comment, or maintenance blackout |
+| `204 No Content` | Request succeeded but no response body is needed | Logout, mark all notifications as read, delete notification |
+| `400 Bad Request` | Frontend sent invalid data | Missing fields, invalid time range, invalid enum value, invalid file type, invalid QR token |
+| `401 Unauthorized` | User is not logged in or token is invalid/expired | Missing JWT token, expired access token before refresh |
+| `403 Forbidden` | User is logged in but does not have permission | Non-admin tries admin endpoint, technician tries to edit unassigned ticket |
+| `404 Not Found` | Requested record does not exist | Resource, booking, ticket, comment, or user id not found |
+| `409 Conflict` | Request is valid but conflicts with current data | Duplicate resource name/code, deleting a resource with active bookings, overlapping maintenance blackout |
+| `500 Internal Server Error` | Unexpected backend error | Any unhandled exception caught by `GlobalExceptionHandler` |
+
+Backend status-code handling is centralized in:
+
+```text
+backend/src/main/java/edu/sliit/smartcampus/exception/GlobalExceptionHandler.java
+```
+
+Important mapping from project exceptions:
+
+| Java Exception | HTTP Status Code | Example |
+| --- | --- | --- |
+| `ValidationException` | `400 Bad Request` | Booking date is in the past |
+| `IllegalArgumentException` | `400 Bad Request` | Invalid request value |
+| `AccessDeniedException` | `403 Forbidden` | User role is not allowed |
+| `ResourceNotFoundException` | `404 Not Found` | Ticket id not found |
+| `ConflictException` | `409 Conflict` | Resource has active bookings |
+| generic `Exception` | `500 Internal Server Error` | Unexpected server failure |
+
+Frontend meaning:
+
+```text
+200/201/204 = success
+400 = fix request data
+401 = login again or refresh token
+403 = user role has no permission
+404 = record not found
+409 = business-rule conflict
+500 = backend/server problem
+```
+
+## 12. End-to-End Examples
 
 ### Example 1: Create Ticket With Images
 
@@ -592,7 +664,7 @@ User logs in
   -> controller/service can identify current user
 ```
 
-## 11. Short Viva Explanation
+## 13. Short Viva Explanation
 
 Use this paragraph if you need to explain the system quickly:
 
@@ -600,7 +672,7 @@ Use this paragraph if you need to explain the system quickly:
 The frontend does not directly access the database. React pages call service files such as bookingApi, ticketApi, and facilityApi. These services use a shared Axios client that attaches the JWT token. The Spring Boot backend receives requests through controllers, applies business rules in services, and uses repositories to read and write JPA entities in the database. The response is converted into DTOs and returned as JSON to the frontend. The main innovation areas are booking conflict detection with waitlist and QR check-in, ticket image evidence upload, SLA tracking, technician workload analytics, and role-based notifications.
 ```
 
-## 12. Key Files to Mention in Report
+## 14. Key Files to Mention in Report
 
 | Area | File |
 | --- | --- |
@@ -619,4 +691,5 @@ The frontend does not directly access the database. React pages call service fil
 | Security config | `SecurityConfig.java`, `JwtAuthenticationFilter.java` |
 | Upload file serving | `WebConfig.java` |
 | SQL schema | `backend/db/full_schemas.sql` |
-
+| Exception/status handling | `GlobalExceptionHandler.java` |
+| Admin analytics | `AdminAnalyticsController.java`, `AnalyticsService.java`, `AnalyticsDto.java` |
