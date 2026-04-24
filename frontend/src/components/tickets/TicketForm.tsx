@@ -41,15 +41,28 @@ export function TicketForm({ onSubmit }: Props) {
     <form className="ticket-form" onSubmit={submit}>
       <label>
         Title
-        <input value={title} onChange={(event) => setTitle(event.target.value)} required maxLength={120} />
+        <input
+          value={title}
+          onChange={(event) => setTitle(event.target.value)}
+          required
+          maxLength={120}
+          placeholder="Short issue summary"
+        />
       </label>
       <label>
         Location
-        <input value={location} onChange={(event) => setLocation(event.target.value)} placeholder="Building, room, or area" />
+        <input
+          value={location}
+          onChange={(event) => setLocation(event.target.value)}
+          placeholder="Building, room, or area"
+        />
       </label>
       <label>
         Category
-        <select value={category} onChange={(event) => setCategory(event.target.value as TicketCategory)}>
+        <select
+          value={category}
+          onChange={(event) => setCategory(event.target.value as TicketCategory)}
+        >
           <option value="ELECTRICAL">Electrical</option>
           <option value="PLUMBING">Plumbing</option>
           <option value="IT_EQUIPMENT">IT equipment</option>
@@ -60,7 +73,10 @@ export function TicketForm({ onSubmit }: Props) {
       </label>
       <label>
         Priority
-        <select value={priority} onChange={(event) => setPriority(event.target.value as TicketPriority)}>
+        <select
+          value={priority}
+          onChange={(event) => setPriority(event.target.value as TicketPriority)}
+        >
           <option value="LOW">Low</option>
           <option value="MEDIUM">Medium</option>
           <option value="HIGH">High</option>
@@ -69,14 +85,23 @@ export function TicketForm({ onSubmit }: Props) {
       </label>
       <label className="ticket-form-wide">
         Description
-        <textarea value={description} onChange={(event) => setDescription(event.target.value)} required rows={5} />
+        <textarea
+          value={description}
+          onChange={(event) => setDescription(event.target.value)}
+          required
+          rows={5}
+          placeholder="Describe the issue, impact, and any urgent details."
+        />
       </label>
       <div className="ticket-form-wide">
         <ImageUploadPreview files={files} onFilesChange={setFiles} />
       </div>
-      <button type="submit" className="btn-primary" disabled={saving}>
-        {saving ? 'Submitting...' : 'Submit ticket'}
-      </button>
+      <div className="ticket-form-actions ticket-form-wide">
+        <p className="muted">Tip: add a photo when reporting visible damage or equipment issues.</p>
+        <button type="submit" className="btn-primary" disabled={saving}>
+          {saving ? 'Submitting...' : 'Submit ticket'}
+        </button>
+      </div>
     </form>
   );
 }

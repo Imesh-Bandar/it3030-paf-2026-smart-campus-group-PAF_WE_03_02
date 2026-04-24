@@ -19,14 +19,25 @@ export function TicketsPage() {
         <div>
           <p className="section-eyebrow">Support & Maintenance</p>
           <h1>Tickets</h1>
+          <p className="section-summary">
+            Submit an incident, then track progress across the support workflow in one place.
+          </p>
         </div>
-        {isAdmin() && <Link className="btn-primary" to="/admin/tickets">Admin board</Link>}
+        {isAdmin() && (
+          <Link className="btn-primary" to="/admin/tickets">
+            Admin board
+          </Link>
+        )}
       </div>
 
       <section className="ticket-layout">
         <div className="ticket-create-panel">
           <div className="section-header compact">
             <h2>Report an Issue</h2>
+            <p className="muted">
+              Keep the title short and include location details so the right team can respond
+              faster.
+            </p>
           </div>
           <TicketForm
             onSubmit={async (payload) => {
@@ -41,8 +52,13 @@ export function TicketsPage() {
         <div className="ticket-list-panel">
           <div className="section-header compact">
             <h2>My Ticket Queue</h2>
+            <p className="muted">Your latest requests and updates appear here in status order.</p>
           </div>
-          {isLoading ? <p className="muted">Loading tickets...</p> : <TicketBoard tickets={tickets} />}
+          {isLoading ? (
+            <p className="muted">Loading tickets...</p>
+          ) : (
+            <TicketBoard tickets={tickets} />
+          )}
         </div>
       </section>
     </main>
