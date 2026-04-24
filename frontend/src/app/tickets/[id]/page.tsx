@@ -2,7 +2,11 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { CommentSection } from '../../../components/tickets/CommentSection';
-import { SlaBadge, TicketPriorityBadge, TicketStatusBadge } from '../../../components/tickets/TicketBadges';
+import {
+  SlaBadge,
+  TicketPriorityBadge,
+  TicketStatusBadge,
+} from '../../../components/tickets/TicketBadges';
 import { useRole } from '../../../hooks/useRole';
 import { ticketApi } from '../../../services/api/ticketApi';
 import type { TicketStatus } from '../../../services/types/ticket';
@@ -30,7 +34,8 @@ export function TicketDetailsPage() {
   if (!ticket) return <main className="page-shell">Ticket not found</main>;
 
   const canManage = isAdmin() || isTechnician();
-  const backendRoot = import.meta.env.VITE_API_BASE_URL?.replace('/api/v1', '') ?? 'http://localhost:8008';
+  const backendRoot =
+    import.meta.env.VITE_API_BASE_URL?.replace('/api/v1', '') ?? 'http://localhost:8008';
 
   return (
     <main className="page-shell animate-fade-up" id="ticket-detail-page">
@@ -38,8 +43,13 @@ export function TicketDetailsPage() {
         <div>
           <p className="section-eyebrow">{ticket.ticketNumber}</p>
           <h1>{ticket.title}</h1>
+          <p className="section-summary">
+            Reported by {ticket.reporterName}. Use the status control to move the workflow forward.
+          </p>
         </div>
-        <Link className="btn-ghost" to="/tickets">Back to tickets</Link>
+        <Link className="btn-ghost" to="/tickets">
+          Back to tickets
+        </Link>
       </div>
 
       <section className="ticket-detail-grid">
@@ -51,12 +61,34 @@ export function TicketDetailsPage() {
           </div>
           <p>{ticket.description}</p>
           <dl className="ticket-facts">
-            <div><dt>Category</dt><dd>{ticket.category.replace('_', ' ')}</dd></div>
-            <div><dt>Location</dt><dd>{ticket.location || 'Not specified'}</dd></div>
-            <div><dt>Reporter</dt><dd>{ticket.reporterName}</dd></div>
-            <div><dt>Technician</dt><dd>{ticket.assigneeName || 'Unassigned'}</dd></div>
-            <div><dt>Elapsed</dt><dd>{ticket.elapsedMinutes} minutes</dd></div>
-            <div><dt>First response</dt><dd>{ticket.firstResponseAt ? new Date(ticket.firstResponseAt).toLocaleString() : 'Pending'}</dd></div>
+            <div>
+              <dt>Category</dt>
+              <dd>{ticket.category.replace('_', ' ')}</dd>
+            </div>
+            <div>
+              <dt>Location</dt>
+              <dd>{ticket.location || 'Not specified'}</dd>
+            </div>
+            <div>
+              <dt>Reporter</dt>
+              <dd>{ticket.reporterName}</dd>
+            </div>
+            <div>
+              <dt>Technician</dt>
+              <dd>{ticket.assigneeName || 'Unassigned'}</dd>
+            </div>
+            <div>
+              <dt>Elapsed</dt>
+              <dd>{ticket.elapsedMinutes} minutes</dd>
+            </div>
+            <div>
+              <dt>First response</dt>
+              <dd>
+                {ticket.firstResponseAt
+                  ? new Date(ticket.firstResponseAt).toLocaleString()
+                  : 'Pending'}
+              </dd>
+            </div>
           </dl>
 
           {canManage && (
@@ -71,7 +103,11 @@ export function TicketDetailsPage() {
                     await refresh();
                   }}
                 >
-                  {statuses.map((status) => <option value={status} key={status}>{status.replace('_', ' ')}</option>)}
+                  {statuses.map((status) => (
+                    <option value={status} key={status}>
+                      {status.replace('_', ' ')}
+                    </option>
+                  ))}
                 </select>
               </label>
             </div>
@@ -82,7 +118,12 @@ export function TicketDetailsPage() {
           <h2>Attachments</h2>
           <div className="ticket-attachment-grid">
             {ticket.attachments.map((attachment) => (
-              <a href={`${backendRoot}${attachment.fileUrl}`} target="_blank" rel="noreferrer" key={attachment.id}>
+              <a
+                href={`${backendRoot}${attachment.fileUrl}`}
+                target="_blank"
+                rel="noreferrer"
+                key={attachment.id}
+              >
                 <img src={`${backendRoot}${attachment.fileUrl}`} alt={attachment.fileName} />
                 <span>{attachment.fileName}</span>
               </a>

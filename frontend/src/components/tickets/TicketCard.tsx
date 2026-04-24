@@ -14,19 +14,21 @@ export function TicketCard({ ticket }: { ticket: Ticket }) {
   return (
     <article className="ticket-card">
       <div className="ticket-card-topline">
-        <span>{ticket.ticketNumber}</span>
+        <span className="ticket-number">{ticket.ticketNumber}</span>
         <TicketStatusBadge status={ticket.status} />
       </div>
       <h3>{ticket.title}</h3>
-      <p>{ticket.description}</p>
+      <p className="ticket-description">{ticket.description}</p>
       <div className="ticket-card-meta">
         <TicketPriorityBadge priority={ticket.priority} />
         <SlaBadge breached={ticket.slaBreached} />
-        <span>{formatMinutes(ticket.elapsedMinutes)}</span>
+        <span className="ticket-meta-time">{formatMinutes(ticket.elapsedMinutes)}</span>
       </div>
       <div className="ticket-card-footer">
         <span>{ticket.assigneeName ? `Tech: ${ticket.assigneeName}` : 'Unassigned'}</span>
-        <Link to={`/tickets/${ticket.id}`}>Open</Link>
+        <Link to={`/tickets/${ticket.id}`} className="ticket-card-link">
+          Open
+        </Link>
       </div>
     </article>
   );

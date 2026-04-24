@@ -6,13 +6,21 @@ type FacilityFiltersProps = {
 };
 
 export function FacilityFilters({ filters, onChange }: FacilityFiltersProps) {
+  const clearFilters = () => onChange({});
+
   return (
     <section className="dashboard-section facility-filters-panel">
-      <div className="section-header booking-header-compact">
+      <div className="section-header booking-header-compact facility-filters-header">
         <div>
           <p className="section-eyebrow">Find Space</p>
           <h2 className="booking-tight-title">Filters</h2>
+          <p className="facility-filters-copy">
+            Narrow down facilities by purpose, status, and capacity.
+          </p>
         </div>
+        <button type="button" className="btn-ghost" onClick={clearFilters}>
+          Clear filters
+        </button>
       </div>
 
       <div className="facility-filters-grid">
@@ -62,6 +70,7 @@ export function FacilityFilters({ filters, onChange }: FacilityFiltersProps) {
                 capacityMin: event.target.value ? Number(event.target.value) : undefined,
               })
             }
+            placeholder="e.g. 20"
           />
         </label>
         <label>
@@ -76,6 +85,7 @@ export function FacilityFilters({ filters, onChange }: FacilityFiltersProps) {
                 capacityMax: event.target.value ? Number(event.target.value) : undefined,
               })
             }
+            placeholder="e.g. 120"
           />
         </label>
       </div>

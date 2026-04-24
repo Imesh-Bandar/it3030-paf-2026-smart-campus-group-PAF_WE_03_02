@@ -1,6 +1,18 @@
 import { Link } from 'react-router-dom';
 import type { Facility } from '../../services/types/facility';
 
+const statusLabel: Record<string, string> = {
+  ACTIVE: 'Available',
+  UNDER_MAINTENANCE: 'Maintenance',
+  OUT_OF_SERVICE: 'Out of service',
+};
+
+const statusTone: Record<string, string> = {
+  ACTIVE: 'approved',
+  UNDER_MAINTENANCE: 'pending',
+  OUT_OF_SERVICE: 'rejected',
+};
+
 type FacilityCardProps = {
   facility: Facility;
   adminHref?: string;
@@ -15,24 +27,16 @@ export function FacilityCard({ facility, adminHref }: FacilityCardProps) {
             <p className="section-eyebrow">{facility.type.replaceAll('_', ' ')}</p>
             <h3 className="facility-title">{facility.name}</h3>
           </div>
-          <span
-            className={`status-badge ${
-              facility.status === 'ACTIVE'
-                ? 'approved'
-                : facility.status === 'UNDER_MAINTENANCE'
-                  ? 'pending'
-                  : 'rejected'
-            }`}
-          >
-            {facility.status.replaceAll('_', ' ')}
+          <span className={`status-badge ${statusTone[facility.status] ?? 'approved'}`}>
+            {statusLabel[facility.status] ?? facility.status.replaceAll('_', ' ')}
           </span>
         </div>
 
         <p className="facility-copy">{facility.description ?? 'No description provided yet.'}</p>
-        <div className="facility-meta-grid">
-          <span>{facility.location}</span>
-          <span>Capacity: {facility.capacity}</span>
-          <span>Code: {facility.resourceCode}</span>
+        <div className="facility-meta-grid" aria-label="Facility summary">
+          <span className="facility-meta-item">{facility.location}</span>
+          <span className="facility-meta-item">Capacity {facility.capacity}</span>
+          <span className="facility-meta-item">Code {facility.resourceCode}</span>
         </div>
 
         {facility.amenities.length > 0 ? (

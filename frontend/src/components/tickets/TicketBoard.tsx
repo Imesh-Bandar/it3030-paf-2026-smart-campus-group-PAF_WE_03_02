@@ -3,23 +3,37 @@ import { TicketCard } from './TicketCard';
 
 const columns: TicketStatus[] = ['OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED', 'REJECTED'];
 
+const columnLabels: Record<TicketStatus, string> = {
+  OPEN: 'Open',
+  IN_PROGRESS: 'In progress',
+  RESOLVED: 'Resolved',
+  CLOSED: 'Closed',
+  REJECTED: 'Rejected',
+};
+
 export function TicketBoard({ tickets }: { tickets: Ticket[] }) {
   return (
     <section className="ticket-board">
       {columns.map((status) => {
         const items = tickets.filter((ticket) => ticket.status === status);
         return (
-          <div className="ticket-column" key={status}>
+          <section
+            className="ticket-column"
+            key={status}
+            aria-labelledby={`ticket-column-${status.toLowerCase()}`}
+          >
             <div className="ticket-column-header">
-              <h2>{status.replace('_', ' ')}</h2>
+              <h2 id={`ticket-column-${status.toLowerCase()}`}>{columnLabels[status]}</h2>
               <span>{items.length}</span>
             </div>
             <div className="ticket-column-list">
-              {items.map((ticket) => (
-                <TicketCard ticket={ticket} key={ticket.id} />
-              ))}
+              {items.length > 0 ? (
+                items.map((ticket) => <TicketCard ticket={ticket} key={ticket.id} />)
+              ) : (
+                <div className="ticket-empty-column">No tickets in this state.</div>
+              )}
             </div>
-          </div>
+          </section>
         );
       })}
     </section>
