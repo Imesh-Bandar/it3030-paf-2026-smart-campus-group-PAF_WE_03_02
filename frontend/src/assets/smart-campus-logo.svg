@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="132" viewBox="0 0 420 132" role="img" aria-labelledby="title desc">
+  <title id="title">Smart Campus</title>
+  <desc id="desc">Smart Campus logo with connected campus icon and wordmark.</desc>
+  <defs>
+    <style>
+      .ink{fill:none;stroke:#082a57;stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+      .fill{fill:#082a57}
+      .word{fill:#082a57;font-family:Inter,Segoe UI,Arial,sans-serif;font-weight:800;letter-spacing:2px}
+      .tag{fill:#082a57;font-family:Inter,Segoe UI,Arial,sans-serif;font-weight:700;letter-spacing:3px}
+    </style>
+  </defs>
+  <g transform="translate(168 8)">
+    <path class="ink" d="M25 44 62 24l38 21v43l-38 22-37-22z"/>
+    <path class="ink" d="M25 44 62 66l38-21M62 66v44"/>
+    <path class="ink" d="M45 31v34M45 31l38 21M45 31l22-12 38 21v34"/>
+    <path class="ink" d="M67 19v33M84 31l31-31M100 45l34-18M100 62l42-4"/>
+    <circle class="fill" cx="116" cy="0" r="9"/>
+    <circle class="fill" cx="135" cy="27" r="9"/>
+    <circle class="fill" cx="146" cy="58" r="9"/>
+    <path class="ink" d="M15 77A58 58 0 0 1 81 1"/>
+    <path class="ink" d="M11 59A43 43 0 0 1 75 17"/>
+    <path class="ink" d="M23 48A31 31 0 0 1 66 28"/>
+  </g>
+  <text class="word" x="210" y="98" font-size="36" text-anchor="middle">SMART CAMPUS</text>
+  <text class="tag" x="210" y="123" font-size="15" text-anchor="middle">INNOVATE • CONNECT • LEARN</text>
+</svg>

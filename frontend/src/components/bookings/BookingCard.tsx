@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { CalendarDays, Clock3, QrCode, UserRound } from 'lucide-react';
 import type { Booking } from '../../services/types/booking';
 
 type BookingCardProps = {
@@ -39,13 +40,33 @@ export function BookingCard({
           </span>
         </div>
 
-        <p>{booking.purpose}</p>
-        {showOwner && <p>Requester: {booking.bookerName}</p>}
+        <p className="booking-card-purpose">{booking.purpose}</p>
+        <div className="booking-card-meta">
+          <span>
+            <CalendarDays size={14} />
+            {booking.bookingDate}
+          </span>
+          <span>
+            <Clock3 size={14} />
+            {booking.startTime} - {booking.endTime}
+          </span>
+          {showOwner ? (
+            <span>
+              <UserRound size={14} />
+              {booking.bookerName}
+            </span>
+          ) : null}
+          {booking.status === 'APPROVED' && booking.qrToken ? (
+            <span>
+              <QrCode size={14} />
+              QR ready
+            </span>
+          ) : null}
+        </div>
         {booking.waitlisted && booking.waitlistPosition ? (
           <p>Waitlist position: #{booking.waitlistPosition}</p>
         ) : null}
         {booking.rejectedReason ? <p>Reason: {booking.rejectedReason}</p> : null}
-        {booking.status === 'APPROVED' && booking.qrToken ? <p>QR code ready for check-in.</p> : null}
 
         <div className="booking-card-actions">
           <Link to={`/bookings/${booking.id}`} className="btn-ghost">

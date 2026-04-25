@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import toast from 'react-hot-toast';
+import { CalendarCheck, ClipboardList, Clock3 } from 'lucide-react';
 import { useBookings } from '../../hooks/useBookings';
 import { BookingCard } from '../../components/bookings/BookingCard';
 import { BookingForm } from '../../components/bookings/BookingForm';
@@ -66,13 +67,19 @@ export function BookingsPage() {
     activeStatus === 'ALL'
       ? bookings
       : bookings.filter((booking) => booking.status === activeStatus);
+  const pendingCount = bookings.filter((booking) => booking.status === 'PENDING').length;
+  const approvedCount = bookings.filter((booking) => booking.status === 'APPROVED').length;
+  const completedCount = bookings.filter((booking) => booking.status === 'COMPLETED').length;
 
   return (
     <main className="page-shell animate-fade-up" id="bookings-page">
-      <div className="section-header">
+      <div className="section-header bookings-hero">
         <div>
           <p className="section-eyebrow">Reservations</p>
           <h1>Bookings</h1>
+          <p className="section-summary">
+            Reserve campus spaces, check slot conflicts, and track approval progress in one place.
+          </p>
         </div>
         {isAdmin() ? (
           <a href="/admin/bookings" className="btn-primary">
@@ -81,9 +88,40 @@ export function BookingsPage() {
         ) : null}
       </div>
 
+      <section className="booking-summary-grid" aria-label="Booking summary">
+        <article className="booking-summary-card">
+          <ClipboardList size={22} />
+          <div>
+            <span>Total requests</span>
+            <strong>{bookings.length}</strong>
+          </div>
+        </article>
+        <article className="booking-summary-card">
+          <Clock3 size={22} />
+          <div>
+            <span>Pending approval</span>
+            <strong>{pendingCount}</strong>
+          </div>
+        </article>
+        <article className="booking-summary-card">
+          <CalendarCheck size={22} />
+          <div>
+            <span>Approved</span>
+            <strong>{approvedCount}</strong>
+          </div>
+        </article>
+        <article className="booking-summary-card">
+          <CalendarCheck size={22} />
+          <div>
+            <span>Completed</span>
+            <strong>{completedCount}</strong>
+          </div>
+        </article>
+      </section>
+
       <BookingForm loading={creating} onSubmit={handleCreate} />
 
-      <section className="dashboard-section booking-section-gap">
+      <section className="dashboard-section booking-section-gap booking-history-panel">
         <div className="section-header booking-header-compact">
           <div>
             <p className="section-eyebrow">History</p>
@@ -111,12 +149,14 @@ export function BookingsPage() {
           ))}
         </div>
 
-        {isLoading ? <p>Loading bookings...</p> : null}
+        {isLoading ? <p className="booking-empty-state">Loading bookings...</p> : null}
         {!isLoading && bookings.length === 0 ? (
-          <p>No bookings yet. Submit your first request.</p>
+          <p className="booking-empty-state">No bookings yet. Submit your first request.</p>
         ) : null}
         {!isLoading && bookings.length > 0 && filteredBookings.length === 0 ? (
-          <p>No bookings in the {activeStatus.toLowerCase()} state.</p>
+          <p className="booking-empty-state">
+            No bookings in the {activeStatus.toLowerCase()} state.
+          </p>
         ) : null}
         {filteredBookings.map((booking) => (
           <BookingCard key={booking.id} booking={booking} onCancel={handleCancel} />

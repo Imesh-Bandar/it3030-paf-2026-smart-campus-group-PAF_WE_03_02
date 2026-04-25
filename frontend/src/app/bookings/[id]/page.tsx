@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { CalendarDays, Clock3, ClipboardList } from 'lucide-react';
 import { bookingApi } from '../../../services/api/bookingApi';
 import { useRole } from '../../../hooks/useRole';
 import { BookingQrCode } from '../../../components/bookings/BookingQrCode';
@@ -48,26 +49,61 @@ export function BookingDetailsPage() {
   };
 
   return (
-    <main className="page-shell" id="booking-details-page">
-      <h1>Booking Details</h1>
-      <p className="muted">Booking id: {id}</p>
+    <main className="page-shell animate-fade-up" id="booking-details-page">
+      <header className="booking-details-hero">
+        <div>
+          <p className="section-eyebrow">Reservation Detail</p>
+          <h1>Booking Details</h1>
+          <p className="muted">Booking id: {id}</p>
+        </div>
+      </header>
 
-      {loading ? <p>Loading...</p> : null}
-      {!loading && !booking ? <p>Booking not found.</p> : null}
+      {loading ? <p className="booking-empty-state">Loading...</p> : null}
+      {!loading && !booking ? <p className="booking-empty-state">Booking not found.</p> : null}
 
       {booking ? (
-        <section className="dashboard-section booking-section-gap">
-          <h2>{booking.resourceName}</h2>
-          <p>Status: {booking.status}</p>
-          <p>
-            Slot: {booking.bookingDate} {booking.startTime} - {booking.endTime}
-          </p>
-          <p>Purpose: {booking.purpose}</p>
+        <section className="dashboard-section booking-section-gap booking-details-panel">
+          <div className="booking-details-header">
+            <div>
+              <p className="section-eyebrow">Resource</p>
+              <h2>{booking.resourceName}</h2>
+            </div>
+            <span
+              className={`status-badge ${
+                booking.status === 'APPROVED' || booking.status === 'COMPLETED'
+                  ? 'approved'
+                  : booking.status === 'PENDING'
+                    ? 'pending'
+                    : 'rejected'
+              }`}
+            >
+              {booking.status}
+            </span>
+          </div>
+
+          <div className="booking-detail-facts">
+            <span>
+              <CalendarDays size={16} />
+              {booking.bookingDate}
+            </span>
+            <span>
+              <Clock3 size={16} />
+              {booking.startTime} - {booking.endTime}
+            </span>
+            <span>
+              <ClipboardList size={16} />
+              {booking.purpose}
+            </span>
+          </div>
           {booking.waitlisted && booking.waitlistPosition ? (
             <p>Waitlisted at position #{booking.waitlistPosition}</p>
           ) : null}
           {booking.status === 'APPROVED' && booking.qrToken ? (
-            <BookingQrCode token={booking.qrToken} bookingId={booking.id} resourceName={booking.resourceName} />
+            <BookingQrCode
+              token={booking.qrToken}
+              bookingId={booking.id}
+              resourceName={booking.resourceName}
+            />
           ) : null}
           {booking.rejectedReason ? <p>Reason: {booking.rejectedReason}</p> : null}
 

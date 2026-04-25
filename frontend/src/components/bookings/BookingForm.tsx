@@ -165,7 +165,7 @@ export function BookingForm({ loading = false, onSubmit }: BookingFormProps) {
 
   return (
     <form
-      className="dashboard-section"
+      className="dashboard-section booking-form-shell"
       onSubmit={async (event) => {
         event.preventDefault();
         if (form.endTime <= form.startTime) {
@@ -193,6 +193,9 @@ export function BookingForm({ loading = false, onSubmit }: BookingFormProps) {
         <div>
           <p className="section-eyebrow">New Request</p>
           <h2 className="booking-tight-title">Create Booking</h2>
+          <p className="muted">
+            Choose a resource and time window. Conflicts are checked before submission.
+          </p>
         </div>
       </div>
 
