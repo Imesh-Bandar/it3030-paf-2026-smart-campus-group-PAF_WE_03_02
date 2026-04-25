@@ -48,6 +48,9 @@ public class SecurityActivityLog {
     @Column(name = "is_suspicious", nullable = false)
     private boolean suspicious = false;
 
+    @Column(name = "acknowledged", nullable = false)
+    private boolean acknowledged = false;
+
     @Column(name = "acknowledged_at")
     private OffsetDateTime acknowledgedAt;
 
