@@ -1,10 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import { ticketApi } from '../services/api/ticketApi';
-import type { TicketStatus } from '../services/types/ticket';
+import { api } from '../lib/axios';
 
-export function useTickets(filters?: { status?: TicketStatus; assigneeId?: string; reporterId?: string }) {
+export function useTickets() {
   return useQuery({
-    queryKey: ['tickets', filters],
-    queryFn: () => ticketApi.getAll(filters),
+    queryKey: ['tickets'],
+    queryFn: async () => {
+      const response = await api.get('/tickets');
+      return response.data;
+    },
   });
 }

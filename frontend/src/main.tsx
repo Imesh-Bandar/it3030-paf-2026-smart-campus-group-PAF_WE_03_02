@@ -10,12 +10,7 @@ import { queryClient } from './lib/queryClient';
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter
-        future={{
-          v7_startTransition: true,
-          v7_relativeSplatPath: true,
-        }}
-      >
+      <BrowserRouter>
         <App />
       </BrowserRouter>
       <Toaster position="top-right" />

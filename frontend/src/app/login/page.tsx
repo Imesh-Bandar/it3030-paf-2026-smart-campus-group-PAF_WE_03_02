@@ -336,7 +336,7 @@ export function LoginPage() {
             type="button"
             id="btn-google-auth"
             className="google-button"
-            onClick={() => login(mode === 'register' ? registerRole : 'STUDENT')}
+            onClick={login}
             disabled={loading}
           >
             <GoogleIcon />

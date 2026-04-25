@@ -271,11 +271,6 @@ function ProtectedRoute({ children, roles }: { children: JSX.Element; roles?: Us
   return children;
 }
 
-function DashboardRoute() {
-  const user = useAuthStore((state) => state.user);
-  return <Navigate to={getRoleHomePath(user?.role)} replace />;
-}
-
 /* ─── App Layout + Nav ───────────────────────────── */
 function AppLayout() {
   const user = useAuthStore((state) => state.user);
@@ -298,7 +293,6 @@ function AppLayout() {
 
   const navLinks = [
     { to: '/', label: 'Home', icon: <IconHome /> },
-    ...(isAuthenticated ? [{ to: '/dashboard', label: 'Dashboard', icon: <IconHome /> }] : []),
     { to: '/facilities', label: 'Facilities', icon: <IconGrid /> },
     { to: '/bookings', label: 'Bookings', icon: <IconCalendar /> },
     { to: '/tickets', label: 'Tickets', icon: <IconTicket /> },
@@ -387,6 +381,7 @@ function AppLayout() {
             className={`btn-hamburger${menuOpen ? ' open' : ''}`}
             onClick={() => setMenuOpen((o) => !o)}
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
             id="btn-hamburger"
           >
             <span className="hamburger-line" />
@@ -405,7 +400,11 @@ function AppLayout() {
         {/* User info if signed in */}
         {isAuthenticated && user && (
           <div className="mobile-menu-user">
-            <div className="header-avatar mobile-avatar" aria-hidden="true">
+            <div
+              className="header-avatar"
+              style={{ width: 40, height: 40, fontSize: 15 }}
+              aria-hidden="true"
+            >
               {initials}
             </div>
             <div className="mobile-menu-user-info">
@@ -438,7 +437,8 @@ function AppLayout() {
           {isAuthenticated ? (
             <button
               type="button"
-              className="btn-ghost mobile-action-btn"
+              className="btn-ghost"
+              style={{ justifyContent: 'center', padding: '12px' }}
               onClick={() => {
                 clearAuth();
                 closeMenu();
@@ -450,7 +450,8 @@ function AppLayout() {
           ) : (
             <Link
               to="/login"
-              className="btn-primary mobile-action-btn"
+              className="btn-primary"
+              style={{ justifyContent: 'center', padding: '14px' }}
               onClick={closeMenu}
               id="btn-sign-in-mobile"
             >
@@ -475,15 +476,6 @@ function App() {
       <Route element={<AppLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
-
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <DashboardRoute />
-            </ProtectedRoute>
-          }
-        />
 
         <Route
           path="/dashboard/student"
@@ -542,8 +534,22 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/facilities" element={<FacilitiesPage />} />
-        <Route path="/facilities/:id" element={<FacilityDetailsPage />} />
+        <Route
+          path="/facilities"
+          element={
+            <ProtectedRoute>
+              <FacilitiesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/facilities/:id"
+          element={
+            <ProtectedRoute>
+              <FacilityDetailsPage />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/bookings"
           element={

@@ -5,7 +5,7 @@
 > **Stack:** Spring Boot REST API + React Frontend + **PostgreSQL**
 > **Team:** 4 Developers  
 > **Deadline:** 27th April 2026
-> **Last Updated:** 23rd April 2026 ✅
+> **Last Updated:** 10th April 2026 ✅
 
 ---
 
@@ -47,17 +47,17 @@
 
 ### 🧩 Module Implementation Status
 
-| Module                       | Current Status      | Notes                                                                                                                                        |
-| ---------------------------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| Facilities (Dev 1)           | 🟢 Core Implemented | Resource catalogue CRUD, filters, availability windows, blackout management, booking eligibility validation, and React workflows complete     |
-| Bookings (Dev 2)             | 🟢 Core Implemented | Booking entity/service/controller now include conflict detection, approval/rejection, cancellation, QR check-in, and waitlist auto-promotion |
-| Tickets (Dev 3)              | 🟢 Core Implemented | Ticket entities/service/controllers, comments, attachments, SLA/workload metrics, assignment suggestions, and React ticket workflows complete |
-| Notifications & Auth (Dev 4) | 🟡 In Progress      | Authentication core complete; multi-role onboarding + role dashboards + notification integration pending                                     |
+| Module                       | Current Status | Notes                                                                                                       |
+| ---------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------- |
+| Facilities (Dev 1)           | 🟡 In Progress | Entity/repository/service/controller and basic UI scaffolds exist; CRUD logic + full endpoints pending      |
+| Bookings (Dev 2)             | 🟡 In Progress | Entity/repository/service/controller and UI placeholders exist; conflict logic + workflow endpoints pending |
+| Tickets (Dev 3)              | 🟡 In Progress | Entity/repository/service/controller and UI placeholders exist; comments/attachments workflows pending      |
+| Notifications & Auth (Dev 4) | 🟡 In Progress | Authentication core complete; multi-role onboarding + role dashboards + notification integration pending    |
 
 ### 🧪 Testing Progress
 
 - [x] Base Spring Boot context test exists
-- [x] Developer 3 module-level unit tests added (`TicketServiceTest` - 5 passing tests)
+- [ ] Module-level unit tests pending
 - [ ] Repository/controller integration tests pending
 
 ### 📚 Documentation Progress
@@ -280,42 +280,42 @@ Project is considered complete when:
 
 ### Backend Tasks
 
-- [x] **D1-B01** Create `Resource` JPA entity with `@Entity @Table("resources")`
-- [x] **D1-B02** Create `ResourceType` enum: `LECTURE_HALL`, `LAB`, `MEETING_ROOM`, `EQUIPMENT`
-- [x] **D1-B03** Create `ResourceStatus` enum: `ACTIVE`, `OUT_OF_SERVICE`, `UNDER_MAINTENANCE`
-- [x] **D1-B04** Create `AvailabilityWindow` JPA entity with `@ManyToOne` to Resource
-- [x] **D1-B05** Create `ResourceRepository extends JpaRepository<Resource, Long>`
-  - [x] Custom finder methods for type, status, capacity
-  - [x] JPQL @Query for location search
-- [x] **D1-B06** Create `ResourceService` with validation logic
-- [x] **D1-B07** Create `ResourceController` with 6 endpoints
+- [ ] **D1-B01** Create `Resource` JPA entity with `@Entity @Table("resources")`
+- [ ] **D1-B02** Create `ResourceType` enum: `LECTURE_HALL`, `LAB`, `MEETING_ROOM`, `EQUIPMENT`
+- [ ] **D1-B03** Create `ResourceStatus` enum: `ACTIVE`, `OUT_OF_SERVICE`, `UNDER_MAINTENANCE`
+- [ ] **D1-B04** Create `AvailabilityWindow` JPA entity with `@ManyToOne` to Resource
+- [ ] **D1-B05** Create `ResourceRepository extends JpaRepository<Resource, Long>`
+  - [ ] Custom finder methods for type, status, capacity
+  - [ ] JPQL @Query for location search
+- [ ] **D1-B06** Create `ResourceService` with validation logic
+- [ ] **D1-B07** Create `ResourceController` with 6 endpoints
   - GET /api/v1/resources (with filters)
   - GET /api/v1/resources/{id}
   - POST /api/v1/resources (ADMIN)
   - PUT /api/v1/resources/{id} (ADMIN)
   - DELETE /api/v1/resources/{id} (ADMIN soft-delete)
   - GET /api/v1/resources/{id}/availability
-- [x] **D1-B08** Create DTOs: ResourceDTO, ResourceRequestDTO, ResourceResponseDTO
-- [x] **D1-B09** Add `@Valid` validation annotations
-- [x] **D1-B10** Write min 5 unit tests using `@DataJpaTest`
-- [x] **D1-B11** Write integration tests using `MockMvc`
-- [x] **D1-B12** Add Swagger/OpenAPI annotations
-- [x] **D1-B13** Seed initial test data via `CommandLineRunner`
-- [x] **D1-B14** Add resource maintenance blackout model and API to mark blocked periods
-- [x] **D1-B15** Enforce blackout validation in availability query and booking eligibility checks
+- [ ] **D1-B08** Create DTOs: ResourceDTO, ResourceRequestDTO, ResourceResponseDTO
+- [ ] **D1-B09** Add `@Valid` validation annotations
+- [ ] **D1-B10** Write min 5 unit tests using `@DataJpaTest`
+- [ ] **D1-B11** Write integration tests using `MockMvc`
+- [ ] **D1-B12** Add Swagger/OpenAPI annotations
+- [ ] **D1-B13** Seed initial test data via `CommandLineRunner`
+- [ ] **D1-B14** Add resource maintenance blackout model and API to mark blocked periods
+- [ ] **D1-B15** Enforce blackout validation in availability query and booking eligibility checks
 
 ### Frontend Tasks
 
-- [x] **D1-F01** Create `ResourcesPage` with list/grid view + search
-- [x] **D1-F02** Create `ResourceCard` component
-- [x] **D1-F03** Create `ResourceDetailPage` with availability calendar
-- [x] **D1-F04** Create `ResourceForm` (Add/Edit) for admins
-- [x] **D1-F05** Create `ResourceFilter` component
-- [x] **D1-F06** Implement `resourceService.js` (axios calls)
-- [x] **D1-F07** Add admin-only buttons/links
-- [x] **D1-F08** Handle loading/error states
-- [x] **D1-F09** Create maintenance blackout calendar UI for admins on resource detail page
-- [x] **D1-F10** Show blocked/unavailable slot badges in facility availability view
+- [ ] **D1-F01** Create `ResourcesPage` with list/grid view + search
+- [ ] **D1-F02** Create `ResourceCard` component
+- [ ] **D1-F03** Create `ResourceDetailPage` with availability calendar
+- [ ] **D1-F04** Create `ResourceForm` (Add/Edit) for admins
+- [ ] **D1-F05** Create `ResourceFilter` component
+- [ ] **D1-F06** Implement `resourceService.js` (axios calls)
+- [ ] **D1-F07** Add admin-only buttons/links
+- [ ] **D1-F08** Handle loading/error states
+- [ ] **D1-F09** Create maintenance blackout calendar UI for admins on resource detail page
+- [ ] **D1-F10** Show blocked/unavailable slot badges in facility availability view
 
 ---
 
@@ -327,13 +327,13 @@ Project is considered complete when:
 
 ### Backend Tasks
 
-- [x] **D2-B01** Create `Booking` JPA entity with compound index on `(resource_id, booking_date, status)`
-- [x] **D2-B02** Create `BookingStatus` enum: `PENDING`, `APPROVED`, `REJECTED`, `CANCELLED`
-- [x] **D2-B03** Create `BookingRepository extends JpaRepository<Booking, Long>`
-  - [x] Custom JPQL @Query for conflict detection
-  - [x] Finders by userId, status, resource
-- [x] **D2-B04** Create `BookingService` with conflict detection logic
-- [x] **D2-B05** Create `BookingController` with 7 endpoints
+- [ ] **D2-B01** Create `Booking` JPA entity with compound index on `(resource_id, booking_date, status)`
+- [ ] **D2-B02** Create `BookingStatus` enum: `PENDING`, `APPROVED`, `REJECTED`, `CANCELLED`
+- [ ] **D2-B03** Create `BookingRepository extends JpaRepository<Booking, Long>`
+  - [ ] Custom JPQL @Query for conflict detection
+  - [ ] Finders by userId, status, resource
+- [ ] **D2-B04** Create `BookingService` with conflict detection logic
+- [ ] **D2-B05** Create `BookingController` with 7 endpoints
   - POST /api/v1/bookings
   - GET /api/v1/bookings (filtered)
   - GET /api/v1/bookings/{id}
@@ -341,31 +341,31 @@ Project is considered complete when:
   - PUT /api/v1/bookings/{id}/reject (ADMIN)
   - PUT /api/v1/bookings/{id}/cancel
   - GET /api/v1/resources/{id}/bookings (for calendar)
-- [x] **D2-B06** Create DTOs: BookingDTO, BookingRequestDTO
-- [x] **D2-B07** Add date/time validation (no past dates)
-- [x] **D2-B08** Write min 5 unit tests for conflict detection
-- [x] **D2-B09** Write integration tests for approval workflow
+- [ ] **D2-B06** Create DTOs: BookingDTO, BookingRequestDTO
+- [ ] **D2-B07** Add date/time validation (no past dates)
+- [ ] **D2-B08** Write min 5 unit tests for conflict detection
+- [ ] **D2-B09** Write integration tests for approval workflow
 - [ ] **D2-B10** Add Swagger annotations
-- [x] **D2-B11** Add QR check-in token generation for approved bookings
-- [x] **D2-B12** Add QR check-in verification endpoint (`POST /api/v1/bookings/{id}/check-in`)
-- [x] **D2-B13** Add booking check-in audit fields (checked-in-by, checked-in-at, verification-status)
-- [x] **D2-B14** Add waitlist model and repository for fully booked resource slots
-- [x] **D2-B15** Implement waitlist auto-promotion logic when approved booking is cancelled/rejected
+- [ ] **D2-B11** Add QR check-in token generation for approved bookings
+- [ ] **D2-B12** Add QR check-in verification endpoint (`POST /api/v1/bookings/{id}/check-in`)
+- [ ] **D2-B13** Add booking check-in audit fields (checked-in-by, checked-in-at, verification-status)
+- [ ] **D2-B14** Add waitlist model and repository for fully booked resource slots
+- [ ] **D2-B15** Implement waitlist auto-promotion logic when approved booking is cancelled/rejected
 
 ### Frontend Tasks
 
-- [x] **D2-F01** Create `BookingRequestPage` with form (date, time, purpose)
-- [x] **D2-F02** Create `MyBookingsPage` with status tabs
-- [x] **D2-F03** Create `AdminBookingsPage` (approval queue)
-- [x] **D2-F04** Create `BookingCard` component
-- [x] **D2-F05** Implement date/time picker with conflict preview
-- [x] **D2-F06** Implement `bookingService.js` (axios)
-- [x] **D2-F07** Show conflict errors with alternative times
-- [x] **D2-F08** Add approve/reject buttons for admins
-- [x] **D2-F09** Build QR code display on approved booking details
-- [x] **D2-F10** Build QR verification screen for staff/admin check-in validation
-- [x] **D2-F11** Add waitlist join action on booking conflict screen
-- [x] **D2-F12** Show waitlist status and promotion updates in My Bookings
+- [ ] **D2-F01** Create `BookingRequestPage` with form (date, time, purpose)
+- [ ] **D2-F02** Create `MyBookingsPage` with status tabs
+- [ ] **D2-F03** Create `AdminBookingsPage` (approval queue)
+- [ ] **D2-F04** Create `BookingCard` component
+- [ ] **D2-F05** Implement date/time picker with conflict preview
+- [ ] **D2-F06** Implement `bookingService.js` (axios)
+- [ ] **D2-F07** Show conflict errors with alternative times
+- [ ] **D2-F08** Add approve/reject buttons for admins
+- [ ] **D2-F09** Build QR code display on approved booking details
+- [ ] **D2-F10** Build QR verification screen for staff/admin check-in validation
+- [ ] **D2-F11** Add waitlist join action on booking conflict screen
+- [ ] **D2-F12** Show waitlist status and promotion updates in My Bookings
 
 ---
 
@@ -375,56 +375,54 @@ Project is considered complete when:
 
 **"Students report facility issues with photos. Admins assign technicians. Technicians update status and comment. I manage tickets, comments, attachments with embedded relationships."**
 
-**Implementation update (23 Apr 2026):** Core Developer 3 backend and frontend workflows are implemented. Comment endpoints are grouped under `TicketController`, and create/my-ticket workflows are combined in `TicketsPage`. Focused unit coverage exists in `TicketServiceTest`; comment/attachment integration tests remain pending.
-
 ### Backend Tasks
 
-- [x] **D3-B01** Create `Ticket` JPA entity (main table)
-- [x] **D3-B02** Create `TicketStatus` enum: `OPEN`, `IN_PROGRESS`, `RESOLVED`, `CLOSED`, `REJECTED`
-- [x] **D3-B03** Create `TicketPriority` enum: `LOW`, `MEDIUM`, `HIGH`, `CRITICAL`
-- [x] **D3-B04** Create `TicketCategory` enum: `ELECTRICAL`, `PLUMBING`, `IT_EQUIPMENT`, `HVAC`, `STRUCTURAL`, `OTHER`
-- [x] **D3-B05** Create `TicketAttachment` JPA entity (separate table with FK to Ticket)
-- [x] **D3-B06** Create `TicketComment` JPA entity (separate table with FK to Ticket, User)
-- [x] **D3-B07** Create `TicketRepository` with finders for reporter, assigned tech, status
-- [x] **D3-B08** Create `TicketService` with:
-  - [x] Status workflow validation (OPEN → IN_PROGRESS → RESOLVED)
-  - [x] Attachment upload (max 3 files)
-  - [x] Comment CRUD operations
-  - [x] Comment ownership rules (user can edit/delete own)
-- [x] **D3-B09** Create `TicketController` with 6 endpoints
+- [ ] **D3-B01** Create `Ticket` JPA entity (main table)
+- [ ] **D3-B02** Create `TicketStatus` enum: `OPEN`, `IN_PROGRESS`, `RESOLVED`, `CLOSED`, `REJECTED`
+- [ ] **D3-B03** Create `TicketPriority` enum: `LOW`, `MEDIUM`, `HIGH`, `CRITICAL`
+- [ ] **D3-B04** Create `TicketCategory` enum: `ELECTRICAL`, `PLUMBING`, `IT_EQUIPMENT`, `HVAC`, `STRUCTURAL`, `OTHER`
+- [ ] **D3-B05** Create `TicketAttachment` JPA entity (separate table with FK to Ticket)
+- [ ] **D3-B06** Create `TicketComment` JPA entity (separate table with FK to Ticket, User)
+- [ ] **D3-B07** Create `TicketRepository` with finders for reporter, assigned tech, status
+- [ ] **D3-B08** Create `TicketService` with:
+  - [ ] Status workflow validation (OPEN → IN_PROGRESS → RESOLVED)
+  - [ ] Attachment upload (max 3 files)
+  - [ ] Comment CRUD operations
+  - [ ] Comment ownership rules (user can edit/delete own)
+- [ ] **D3-B09** Create `TicketController` with 6 endpoints
   - POST /api/v1/tickets (multipart for attachments)
   - GET /api/v1/tickets (with filters)
   - GET /api/v1/tickets/{id}
   - PUT /api/v1/tickets/{id}/status (ADMIN/TECH)
   - PUT /api/v1/tickets/{id}/assign (ADMIN)
   - DELETE /api/v1/tickets/{id} (soft-delete)
-- [x] **D3-B10** Create ticket comment endpoints (implemented in `TicketController`)
+- [ ] **D3-B10** Create `TicketCommentController` with 3 endpoints
   - POST /api/v1/tickets/{id}/comments
   - PUT /api/v1/tickets/{id}/comments/{commentId}
   - DELETE /api/v1/tickets/{id}/comments/{commentId}
-- [x] **D3-B11** Implement MultipartFile upload with file validation
-- [x] **D3-B12** Write min 5 unit tests
+- [ ] **D3-B11** Implement MultipartFile upload with file validation
+- [ ] **D3-B12** Write min 5 unit tests
 - [ ] **D3-B13** Write integration tests for comment/attachment ops
-- [x] **D3-B14** Add Swagger annotations
-- [x] **D3-B15** Add SLA timer fields to ticket model (`first_response_at`, `resolved_at`, `sla_breached`)
-- [x] **D3-B16** Implement service-level timer calculations (time-to-first-response, time-to-resolution)
-- [x] **D3-B17** Add ticket SLA metrics endpoint for dashboard consumption
-- [x] **D3-B18** Add technician workload metrics endpoint (active tickets, priority mix, overdue count)
-- [x] **D3-B19** Implement assignment suggestion service based on workload balancing rules
+- [ ] **D3-B14** Add Swagger annotations
+- [ ] **D3-B15** Add SLA timer fields to ticket model (`first_response_at`, `resolved_at`, `sla_breached`)
+- [ ] **D3-B16** Implement service-level timer calculations (time-to-first-response, time-to-resolution)
+- [ ] **D3-B17** Add ticket SLA metrics endpoint for dashboard consumption
+- [ ] **D3-B18** Add technician workload metrics endpoint (active tickets, priority mix, overdue count)
+- [ ] **D3-B19** Implement assignment suggestion service based on workload balancing rules
 
 ### Frontend Tasks
 
-- [x] **D3-F01** Create ticket creation flow with image upload (max 3) in `TicketsPage`
-- [x] **D3-F02** Create user's ticket queue in `TicketsPage`
-- [x] **D3-F03** Create `AdminTicketsPage` (all tickets, with assign UI)
-- [x] **D3-F04** Create `TicketDetailPage` with comments and attachments
-- [x] **D3-F05** Create `CommentSection` with edit/delete
-- [x] **D3-F06** Create `ImageUploadPreview` (drag-drop)
-- [x] **D3-F07** Create status/priority badge components
-- [x] **D3-F08** Implement `ticketApi.ts` (axios)
-- [x] **D3-F09** Show SLA indicators and elapsed timers on technician and admin ticket views
-- [x] **D3-F10** Add assignment suggestion panel to admin ticket assignment view
-- [x] **D3-F11** Show technician workload indicators (load chips/heat status) in ticket board
+- [ ] **D3-F01** Create `CreateTicketPage` with image upload (max 3)
+- [ ] **D3-F02** Create `MyTicketsPage` (user's reported tickets)
+- [ ] **D3-F03** Create `AdminTicketsPage` (all tickets, with assign UI)
+- [ ] **D3-F04** Create `TicketDetailPage` with comments, attachments, timeline
+- [ ] **D3-F05** Create `CommentSection` with edit/delete
+- [ ] **D3-F06** Create `ImageUploadPreview` (drag-drop)
+- [ ] **D3-F07** Create status/priority badge components
+- [ ] **D3-F08** Implement `ticketService.js` (axios)
+- [ ] **D3-F09** Show SLA indicators and elapsed timers on technician and admin ticket views
+- [ ] **D3-F10** Add assignment suggestion panel to admin ticket assignment view
+- [ ] **D3-F11** Show technician workload indicators (load chips/heat status) in ticket board
 
 ---
 
@@ -521,7 +519,6 @@ Project is considered complete when:
 ### Member 4 Completion Summary (21 Apr 2026) ✅
 
 **Backend Implementation (D4-B Series)**:
-
 - [x] D4-B01 through D4-B05: Notification JPA entity, NotificationType enum, NotificationRepository, NotificationService, NotificationController (4 endpoints: paginated GET, mark read, mark all read, delete)
 - [x] D4-B07 through D4-B14: User entity, UserRole enum (STUDENT/STAFF/TECHNICIAN/ADMIN), UserRepository, Spring Security config, JWT, AuthController, global exception handler, CORS
 - [x] D4-B12: Admin user management endpoints (GET /api/v1/users list all users, PUT /api/v1/users/{id}/role update role)
@@ -534,7 +531,6 @@ Project is considered complete when:
 - [ ] D4-B19/D4-B21: Google OAuth edge-case handling and comprehensive auth test coverage (infrastructure exists)
 
 **Frontend Implementation (D4-F Series)**:
-
 - [x] D4-F01 through D4-F04: Google OAuth login, JWT storage, axios interceptor, AuthContext, ProtectedRoute HOC
 - [x] D4-F05 through D4-F08: NotificationBell component, NotificationPanel dropdown, UserManagementPage, API services (notification, auth, security)
 - [x] D4-F09 through D4-F12: Auto-logout on token expiry, signup role selector, Google OAuth UX messaging, role-based landing redirects
@@ -542,7 +538,6 @@ Project is considered complete when:
 - [x] D4-F18 through D4-F21: Notification preferences UI, admin analytics widgets, account security activity page, suspicious login alert banner with acknowledgement action
 
 **Code Quality & Bug Fixes**:
-
 - [x] Fixed JPQL timestamp type mismatches in NotificationRepository and SecurityActivityLogRepository (OffsetDateTime parameterization)
 - [x] Fixed TypeScript import paths in 6 frontend page components (../../ → ../../../)
 - [x] Fixed TypeScript type inference for React state updater callbacks
@@ -552,7 +547,6 @@ Project is considered complete when:
 - [x] All frontend production build passing (151 modules, optimized bundles)
 
 **Completed Deliverables**:
-
 - ✅ All Member 4 backend endpoints fully implemented and type-checked
 - ✅ All Member 4 frontend pages created with correct import paths
 - ✅ Role-based authentication system (STUDENT/STAFF/TECHNICIAN/ADMIN)
@@ -565,7 +559,6 @@ Project is considered complete when:
 - ✅ Frontend production build validation
 
 **Known Pending Items** (External Dependencies):
-
 - D4-B06: Notification trigger integration awaits booking/ticket service completion by Dev 2/Dev 3
 - D4-B15/B16: Extended test coverage and auth integration tests (core tests implemented)
 - D4-B19/B21: Google OAuth edge-case refinements and comprehensive flow testing

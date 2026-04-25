@@ -17,19 +17,15 @@ public class LocalCredentialService {
     }
 
     public void upsertPasswordHash(UUID userId, String passwordHash) {
-        int updated = jdbcTemplate.update(
-                "UPDATE user_credentials SET password_hash = ?, updated_at = NOW() WHERE user_id = ?",
-                passwordHash,
-                userId);
-        if (updated == 0) {
-            jdbcTemplate.update(
-                    """
-                            INSERT INTO user_credentials (user_id, password_hash, created_at, updated_at)
-                            VALUES (?, ?, NOW(), NOW())
-                            """,
-                    userId,
-                    passwordHash);
-        }
+        jdbcTemplate.update(
+                """
+                        INSERT INTO user_credentials (user_id, password_hash, created_at, updated_at)
+                        VALUES (?, ?, NOW(), NOW())
+                        ON CONFLICT (user_id)
+                        DO UPDATE SET password_hash = EXCLUDED.password_hash, updated_at = NOW()
+                        """,
+                userId,
+                passwordHash);
     }
 
     public Optional<String> findPasswordHash(UUID userId) {
