@@ -34,3 +34,6 @@ frontend/node_modules/
 *.tmp
 *.swp
 *.sixth
+
+DEVELOPER_QUICK_START.md
+
