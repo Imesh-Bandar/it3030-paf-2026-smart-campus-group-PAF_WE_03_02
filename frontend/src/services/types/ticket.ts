@@ -1,6 +1,12 @@
 export type TicketStatus = 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED' | 'REJECTED';
 export type TicketPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-export type TicketCategory = 'ELECTRICAL' | 'PLUMBING' | 'IT_EQUIPMENT' | 'HVAC' | 'STRUCTURAL' | 'OTHER';
+export type TicketCategory =
+  | 'ELECTRICAL'
+  | 'PLUMBING'
+  | 'IT_EQUIPMENT'
+  | 'HVAC'
+  | 'STRUCTURAL'
+  | 'OTHER';
 
 export type TicketAttachment = {
   id: string;
@@ -61,10 +67,21 @@ export type TicketSlaMetrics = {
 export type TechnicianWorkload = {
   technicianId: string;
   technicianName: string;
+  available: boolean;
+  availabilityNote?: string;
+  availabilityUpdatedAt?: string;
   activeTickets: number;
   overdueTickets: number;
   loadStatus: 'LOW' | 'MEDIUM' | 'HIGH';
   priorityMix: Record<TicketPriority, number>;
+};
+
+export type TechnicianAvailability = {
+  technicianId: string;
+  technicianName: string;
+  available: boolean;
+  note?: string;
+  updatedAt?: string;
 };
 
 export type AssignmentSuggestion = {
