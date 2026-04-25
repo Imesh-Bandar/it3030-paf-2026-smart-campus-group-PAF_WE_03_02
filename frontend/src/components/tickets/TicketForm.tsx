@@ -79,22 +79,6 @@ export function TicketForm({ onSubmit }: Props) {
     }
   };
 
-  const resetForm = () => {
-    setTitle('');
-    setDescription('');
-    setCategory('OTHER');
-    setPriority('MEDIUM');
-    setLocation('');
-    setFiles([]);
-    setErrors({});
-  };
-
-  const hasDraft =
-    title.trim().length > 0 ||
-    description.trim().length > 0 ||
-    location.trim().length > 0 ||
-    files.length > 0;
-
   return (
     <form className="ticket-form ticket-form-enhanced" onSubmit={submit} noValidate>
       <label>

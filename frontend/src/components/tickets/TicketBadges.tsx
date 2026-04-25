@@ -1,5 +1,4 @@
 import type { TicketPriority, TicketStatus } from '../../services/types/ticket';
-import { formatStatusLabel } from './ticketUi';
 
 const statusLabels: Record<TicketStatus, string> = {
   OPEN: 'Open',

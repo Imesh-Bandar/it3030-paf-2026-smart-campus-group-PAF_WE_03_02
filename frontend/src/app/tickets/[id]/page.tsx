@@ -11,7 +11,7 @@ import {
 import { useRole } from '../../../hooks/useRole';
 import { ticketApi } from '../../../services/api/ticketApi';
 import type { TicketStatus } from '../../../services/types/ticket';
-import { formatStatusLabel, getApiErrorMessage } from '../../../components/tickets/ticketUi';
+import { getApiErrorMessage } from '../../../components/tickets/ticketUi';
 
 const statuses: TicketStatus[] = ['OPEN', 'IN_PROGRESS', 'RESOLVED'];
 
