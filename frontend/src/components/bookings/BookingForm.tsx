@@ -196,77 +196,225 @@ export function BookingForm({ loading = false, onSubmit }: BookingFormProps) {
         </div>
       </div>
 
-      <div className="booking-form-grid">
-        <label>
-          Resource
-          <select
-            required
-            value={form.resourceId}
-            onChange={(event) => {
-              setFormError(null);
-              setForm((prev) => ({ ...prev, resourceId: event.target.value }));
-            }}
-          >
-            <option value="">Select a resource</option>
-            {resources.map((resource) => (
-              <option key={resource.id} value={resource.id}>
-                {resource.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Booking Date
-          <input
-            required
-            type="date"
-            min={todayDate}
-            value={form.bookingDate}
-            onChange={(event) => {
-              setFormError(null);
-              setForm((prev) => ({ ...prev, bookingDate: event.target.value }));
-            }}
-          />
-        </label>
-        <div className="booking-form-time-grid">
-          <label>
-            Start Time
-            <input
+      <div
+        style={{
+          background: 'var(--bg-card)',
+          padding: '24px',
+          borderRadius: '16px',
+          border: '1px solid var(--border)',
+          boxShadow: 'var(--shadow-sm)',
+          marginBottom: '24px',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '4px',
+            height: '100%',
+            background: 'var(--grad-brand)',
+          }}
+        />
+        <div className="booking-form-grid">
+          <label style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600' }}>
+              <svg
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                ></path>
+              </svg>
+              Resource
+            </span>
+            <select
               required
-              type="time"
-              value={form.startTime}
+              value={form.resourceId}
               onChange={(event) => {
                 setFormError(null);
-                setForm((prev) => ({ ...prev, startTime: event.target.value }));
+                setForm((prev) => ({ ...prev, resourceId: event.target.value }));
+              }}
+              style={{
+                width: '100%',
+                padding: '12px',
+                borderRadius: '8px',
+                border: '1px solid var(--border)',
+                background: 'var(--input-bg)',
+                color: 'var(--text-primary)',
+              }}
+            >
+              <option value="">Select a resource</option>
+              {resources.map((resource) => (
+                <option key={resource.id} value={resource.id}>
+                  {resource.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600' }}>
+              <svg
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                ></path>
+              </svg>
+              Booking Date
+            </span>
+            <input
+              required
+              type="date"
+              min={todayDate}
+              value={form.bookingDate}
+              onChange={(event) => {
+                setFormError(null);
+                setForm((prev) => ({ ...prev, bookingDate: event.target.value }));
+              }}
+              style={{
+                width: '100%',
+                padding: '12px',
+                borderRadius: '8px',
+                border: '1px solid var(--border)',
+                background: 'var(--input-bg)',
+                color: 'var(--text-primary)',
               }}
             />
           </label>
-          <label>
-            End Time
-            <input
+          <div className="booking-form-time-grid">
+            <label style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <span
+                style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600' }}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+                Start Time
+              </span>
+              <input
+                required
+                type="time"
+                value={form.startTime}
+                onChange={(event) => {
+                  setFormError(null);
+                  setForm((prev) => ({ ...prev, startTime: event.target.value }));
+                }}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  borderRadius: '8px',
+                  border: '1px solid var(--border)',
+                  background: 'var(--input-bg)',
+                  color: 'var(--text-primary)',
+                }}
+              />
+            </label>
+            <label style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <span
+                style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600' }}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+                End Time
+              </span>
+              <input
+                required
+                type="time"
+                value={form.endTime}
+                onChange={(event) => {
+                  setFormError(null);
+                  setForm((prev) => ({ ...prev, endTime: event.target.value }));
+                }}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  borderRadius: '8px',
+                  border: '1px solid var(--border)',
+                  background: 'var(--input-bg)',
+                  color: 'var(--text-primary)',
+                }}
+              />
+            </label>
+          </div>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600' }}>
+              <svg
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                ></path>
+              </svg>
+              Purpose
+            </span>
+            <textarea
               required
-              type="time"
-              value={form.endTime}
+              value={form.purpose}
               onChange={(event) => {
                 setFormError(null);
-                setForm((prev) => ({ ...prev, endTime: event.target.value }));
+                setForm((prev) => ({ ...prev, purpose: event.target.value }));
+              }}
+              placeholder="Class, event, meeting, or other use"
+              rows={3}
+              style={{
+                width: '100%',
+                padding: '12px',
+                borderRadius: '8px',
+                border: '1px solid var(--border)',
+                background: 'var(--input-bg)',
+                color: 'var(--text-primary)',
+                resize: 'vertical',
               }}
             />
           </label>
         </div>
-        <label>
-          Purpose
-          <textarea
-            required
-            value={form.purpose}
-            onChange={(event) => {
-              setFormError(null);
-              setForm((prev) => ({ ...prev, purpose: event.target.value }));
-            }}
-            placeholder="Class, event, meeting, or other use"
-            rows={3}
-          />
-        </label>
       </div>
 
       {form.startTime && form.endTime && form.endTime <= form.startTime ? (

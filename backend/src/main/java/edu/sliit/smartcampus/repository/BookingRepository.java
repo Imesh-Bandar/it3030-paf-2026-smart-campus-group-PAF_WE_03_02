@@ -1,4 +1,4 @@
-package edu.sliit.smartcampus.repository;
+ ghupackage edu.sliit.smartcampus.repository;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

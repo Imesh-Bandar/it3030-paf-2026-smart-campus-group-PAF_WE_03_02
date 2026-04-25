@@ -69,14 +69,61 @@ export function BookingsPage() {
 
   return (
     <main className="page-shell animate-fade-up" id="bookings-page">
-      <div className="section-header">
+      <div className="section-header" style={{ marginBottom: '32px' }}>
         <div>
-          <p className="section-eyebrow">Reservations</p>
-          <h1>Bookings</h1>
+          <p
+            className="section-eyebrow"
+            style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+          >
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+              ></path>
+            </svg>
+            Reservations
+          </p>
+          <h1
+            style={{
+              fontSize: '32px',
+              fontWeight: '800',
+              background: 'var(--grad-brand)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
+            Bookings
+          </h1>
         </div>
         {isAdmin() ? (
-          <a href="/admin/bookings" className="btn-primary">
-            Open Approval Queue
+          <a
+            href="/admin/bookings"
+            className="btn-primary"
+            style={{ boxShadow: '0 4px 14px rgba(26, 110, 245, 0.4)' }}
+          >
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+              ></path>
+            </svg>
+            Approval Queue
           </a>
         ) : null}
       </div>
@@ -86,10 +133,48 @@ export function BookingsPage() {
       <section className="dashboard-section booking-section-gap">
         <div className="section-header booking-header-compact">
           <div>
-            <p className="section-eyebrow">History</p>
+            <p
+              className="section-eyebrow"
+              style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+            >
+              <svg
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+              History
+            </p>
             <h2 className="booking-tight-title">My Bookings</h2>
           </div>
-          <button type="button" className="btn-ghost" onClick={() => void refetch()}>
+          <button
+            type="button"
+            className="btn-outline"
+            onClick={() => void refetch()}
+            style={{ padding: '6px 12px', fontSize: '13px' }}
+          >
+            <svg
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              ></path>
+            </svg>
             Refresh
           </button>
         </div>
@@ -111,16 +196,91 @@ export function BookingsPage() {
           ))}
         </div>
 
-        {isLoading ? <p>Loading bookings...</p> : null}
+        {isLoading ? (
+          <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)' }}>
+            <svg
+              className="animate-spin"
+              style={{ margin: '0 auto', marginBottom: '12px' }}
+              width="24"
+              height="24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              ></path>
+            </svg>
+            <p>Loading bookings...</p>
+          </div>
+        ) : null}
+
         {!isLoading && bookings.length === 0 ? (
-          <p>No bookings yet. Submit your first request.</p>
+          <div
+            style={{
+              background: 'var(--bg-card)',
+              border: '1px dashed var(--border)',
+              borderRadius: '12px',
+              padding: '40px',
+              textAlign: 'center',
+              color: 'var(--text-muted)',
+            }}
+          >
+            <svg
+              width="48"
+              height="48"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1"
+              viewBox="0 0 24 24"
+              style={{ margin: '0 auto 16px', opacity: 0.5 }}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+              ></path>
+            </svg>
+            <p style={{ fontSize: '16px', fontWeight: '500', color: 'var(--text-primary)' }}>
+              No bookings yet.
+            </p>
+            <p>Submit your first request above to get started.</p>
+          </div>
         ) : null}
+
         {!isLoading && bookings.length > 0 && filteredBookings.length === 0 ? (
-          <p>No bookings in the {activeStatus.toLowerCase()} state.</p>
+          <div
+            style={{
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border)',
+              borderRadius: '12px',
+              padding: '40px',
+              textAlign: 'center',
+              color: 'var(--text-muted)',
+            }}
+          >
+            <p style={{ fontSize: '15px' }}>
+              No bookings in the{' '}
+              <strong style={{ color: 'var(--text-primary)' }}>{activeStatus.toLowerCase()}</strong>{' '}
+              state.
+            </p>
+          </div>
         ) : null}
-        {filteredBookings.map((booking) => (
-          <BookingCard key={booking.id} booking={booking} onCancel={handleCancel} />
-        ))}
+
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+            gap: '24px',
+          }}
+        >
+          {filteredBookings.map((booking) => (
+            <BookingCard key={booking.id} booking={booking} onCancel={handleCancel} />
+          ))}
+        </div>
       </section>
     </main>
   );
