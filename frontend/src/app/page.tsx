@@ -58,7 +58,7 @@ export function HomePage() {
       badge: 'Manage',
       title: 'Bookings',
       description:
-        'Plan and manage reservations with fast approvals, status tracking, and calendar visibility.',
+        'Organize and oversee reservations with quick approvals, status updates, and clear calendar views.',
       href: '/bookings',
       linkLabel: 'View Bookings',
     },
