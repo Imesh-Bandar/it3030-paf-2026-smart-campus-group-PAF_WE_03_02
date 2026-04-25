@@ -1,9 +1,27 @@
+import { useEffect, useMemo } from 'react';
+
 type Props = {
   files: File[];
   onFilesChange: (files: File[]) => void;
 };
 
 export function ImageUploadPreview({ files, onFilesChange }: Props) {
+  const previews = useMemo(
+    () =>
+      files.map((file) => ({
+        key: `${file.name}-${file.lastModified}`,
+        url: URL.createObjectURL(file),
+        file,
+      })),
+    [files],
+  );
+
+  useEffect(() => {
+    return () => {
+      previews.forEach((preview) => URL.revokeObjectURL(preview.url));
+    };
+  }, [previews]);
+
   const addFiles = (nextFiles: FileList | null) => {
     if (!nextFiles) return;
     const images = Array.from(nextFiles)
@@ -14,7 +32,7 @@ export function ImageUploadPreview({ files, onFilesChange }: Props) {
 
   return (
     <div
-      className="ticket-upload-zone"
+      className="ticket-upload-zone ticket-upload-zone-enhanced"
       onDragOver={(event) => event.preventDefault()}
       onDrop={(event) => {
         event.preventDefault();
@@ -28,19 +46,25 @@ export function ImageUploadPreview({ files, onFilesChange }: Props) {
         multiple
         onChange={(event) => addFiles(event.target.files)}
       />
-      <label htmlFor="ticket-files">Drop images here or choose files</label>
+      <label htmlFor="ticket-files" className="ticket-upload-drop" role="button" tabIndex={0}>
+        <span className="ticket-upload-title">Drop images here or choose files</span>
+        <span className="ticket-upload-meta">
+          Up to 3 files, each 5MB max (JPG, PNG, WEBP, GIF)
+        </span>
+      </label>
+      {files.length >= 3 && <p className="ticket-upload-warning">Maximum 3 images reached.</p>}
       <div className="ticket-upload-grid">
-        {files.map((file) => (
-          <figure key={`${file.name}-${file.lastModified}`}>
-            <img src={URL.createObjectURL(file)} alt={file.name} />
-            <figcaption>{file.name}</figcaption>
+        {previews.map((preview) => (
+          <figure key={preview.key}>
+            <img src={preview.url} alt={preview.file.name} />
+            <figcaption>{preview.file.name}</figcaption>
             <button
               type="button"
-              className="icon-button"
-              onClick={() => onFilesChange(files.filter((item) => item !== file))}
-              aria-label={`Remove ${file.name}`}
+              className="ticket-upload-remove"
+              onClick={() => onFilesChange(files.filter((item) => item !== preview.file))}
+              aria-label={`Remove ${preview.file.name}`}
             >
-              x
+              Remove
             </button>
           </figure>
         ))}

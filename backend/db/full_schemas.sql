@@ -49,6 +49,7 @@ CREATE TABLE security_activity_logs (
   user_agent TEXT,
   location VARCHAR(255),
   is_suspicious BOOLEAN NOT NULL DEFAULT FALSE,
+  acknowledged BOOLEAN NOT NULL DEFAULT FALSE,
   acknowledged_at TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   CONSTRAINT security_activity_logs_event_type_check
