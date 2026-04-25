@@ -53,14 +53,14 @@ export function TicketDetailsPage() {
 
   if (isLoading) {
     return (
-      <main className="page-shell" id="ticket-detail-page">
-        <div className="ticket-detail-loading" />
+      <main className="page-shell">
+        <div className="ticket-loading-card" />
       </main>
     );
   }
   if (isError) {
     return (
-      <main className="page-shell" id="ticket-detail-page">
+      <main className="page-shell">
         <div className="ticket-error-banner">
           {getApiErrorMessage(error, 'Failed to load ticket.')}
         </div>
@@ -83,21 +83,22 @@ export function TicketDetailsPage() {
             Reported by {ticket.reporterName}. Use the status control to move the workflow forward.
           </p>
         </div>
-        <Link className="btn-ghost ticket-back-link" to="/tickets">
-          <ArrowLeft size={16} aria-hidden="true" />
-          Back to tickets
-        </Link>
+        <div className="ticket-detail-badges">
+          <Link className="btn-ghost" to="/tickets">
+            Back to tickets
+          </Link>
+        </div>
       </div>
 
       <section className="ticket-detail-grid">
-        <article className="ticket-detail-main ticket-panel-enter">
+        <article className="ticket-detail-main ticket-detail-section">
           <div className="ticket-detail-badges">
             <TicketStatusBadge status={ticket.status} />
             <TicketPriorityBadge priority={ticket.priority} />
             <SlaBadge breached={ticket.slaBreached} />
           </div>
-          <p className="ticket-detail-description">{ticket.description}</p>
-          <dl className="ticket-facts">
+          <p className="ticket-detail-copy">{ticket.description}</p>
+          <dl className="ticket-detail-meta-grid ticket-facts">
             <div>
               <dt>
                 <CalendarClock size={15} aria-hidden="true" />
@@ -143,10 +144,11 @@ export function TicketDetailsPage() {
           </dl>
 
           {canManage && (
-            <div className="ticket-status-control">
+            <div className="ticket-status-control ticket-detail-section">
               <label>
-                Status
+                <span>Status</span>
                 <select
+                  className="ticket-status-select"
                   value={ticket.status}
                   onChange={async (event) => {
                     setActionError(null);
@@ -170,19 +172,16 @@ export function TicketDetailsPage() {
                   ))}
                 </select>
               </label>
-              {actionError && <p className="ticket-action-error">{actionError}</p>}
+              {actionError && <p className="field-error">{actionError}</p>}
             </div>
           )}
         </article>
 
-        <aside className="ticket-detail-section ticket-panel-enter ticket-panel-enter-delay">
-          <div className="ticket-section-title">
-            <Paperclip size={18} aria-hidden="true" />
-            <h2>Attachments</h2>
-          </div>
+        <aside className="ticket-detail-side ticket-detail-section">
+          <h2>Attachments</h2>
           <div className="ticket-attachment-grid">
             {ticket.attachments.length === 0 && (
-              <div className="ticket-empty-state">No attachments added.</div>
+              <div className="ticket-empty-column">No attachments added.</div>
             )}
             {ticket.attachments.map((attachment) => (
               <a

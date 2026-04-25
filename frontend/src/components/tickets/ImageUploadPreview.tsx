@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 
 type Props = {
   files: File[];
@@ -6,21 +6,20 @@ type Props = {
 };
 
 export function ImageUploadPreview({ files, onFilesChange }: Props) {
-  const previews = useMemo(
-    () =>
-      files.map((file) => ({
-        key: `${file.name}-${file.lastModified}`,
-        url: URL.createObjectURL(file),
-        file,
-      })),
-    [files],
-  );
+  const [previews, setPreviews] = useState<Array<{ key: string; url: string; file: File }>>([]);
 
   useEffect(() => {
+    const nextPreviews = files.map((file) => ({
+      key: `${file.name}-${file.lastModified}`,
+      url: URL.createObjectURL(file),
+      file,
+    }));
+    setPreviews(nextPreviews);
+
     return () => {
-      previews.forEach((preview) => URL.revokeObjectURL(preview.url));
+      nextPreviews.forEach((preview) => URL.revokeObjectURL(preview.url));
     };
-  }, [previews]);
+  }, [files]);
 
   const addFiles = (nextFiles: FileList | null) => {
     if (!nextFiles) return;
