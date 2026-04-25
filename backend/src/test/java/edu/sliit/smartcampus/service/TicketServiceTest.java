@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import edu.sliit.smartcampus.dto.TicketCommentRequestDto;
+import edu.sliit.smartcampus.dto.TicketCreateRequestDto;
 import edu.sliit.smartcampus.dto.TicketStatusUpdateRequestDto;
 import edu.sliit.smartcampus.model.Ticket;
 import edu.sliit.smartcampus.model.TicketCategory;
@@ -68,8 +69,15 @@ class TicketServiceTest {
         when(ticketRepository.save(any(Ticket.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(userRepository.findByRole(UserRole.ADMIN)).thenReturn(List.of(admin));
 
-        var result = ticketService.createTicket("Broken projector", "Projector does not power on", "IT_EQUIPMENT",
-                "HIGH", "Lab A", List.of());
+        TicketCreateRequestDto request = new TicketCreateRequestDto();
+        request.setTitle("Broken projector");
+        request.setDescription("Projector does not power on");
+        request.setCategory("IT_EQUIPMENT");
+        request.setPriority("HIGH");
+        request.setLocation("Lab A");
+        request.setFiles(List.of());
+
+        var result = ticketService.createTicket(request);
 
         assertThat(result.status()).isEqualTo("OPEN");
         assertThat(result.ticketNumber()).startsWith("TCK-");
@@ -105,6 +113,7 @@ class TicketServiceTest {
     @Test
     void updateStatus_setsResolvedTimestamp() {
         Ticket ticket = ticket("TCK-3", student, technician);
+        ticket.setStatus(TicketStatus.IN_PROGRESS);
         when(authService.getCurrentUserId()).thenReturn(technician.getId());
         when(userRepository.findById(technician.getId())).thenReturn(Optional.of(technician));
         when(ticketRepository.findById(ticket.getId())).thenReturn(Optional.of(ticket));
