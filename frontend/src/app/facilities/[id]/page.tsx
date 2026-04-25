@@ -116,6 +116,10 @@ export function FacilityDetailsPage() {
               <p className="section-eyebrow">{facility.type.replaceAll('_', ' ')}</p>
               <h1>{facility.name}</h1>
               <p>{facility.location}</p>
+              <p className="section-summary">
+                Capacity {facility.capacity} · {facility.availabilityWindows.length} weekly windows
+                · {facility.resourceCode}
+              </p>
             </div>
             <span
               className={`status-badge ${
@@ -132,7 +136,9 @@ export function FacilityDetailsPage() {
 
           <section className="dashboard-section facility-detail-hero">
             <div className="facility-detail-copy">
-              <p>{facility.description ?? 'No description has been added for this resource yet.'}</p>
+              <p>
+                {facility.description ?? 'No description has been added for this resource yet.'}
+              </p>
               <div className="facility-meta-grid">
                 <span>Capacity: {facility.capacity}</span>
                 <span>Code: {facility.resourceCode}</span>
@@ -153,6 +159,9 @@ export function FacilityDetailsPage() {
               <div>
                 <p className="section-eyebrow">Schedule</p>
                 <h2 className="booking-tight-title">Availability</h2>
+                <p className="muted">
+                  Adjust the date window to inspect bookings and maintenance gaps.
+                </p>
               </div>
               <div className="booking-card-actions">
                 <input type="date" value={from} onChange={(event) => setFrom(event.target.value)} />
@@ -167,6 +176,9 @@ export function FacilityDetailsPage() {
               <div>
                 <p className="section-eyebrow">Maintenance</p>
                 <h2 className="booking-tight-title">Blackouts</h2>
+                <p className="muted">
+                  Track scheduled downtime and remove it when the resource returns to service.
+                </p>
               </div>
             </div>
 
@@ -220,7 +232,11 @@ export function FacilityDetailsPage() {
                     onChange={(event) => setBlackoutReason(event.target.value)}
                     placeholder="Reason"
                   />
-                  <button type="button" className="btn-primary" onClick={() => void createBlackout()}>
+                  <button
+                    type="button"
+                    className="btn-primary"
+                    onClick={() => void createBlackout()}
+                  >
                     Save Blackout
                   </button>
                 </div>
