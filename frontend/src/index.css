@@ -2030,6 +2030,47 @@ body {
   font-size: 14px;
 }
 
+.booking-form-error {
+  margin: 0.75rem 0 0;
+  border: 1px solid rgba(220, 38, 38, 0.4);
+  border-radius: var(--r-md);
+  background: rgba(220, 38, 38, 0.12);
+  color: #fecaca;
+  padding: 0.7rem 0.85rem;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+[data-theme='light'] .booking-form-error {
+  color: #991b1b;
+  background: rgba(220, 38, 38, 0.08);
+}
+
+.booking-window-list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  color: var(--text-secondary);
+  font-size: 0.86rem;
+}
+
+.booking-window-list span {
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.booking-window-list strong {
+  border: 1px solid var(--border);
+  border-radius: var(--r-full);
+  background: var(--bg-card-2);
+  color: var(--text-primary);
+  padding: 0.28rem 0.65rem;
+  font-size: 0.78rem;
+}
+
 .booking-alternative-list {
   list-style: none;
   margin: 10px 0 0;

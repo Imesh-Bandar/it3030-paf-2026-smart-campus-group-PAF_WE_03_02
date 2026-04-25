@@ -1,13 +1,25 @@
 import { useEffect, useState } from 'react';
 import { bookingApi } from '../../services/api/bookingApi';
 import { facilityApi } from '../../services/api/facilityApi';
-import type { Booking, BookingConflictPreview, BookingRequestPayload } from '../../services/types/booking';
-import type { ResourceOption } from '../../services/types/facility';
+import type {
+  Booking,
+  BookingConflictPreview,
+  BookingRequestPayload,
+} from '../../services/types/booking';
+import type { AvailabilitySlot, Facility } from '../../services/types/facility';
 
 type BookingFormProps = {
   loading?: boolean;
   onSubmit: (payload: BookingRequestPayload) => Promise<void> | void;
 };
+
+function getTodayDateInputValue() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 
 export function BookingForm({ loading = false, onSubmit }: BookingFormProps) {
   const [form, setForm] = useState<BookingRequestPayload>({
@@ -17,11 +29,13 @@ export function BookingForm({ loading = false, onSubmit }: BookingFormProps) {
     endTime: '',
     purpose: '',
   });
-  const [resources, setResources] = useState<ResourceOption[]>([]);
+  const [resources, setResources] = useState<Facility[]>([]);
   const [preview, setPreview] = useState<BookingConflictPreview | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
   const [dayBookings, setDayBookings] = useState<Booking[]>([]);
+  const [availabilitySlots, setAvailabilitySlots] = useState<AvailabilitySlot[]>([]);
   const [calendarLoading, setCalendarLoading] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   useEffect(() => {
     facilityApi
@@ -30,9 +44,68 @@ export function BookingForm({ loading = false, onSubmit }: BookingFormProps) {
       .catch(() => setResources([]));
   }, []);
 
+  const selectedResource = resources.find((resource) => resource.id === form.resourceId);
+  const selectedDateDay =
+    form.bookingDate.length > 0 ? new Date(`${form.bookingDate}T00:00:00`).getDay() : null;
+  const selectedDayWindows =
+    selectedResource && selectedDateDay !== null
+      ? selectedResource.availabilityWindows.filter(
+          (window) => window.dayOfWeek === selectedDateDay,
+        )
+      : [];
+  const normalizedStartTime = form.startTime.slice(0, 5);
+  const normalizedEndTime = form.endTime.slice(0, 5);
+  const todayDate = getTodayDateInputValue();
+  const dateError =
+    form.bookingDate && form.bookingDate < todayDate
+      ? 'Booking date must be today or a future date.'
+      : null;
+  const availabilityError =
+    selectedResource &&
+    form.bookingDate &&
+    form.startTime &&
+    form.endTime &&
+    selectedDayWindows.length === 0
+      ? 'This resource has no availability window for the selected date.'
+      : selectedResource &&
+          form.bookingDate &&
+          form.startTime &&
+          form.endTime &&
+          !selectedDayWindows.some(
+            (window) =>
+              normalizedStartTime >= window.startTime.slice(0, 5) &&
+              normalizedEndTime <= window.endTime.slice(0, 5),
+          )
+        ? 'Selected slot is outside the configured availability window.'
+        : selectedResource &&
+            form.bookingDate &&
+            form.startTime &&
+            form.endTime &&
+            availabilitySlots.some(
+              (slot) =>
+                normalizedStartTime < slot.endTime.slice(0, 5) &&
+                normalizedEndTime > slot.startTime.slice(0, 5) &&
+                (slot.status === 'BLOCKED' || slot.status === 'UNAVAILABLE'),
+            )
+          ? 'Selected slot is blocked by maintenance or unavailable time.'
+          : null;
+
   useEffect(() => {
-    const hasRequiredFields = form.resourceId && form.bookingDate && form.startTime && form.endTime;
+    const hasRequiredFields =
+      form.resourceId && form.bookingDate && form.startTime && form.endTime && form.purpose.trim();
     if (!hasRequiredFields) {
+      setPreview(null);
+      return;
+    }
+    if (form.endTime <= form.startTime) {
+      setPreview(null);
+      return;
+    }
+    if (dateError) {
+      setPreview(null);
+      return;
+    }
+    if (availabilityError) {
       setPreview(null);
       return;
     }
@@ -50,26 +123,31 @@ export function BookingForm({ loading = false, onSubmit }: BookingFormProps) {
     }, 400);
 
     return () => clearTimeout(timeout);
-  }, [form]);
+  }, [availabilityError, dateError, form]);
 
   useEffect(() => {
     if (!form.resourceId || !form.bookingDate) {
       setDayBookings([]);
+      setAvailabilitySlots([]);
       return;
     }
 
     let active = true;
     setCalendarLoading(true);
-    bookingApi
-      .getResourceBookings(form.resourceId, form.bookingDate)
-      .then((bookings) => {
+    Promise.all([
+      bookingApi.getResourceBookings(form.resourceId, form.bookingDate),
+      facilityApi.getAvailability(form.resourceId, form.bookingDate, form.bookingDate),
+    ])
+      .then(([bookings, availability]) => {
         if (active) {
           setDayBookings(bookings);
+          setAvailabilitySlots(availability.availability[0]?.slots ?? []);
         }
       })
       .catch(() => {
         if (active) {
           setDayBookings([]);
+          setAvailabilitySlots([]);
         }
       })
       .finally(() => {
@@ -90,7 +168,24 @@ export function BookingForm({ loading = false, onSubmit }: BookingFormProps) {
       className="dashboard-section"
       onSubmit={async (event) => {
         event.preventDefault();
-        await onSubmit(form);
+        if (form.endTime <= form.startTime) {
+          setFormError('End time must be after start time.');
+          return;
+        }
+        if (dateError) {
+          setFormError(dateError);
+          return;
+        }
+        if (availabilityError) {
+          setFormError(availabilityError);
+          return;
+        }
+        if (!form.purpose.trim()) {
+          setFormError('Purpose is required.');
+          return;
+        }
+        setFormError(null);
+        await onSubmit({ ...form, purpose: form.purpose.trim() });
         setForm((prev) => ({ ...prev, purpose: '', startTime: '', endTime: '' }));
       }}
     >
@@ -107,7 +202,10 @@ export function BookingForm({ loading = false, onSubmit }: BookingFormProps) {
           <select
             required
             value={form.resourceId}
-            onChange={(event) => setForm((prev) => ({ ...prev, resourceId: event.target.value }))}
+            onChange={(event) => {
+              setFormError(null);
+              setForm((prev) => ({ ...prev, resourceId: event.target.value }));
+            }}
           >
             <option value="">Select a resource</option>
             {resources.map((resource) => (
@@ -122,8 +220,12 @@ export function BookingForm({ loading = false, onSubmit }: BookingFormProps) {
           <input
             required
             type="date"
+            min={todayDate}
             value={form.bookingDate}
-            onChange={(event) => setForm((prev) => ({ ...prev, bookingDate: event.target.value }))}
+            onChange={(event) => {
+              setFormError(null);
+              setForm((prev) => ({ ...prev, bookingDate: event.target.value }));
+            }}
           />
         </label>
         <div className="booking-form-time-grid">
@@ -133,7 +235,10 @@ export function BookingForm({ loading = false, onSubmit }: BookingFormProps) {
               required
               type="time"
               value={form.startTime}
-              onChange={(event) => setForm((prev) => ({ ...prev, startTime: event.target.value }))}
+              onChange={(event) => {
+                setFormError(null);
+                setForm((prev) => ({ ...prev, startTime: event.target.value }));
+              }}
             />
           </label>
           <label>
@@ -142,7 +247,10 @@ export function BookingForm({ loading = false, onSubmit }: BookingFormProps) {
               required
               type="time"
               value={form.endTime}
-              onChange={(event) => setForm((prev) => ({ ...prev, endTime: event.target.value }))}
+              onChange={(event) => {
+                setFormError(null);
+                setForm((prev) => ({ ...prev, endTime: event.target.value }));
+              }}
             />
           </label>
         </div>
@@ -151,15 +259,53 @@ export function BookingForm({ loading = false, onSubmit }: BookingFormProps) {
           <textarea
             required
             value={form.purpose}
-            onChange={(event) => setForm((prev) => ({ ...prev, purpose: event.target.value }))}
+            onChange={(event) => {
+              setFormError(null);
+              setForm((prev) => ({ ...prev, purpose: event.target.value }));
+            }}
             placeholder="Class, event, meeting, or other use"
             rows={3}
           />
         </label>
       </div>
 
+      {form.startTime && form.endTime && form.endTime <= form.startTime ? (
+        <p className="booking-form-error">End time must be after start time.</p>
+      ) : null}
+      {dateError ? <p className="booking-form-error">{dateError}</p> : null}
+      {availabilityError ? <p className="booking-form-error">{availabilityError}</p> : null}
+      {formError ? <p className="booking-form-error">{formError}</p> : null}
+      {selectedResource && form.bookingDate ? (
+        <div className="booking-window-list">
+          <span>Available windows</span>
+          {selectedDayWindows.length > 0 ? (
+            selectedDayWindows.map((window) => (
+              <strong key={`${window.dayOfWeek}-${window.startTime}-${window.endTime}`}>
+                {window.startTime.slice(0, 5)} - {window.endTime.slice(0, 5)}
+              </strong>
+            ))
+          ) : (
+            <strong>Closed for this day</strong>
+          )}
+        </div>
+      ) : null}
+
       <div className="booking-form-submit-wrap">
-        <button type="submit" className="btn-primary" disabled={loading}>
+        <button
+          type="submit"
+          className="btn-primary"
+          disabled={
+            loading ||
+            Boolean(dateError) ||
+            Boolean(form.startTime && form.endTime && form.endTime <= form.startTime) ||
+            Boolean(availabilityError)
+          }
+          onClick={() => {
+            if (!form.purpose.trim()) {
+              setFormError('Purpose is required.');
+            }
+          }}
+        >
           {loading ? 'Submitting...' : submitLabel}
         </button>
       </div>
@@ -210,8 +356,7 @@ export function BookingForm({ loading = false, onSubmit }: BookingFormProps) {
                   <strong>
                     {booking.startTime} - {booking.endTime}
                   </strong>{' '}
-                  <span>{booking.status}</span>{' '}
-                  <span>{booking.purpose}</span>
+                  <span>{booking.status}</span> <span>{booking.purpose}</span>
                 </li>
               ))}
             </ul>
