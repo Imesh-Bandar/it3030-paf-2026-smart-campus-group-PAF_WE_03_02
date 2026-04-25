@@ -1,8 +1,4 @@
 import { api } from '../../lib/axios';
-import type { ResourceOption } from '../types/facility';
-
-export const facilityApi = {
-  getAll: async (): Promise<ResourceOption[]> => (await api.get('/resources')).data,
 import type {
   Facility,
   FacilityAvailability,
@@ -25,6 +21,9 @@ export const facilityApi = {
     (await api.get(`/resources/${id}/availability`, { params: { from, to } })).data,
   getBlackouts: async (id: string): Promise<MaintenanceBlackout[]> =>
     (await api.get(`/resources/${id}/maintenance-blackouts`)).data,
-  createBlackout: async (id: string, payload: MaintenanceBlackoutPayload): Promise<MaintenanceBlackout> =>
+  createBlackout: async (
+    id: string,
+    payload: MaintenanceBlackoutPayload,
+  ): Promise<MaintenanceBlackout> =>
     (await api.post(`/resources/${id}/maintenance-blackouts`, payload)).data,
 };
