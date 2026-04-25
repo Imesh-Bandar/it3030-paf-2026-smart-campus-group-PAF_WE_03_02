@@ -21,9 +21,13 @@ import { NotificationsPage } from './app/notifications/page';
 import { NotificationPreferencesPage } from './app/notifications/preferences/page';
 import { SecurityActivityPage } from './app/account/security/page';
 import { NotificationBell } from './components/notifications/NotificationBell';
+import { Footer } from './components/layout/Footer';
 import { getRoleHomePath, useRole } from './hooks/useRole';
 import { useTheme } from './hooks/useTheme';
 import type { UserRole } from './services/types/user';
+import smartCampusLogo from './assets/smart-campus-logo.svg';
+import { AboutPage } from './app/about/page';
+import { PrivacyPolicyPage } from './app/privacy/page';
 
 /* ─── Icons (inline SVG helpers) ─────────────────── */
 function IconHome() {
@@ -240,25 +244,6 @@ function IconMoon() {
   );
 }
 
-function IconBuilding() {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-      <polyline points="9 22 9 12 15 12 15 22" />
-    </svg>
-  );
-}
-
 /* ─── Protected Route ─────────────────────────────── */
 function ProtectedRoute({ children, roles }: { children: JSX.Element; roles?: UserRole[] }) {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -317,12 +302,7 @@ function AppLayout() {
       <header className="app-header">
         {/* Brand */}
         <Link to="/" className="header-brand" aria-label="Smart Campus Home" onClick={closeMenu}>
-          <div className="header-brand-icon">
-            <IconBuilding />
-          </div>
-          <span className="header-brand-name">
-            Smart<span>Campus</span>
-          </span>
+          <img className="header-brand-logo" src={smartCampusLogo} alt="Smart Campus" />
         </Link>
 
         {/* Desktop nav */}
@@ -461,6 +441,7 @@ function AppLayout() {
       </nav>
 
       <Outlet />
+      <Footer />
     </div>
   );
 }
@@ -474,6 +455,8 @@ function App() {
     <Routes>
       <Route element={<AppLayout />}>
         <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/privacy" element={<PrivacyPolicyPage />} />
         <Route path="/login" element={<LoginPage />} />
 
         <Route
