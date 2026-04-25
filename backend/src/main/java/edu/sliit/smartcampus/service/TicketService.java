@@ -1,6 +1,8 @@
 package edu.sliit.smartcampus.service;
 
 import edu.sliit.smartcampus.dto.AssignmentSuggestionDto;
+import edu.sliit.smartcampus.dto.TechnicianAvailabilityDto;
+import edu.sliit.smartcampus.dto.TechnicianAvailabilityUpdateRequestDto;
 import edu.sliit.smartcampus.dto.TechnicianWorkloadDto;
 import edu.sliit.smartcampus.dto.TicketAttachmentDto;
 import edu.sliit.smartcampus.dto.TicketCommentDto;
@@ -12,6 +14,7 @@ import edu.sliit.smartcampus.dto.TicketStatusUpdateRequestDto;
 import edu.sliit.smartcampus.exception.ResourceNotFoundException;
 import edu.sliit.smartcampus.exception.ValidationException;
 import edu.sliit.smartcampus.model.NotificationType;
+import edu.sliit.smartcampus.model.TechnicianAvailability;
 import edu.sliit.smartcampus.model.Ticket;
 import edu.sliit.smartcampus.model.TicketAttachment;
 import edu.sliit.smartcampus.model.TicketCategory;
@@ -23,6 +26,7 @@ import edu.sliit.smartcampus.model.UserRole;
 import edu.sliit.smartcampus.repository.TicketAttachmentRepository;
 import edu.sliit.smartcampus.repository.TicketCommentRepository;
 import edu.sliit.smartcampus.repository.TicketRepository;
+import edu.sliit.smartcampus.repository.TechnicianAvailabilityRepository;
 import edu.sliit.smartcampus.repository.UserRepository;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -33,6 +37,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -55,6 +60,7 @@ public class TicketService {
     private final TicketRepository ticketRepository;
     private final TicketCommentRepository commentRepository;
     private final TicketAttachmentRepository attachmentRepository;
+    private final TechnicianAvailabilityRepository technicianAvailabilityRepository;
     private final UserRepository userRepository;
     private final TicketFileStorageService fileStorageService;
     private final NotificationService notificationService;
@@ -64,6 +70,7 @@ public class TicketService {
             TicketRepository ticketRepository,
             TicketCommentRepository commentRepository,
             TicketAttachmentRepository attachmentRepository,
+            TechnicianAvailabilityRepository technicianAvailabilityRepository,
             UserRepository userRepository,
             TicketFileStorageService fileStorageService,
             NotificationService notificationService) {
@@ -71,6 +78,7 @@ public class TicketService {
         this.ticketRepository = ticketRepository;
         this.commentRepository = commentRepository;
         this.attachmentRepository = attachmentRepository;
+        this.technicianAvailabilityRepository = technicianAvailabilityRepository;
         this.userRepository = userRepository;
         this.fileStorageService = fileStorageService;
         this.notificationService = notificationService;
@@ -138,6 +146,9 @@ public class TicketService {
                 .orElseThrow(() -> new ResourceNotFoundException("Technician not found"));
         if (technician.getRole() != UserRole.TECHNICIAN) {
             throw new ValidationException("Selected user is not a technician");
+        }
+        if (!isTechnicianAvailable(technician.getId())) {
+            throw new ValidationException("Selected technician is currently unavailable");
         }
         ticket.setAssignee(technician);
         if (ticket.getStatus() == TicketStatus.OPEN) {
@@ -264,9 +275,13 @@ public class TicketService {
 
     public List<TechnicianWorkloadDto> getTechnicianWorkloads() {
         requireAdmin(getCurrentUser());
-        return userRepository.findByRole(UserRole.TECHNICIAN).stream()
-                .map(this::toWorkloadDto)
-                .sorted(Comparator.comparingLong(TechnicianWorkloadDto::activeTickets))
+        List<User> technicians = userRepository.findByRole(UserRole.TECHNICIAN);
+        Map<UUID, TechnicianAvailability> availabilityByTechnician = availabilityByTechnician(technicians);
+        return technicians.stream()
+                .map(technician -> toWorkloadDto(technician, availabilityByTechnician.get(technician.getId())))
+                .sorted(Comparator.comparing(TechnicianWorkloadDto::available).reversed()
+                        .thenComparingLong(TechnicianWorkloadDto::activeTickets)
+                        .thenComparing(TechnicianWorkloadDto::technicianName))
                 .toList();
     }
 
@@ -274,15 +289,43 @@ public class TicketService {
         requireAdmin(getCurrentUser());
         Ticket ticket = getActiveTicket(ticketId);
         List<TechnicianWorkloadDto> workloads = getTechnicianWorkloads();
-        TechnicianWorkloadDto suggested = workloads.stream().findFirst().orElse(null);
+        TechnicianWorkloadDto suggested = workloads.stream().filter(TechnicianWorkloadDto::available).findFirst().orElse(null);
         if (suggested == null) {
             return new AssignmentSuggestionDto(ticket.getId(), null, null,
-                    "No technician accounts are available", workloads);
+                    "No available technicians right now", workloads);
         }
         String reason = "Lowest active load with " + suggested.activeTickets() + " active ticket"
                 + (suggested.activeTickets() == 1 ? "" : "s");
         return new AssignmentSuggestionDto(ticket.getId(), suggested.technicianId(), suggested.technicianName(), reason,
                 workloads);
+    }
+
+    @Transactional
+    public TechnicianAvailabilityDto updateMyAvailability(TechnicianAvailabilityUpdateRequestDto request) {
+        User technician = getCurrentUser();
+        if (technician.getRole() != UserRole.TECHNICIAN) {
+            throw new AccessDeniedException("Only technicians can update availability");
+        }
+        TechnicianAvailability availability = technicianAvailabilityRepository.findByTechnician_Id(technician.getId())
+                .orElseGet(() -> {
+                    TechnicianAvailability created = new TechnicianAvailability();
+                    created.setTechnician(technician);
+                    return created;
+                });
+        availability.setAvailable(Boolean.TRUE.equals(request.available()));
+        availability.setNote(blankToNull(request.note()));
+        TechnicianAvailability saved = technicianAvailabilityRepository.save(availability);
+        return toAvailabilityDto(technician, saved);
+    }
+
+    public TechnicianAvailabilityDto getMyAvailability() {
+        User technician = getCurrentUser();
+        if (technician.getRole() != UserRole.TECHNICIAN) {
+            throw new AccessDeniedException("Only technicians can view availability");
+        }
+        TechnicianAvailability availability = technicianAvailabilityRepository.findByTechnician_Id(technician.getId())
+                .orElse(null);
+        return toAvailabilityDto(technician, availability);
     }
 
     private Ticket getVisibleTicket(UUID id) {
@@ -479,13 +522,47 @@ public class TicketService {
                 attachment.getCreatedAt());
     }
 
-    private TechnicianWorkloadDto toWorkloadDto(User technician) {
+    private TechnicianWorkloadDto toWorkloadDto(User technician, TechnicianAvailability availability) {
         List<Ticket> assigned = ticketRepository.findByAssignee_IdAndDeletedAtIsNullOrderByCreatedAtDesc(technician.getId());
         List<Ticket> active = assigned.stream().filter(ticket -> ACTIVE_STATUSES.contains(ticket.getStatus())).toList();
         long overdue = active.stream().filter(Ticket::isSlaBreached).count();
         String loadStatus = active.size() >= 8 ? "HIGH" : active.size() >= 4 ? "MEDIUM" : "LOW";
-        return new TechnicianWorkloadDto(technician.getId(), technician.getFullName(), active.size(), overdue,
-                loadStatus, priorityMix(active));
+        return new TechnicianWorkloadDto(
+                technician.getId(),
+                technician.getFullName(),
+                availability == null || availability.isAvailable(),
+                availability == null ? null : availability.getNote(),
+                availability == null ? null : availability.getUpdatedAt(),
+                active.size(),
+                overdue,
+                loadStatus,
+                priorityMix(active));
+    }
+
+    private boolean isTechnicianAvailable(UUID technicianId) {
+        return technicianAvailabilityRepository.findByTechnician_Id(technicianId)
+                .map(TechnicianAvailability::isAvailable)
+                .orElse(true);
+    }
+
+    private Map<UUID, TechnicianAvailability> availabilityByTechnician(List<User> technicians) {
+        if (technicians.isEmpty()) {
+            return Map.of();
+        }
+        List<UUID> ids = technicians.stream().map(User::getId).toList();
+        Map<UUID, TechnicianAvailability> result = new HashMap<>();
+        technicianAvailabilityRepository.findByTechnician_IdIn(ids)
+                .forEach(availability -> result.put(availability.getTechnician().getId(), availability));
+        return result;
+    }
+
+    private TechnicianAvailabilityDto toAvailabilityDto(User technician, TechnicianAvailability availability) {
+        return new TechnicianAvailabilityDto(
+                technician.getId(),
+                technician.getFullName(),
+                availability == null || availability.isAvailable(),
+                availability == null ? null : availability.getNote(),
+                availability == null ? null : availability.getUpdatedAt());
     }
 
     private Map<String, Long> priorityMix(List<Ticket> tickets) {
