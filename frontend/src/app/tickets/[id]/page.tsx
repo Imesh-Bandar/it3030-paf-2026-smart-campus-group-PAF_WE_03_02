@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { ArrowLeft, CalendarClock, Clock3, MapPin, Paperclip, User, UserCog } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useState } from 'react';
@@ -14,6 +15,17 @@ import type { TicketStatus } from '../../../services/types/ticket';
 import { formatStatusLabel, getApiErrorMessage } from '../../../components/tickets/ticketUi';
 
 const statuses: TicketStatus[] = ['OPEN', 'IN_PROGRESS', 'RESOLVED'];
+
+function formatDateTime(value?: string) {
+  return value ? new Date(value).toLocaleString() : 'Pending';
+}
+
+function formatMinutes(value: number) {
+  if (value < 60) return `${value} min`;
+  const hours = Math.floor(value / 60);
+  const minutes = value % 60;
+  return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
+}
 
 export function TicketDetailsPage() {
   const { id } = useParams();
@@ -63,7 +75,7 @@ export function TicketDetailsPage() {
 
   return (
     <main className="page-shell animate-fade-up" id="ticket-detail-page">
-      <div className="section-header">
+      <div className="ticket-detail-hero">
         <div>
           <p className="section-eyebrow">{ticket.ticketNumber}</p>
           <h1>{ticket.title}</h1>
@@ -88,32 +100,46 @@ export function TicketDetailsPage() {
           <p className="ticket-detail-copy">{ticket.description}</p>
           <dl className="ticket-detail-meta-grid ticket-facts">
             <div>
-              <dt>Category</dt>
+              <dt>
+                <CalendarClock size={15} aria-hidden="true" />
+                Category
+              </dt>
               <dd>{ticket.category.replace('_', ' ')}</dd>
             </div>
             <div>
-              <dt>Location</dt>
+              <dt>
+                <MapPin size={15} aria-hidden="true" />
+                Location
+              </dt>
               <dd>{ticket.location || 'Not specified'}</dd>
             </div>
             <div>
-              <dt>Reporter</dt>
+              <dt>
+                <User size={15} aria-hidden="true" />
+                Reporter
+              </dt>
               <dd>{ticket.reporterName}</dd>
             </div>
             <div>
-              <dt>Technician</dt>
+              <dt>
+                <UserCog size={15} aria-hidden="true" />
+                Technician
+              </dt>
               <dd>{ticket.assigneeName || 'Unassigned'}</dd>
             </div>
             <div>
-              <dt>Elapsed</dt>
-              <dd>{ticket.elapsedMinutes} minutes</dd>
+              <dt>
+                <Clock3 size={15} aria-hidden="true" />
+                Elapsed
+              </dt>
+              <dd>{formatMinutes(ticket.elapsedMinutes)}</dd>
             </div>
             <div>
-              <dt>First response</dt>
-              <dd>
-                {ticket.firstResponseAt
-                  ? new Date(ticket.firstResponseAt).toLocaleString()
-                  : 'Pending'}
-              </dd>
+              <dt>
+                <CalendarClock size={15} aria-hidden="true" />
+                First response
+              </dt>
+              <dd>{formatDateTime(ticket.firstResponseAt)}</dd>
             </div>
           </dl>
 

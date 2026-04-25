@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Bell, CalendarDays, CheckCheck, Cog, ShieldCheck, Ticket, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { notificationApi, type Notification } from '../../services/api/notificationApi';
@@ -25,11 +26,11 @@ function getNotificationAccent(type: string) {
   return 'blue';
 }
 
-function getNotificationIcon(type: string) {
-  if (type.includes('SECURITY')) return '🔐';
-  if (type.includes('TICKET')) return '🎫';
-  if (type.includes('BOOKING')) return '📅';
-  return '🔔';
+function NotificationTypeIcon({ type, size }: { type: string; size: number }) {
+  if (type.includes('SECURITY')) return <ShieldCheck size={size} aria-hidden="true" />;
+  if (type.includes('TICKET')) return <Ticket size={size} aria-hidden="true" />;
+  if (type.includes('BOOKING')) return <CalendarDays size={size} aria-hidden="true" />;
+  return <Bell size={size} aria-hidden="true" />;
 }
 
 function NotificationRow({
@@ -66,16 +67,16 @@ function NotificationRow({
 
   return (
     <article
-      className={`dashboard-info-card notification-card ${notification.read ? '' : 'unread'}`}
+      className={`notification-card ${notification.read ? '' : 'unread'}`}
       onClick={!notification.read ? handleMarkRead : undefined}
       role={!notification.read ? 'button' : undefined}
       tabIndex={!notification.read ? 0 : undefined}
       id={`notification-${notification.id}`}
     >
-      <div className={`dashboard-info-card-icon ${getNotificationAccent(notification.type)}`}>
-        {getNotificationIcon(notification.type)}
+      <div className={`notification-card-icon ${getNotificationAccent(notification.type)}`}>
+        <NotificationTypeIcon type={notification.type} size={20} />
       </div>
-      <div className="dashboard-info-card-body" style={{ flex: 1 }}>
+      <div className="notification-row-body">
         <div className="notification-row-header">
           <div>
             <h3>{notification.title}</h3>
@@ -98,17 +99,19 @@ function NotificationRow({
                 void handleMarkRead();
               }}
             >
+              <CheckCheck size={15} aria-hidden="true" />
               Mark read
             </button>
           )}
           <button
             type="button"
-            className="btn-ghost"
+            className="btn-ghost btn-danger"
             onClick={(event) => {
               event.stopPropagation();
               void handleDelete();
             }}
           >
+            <Trash2 size={15} aria-hidden="true" />
             Delete
           </button>
         </div>
@@ -172,51 +175,59 @@ export function NotificationsPage() {
   };
 
   if (loading) {
-    return <main className="page-shell">Loading notifications...</main>;
+    return (
+      <main className="page-shell" id="notifications-page">
+        <div className="notification-loading">Loading notifications...</div>
+      </main>
+    );
   }
 
   return (
-    <main className="page-shell" id="notifications-page">
-      <header className="page-header">
+    <main className="page-shell animate-fade-up" id="notifications-page">
+      <header className="notification-hero">
         <h1>Notifications</h1>
         <p>Track booking updates, ticket changes, and security alerts in one place.</p>
       </header>
 
-      <section className="dashboard-section" aria-label="Notification summary">
-        <div className="dashboard-cards-grid">
-          <article className="dashboard-info-card">
-            <div className="dashboard-info-card-icon amber">🔔</div>
-            <div className="dashboard-info-card-body">
-              <h3>Unread Alerts</h3>
-              <p>
-                {unreadCount} unread notification{unreadCount !== 1 ? 's' : ''}.
-              </p>
-            </div>
-          </article>
-          <article className="dashboard-info-card">
-            <div className="dashboard-info-card-icon rose">🔐</div>
-            <div className="dashboard-info-card-body">
-              <h3>Security Settings</h3>
-              <p>Review your account activity and suspicious login history.</p>
-              <Link to="/account/security" className="dashboard-card-link">
-                View Security Activity →
-              </Link>
-            </div>
-          </article>
-          <article className="dashboard-info-card">
-            <div className="dashboard-info-card-icon blue">⚙️</div>
-            <div className="dashboard-info-card-body">
-              <h3>Preferences</h3>
-              <p>Choose which categories of updates you want to receive.</p>
-              <Link to="/notifications/preferences" className="dashboard-card-link">
-                Manage Preferences →
-              </Link>
-            </div>
-          </article>
-        </div>
+      <section className="notification-summary-grid" aria-label="Notification summary">
+        <article className="notification-summary-card">
+          <div className="notification-card-icon amber">
+            <Bell size={20} aria-hidden="true" />
+          </div>
+          <div>
+            <h3>Unread Alerts</h3>
+            <p>
+              {unreadCount} unread notification{unreadCount !== 1 ? 's' : ''}.
+            </p>
+          </div>
+        </article>
+        <article className="notification-summary-card">
+          <div className="notification-card-icon rose">
+            <ShieldCheck size={20} aria-hidden="true" />
+          </div>
+          <div>
+            <h3>Security Settings</h3>
+            <p>Review your account activity and suspicious login history.</p>
+            <Link to="/account/security" className="dashboard-card-link">
+              View Security Activity
+            </Link>
+          </div>
+        </article>
+        <article className="notification-summary-card">
+          <div className="notification-card-icon blue">
+            <Cog size={20} aria-hidden="true" />
+          </div>
+          <div>
+            <h3>Preferences</h3>
+            <p>Choose which categories of updates you want to receive.</p>
+            <Link to="/notifications/preferences" className="dashboard-card-link">
+              Manage Preferences
+            </Link>
+          </div>
+        </article>
       </section>
 
-      <section className="dashboard-section" aria-labelledby="notifications-list-heading">
+      <section className="notifications-panel" aria-labelledby="notifications-list-heading">
         <div className="notifications-toolbar">
           <div>
             <h2 id="notifications-list-heading">Recent Notifications</h2>
@@ -231,16 +242,18 @@ export function NotificationsPage() {
             onClick={handleMarkAllRead}
             disabled={saving || unreadCount === 0}
           >
+            <CheckCheck size={16} aria-hidden="true" />
             {saving ? 'Updating...' : 'Mark All Read'}
           </button>
         </div>
 
         <div className="notifications-list">
           {notifications.length === 0 ? (
-            <article className="dashboard-info-card">
-              <div className="dashboard-info-card-body">
+            <article className="notification-empty-state">
+              <Bell size={28} aria-hidden="true" />
+              <div>
                 <h3>No notifications yet</h3>
-                <p>You’ll see booking, ticket, and security updates here when they arrive.</p>
+                <p>You will see booking, ticket, and security updates here when they arrive.</p>
               </div>
             </article>
           ) : (

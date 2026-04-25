@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
+import { MessageSquare } from 'lucide-react';
 import type { TicketComment } from '../../services/types/ticket';
 import { getApiErrorMessage } from './ticketUi';
 
@@ -79,7 +80,7 @@ export function CommentSection({ comments, canUseInternalNotes, onAdd, onEdit, o
                     setBusyCommentId(null);
                   }
                 }}
-                className="space-y-2"
+                className="ticket-comment-edit"
               >
                 <textarea
                   className="ticket-comment-edit"

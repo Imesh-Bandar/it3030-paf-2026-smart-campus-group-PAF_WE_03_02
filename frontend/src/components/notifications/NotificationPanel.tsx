@@ -1,13 +1,15 @@
-import { useNotificationStore } from '../../stores/notificationStore';
+import type { MouseEvent } from 'react';
+import { Bell, CalendarDays, CheckCheck, Cog, ShieldCheck, Ticket, Trash2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { notificationApi } from '../../services/api/notificationApi';
 import type { Notification } from '../../services/api/notificationApi';
-import { Link } from 'react-router-dom';
+import { useNotificationStore } from '../../stores/notificationStore';
 
 function formatRelativeTime(dateStr: string): string {
   const date = new Date(dateStr);
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
+  const diffMins = Math.floor(diffMs / 60_000);
   if (diffMins < 1) return 'just now';
   if (diffMins < 60) return `${diffMins}m ago`;
   const diffHrs = Math.floor(diffMins / 60);
@@ -16,11 +18,11 @@ function formatRelativeTime(dateStr: string): string {
   return `${diffDays}d ago`;
 }
 
-function getNotificationIcon(type: string): string {
-  if (type.startsWith('BOOKING')) return '📅';
-  if (type.startsWith('TICKET')) return '🎫';
-  if (type.startsWith('ACCOUNT_SECURITY')) return '🔐';
-  return '🔔';
+function NotificationTypeIcon({ type }: { type: string }) {
+  if (type.startsWith('BOOKING')) return <CalendarDays size={17} aria-hidden="true" />;
+  if (type.startsWith('TICKET')) return <Ticket size={17} aria-hidden="true" />;
+  if (type.startsWith('ACCOUNT_SECURITY')) return <ShieldCheck size={17} aria-hidden="true" />;
+  return <Bell size={17} aria-hidden="true" />;
 }
 
 function NotificationItem({ notification }: { notification: Notification }) {
@@ -35,8 +37,8 @@ function NotificationItem({ notification }: { notification: Notification }) {
     }
   };
 
-  const handleDelete = async (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleDelete = async (event: MouseEvent) => {
+    event.stopPropagation();
     try {
       await notificationApi.deleteNotification(notification.id);
       removeNotification(notification.id);
@@ -53,12 +55,12 @@ function NotificationItem({ notification }: { notification: Notification }) {
       tabIndex={!notification.read ? 0 : undefined}
       id={`notification-${notification.id}`}
     >
-      <span className="notification-item-icon">{getNotificationIcon(notification.type)}</span>
+      <span className="notification-item-icon">
+        <NotificationTypeIcon type={notification.type} />
+      </span>
       <div className="notification-item-body">
         <p className="notification-item-title">{notification.title}</p>
-        {notification.message && (
-          <p className="notification-item-msg">{notification.message}</p>
-        )}
+        {notification.message && <p className="notification-item-msg">{notification.message}</p>}
         <span className="notification-item-time">{formatRelativeTime(notification.createdAt)}</span>
       </div>
       <button
@@ -68,7 +70,7 @@ function NotificationItem({ notification }: { notification: Notification }) {
         aria-label="Delete notification"
         title="Delete"
       >
-        ×
+        <Trash2 size={15} aria-hidden="true" />
       </button>
     </div>
   );
@@ -87,25 +89,30 @@ export function NotificationPanel() {
   };
 
   return (
-    <div className="notification-panel" id="notification-panel" role="dialog" aria-label="Notifications">
+    <div
+      className="notification-panel"
+      id="notification-panel"
+      role="dialog"
+      aria-label="Notifications"
+    >
       <div className="notification-panel-header">
         <h3>Notifications</h3>
         <div className="notification-panel-actions">
           <button
             type="button"
-            className="btn-ghost"
+            className="btn-ghost notification-panel-action"
             onClick={handleMarkAllRead}
             id="btn-mark-all-read"
-            style={{ fontSize: '0.75rem', padding: '4px 8px' }}
           >
+            <CheckCheck size={14} aria-hidden="true" />
             Mark all read
           </button>
           <Link
             to="/notifications/preferences"
-            className="btn-ghost"
-            style={{ fontSize: '0.75rem', padding: '4px 8px' }}
+            className="btn-ghost notification-panel-icon-action"
+            aria-label="Notification preferences"
           >
-            ⚙
+            <Cog size={15} aria-hidden="true" />
           </Link>
         </div>
       </div>
@@ -113,16 +120,18 @@ export function NotificationPanel() {
       <div className="notification-panel-body">
         {notifications.length === 0 ? (
           <div className="notification-empty">
-            <span>🔔</span>
+            <Bell size={26} aria-hidden="true" />
             <p>No notifications yet</p>
           </div>
         ) : (
-          notifications.map((n) => <NotificationItem key={n.id} notification={n} />)
+          notifications.map((notification) => (
+            <NotificationItem key={notification.id} notification={notification} />
+          ))
         )}
       </div>
 
       <div className="notification-panel-footer">
-        <Link to="/notifications" className="btn-ghost" style={{ width: '100%', justifyContent: 'center' }}>
+        <Link to="/notifications" className="btn-ghost notification-panel-view-all">
           View all notifications
         </Link>
       </div>
