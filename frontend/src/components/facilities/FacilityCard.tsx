@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Building2, MapPin, Users } from 'lucide-react';
 import type { Facility } from '../../services/types/facility';
 
 const statusLabel: Record<string, string> = {
@@ -21,6 +22,16 @@ type FacilityCardProps = {
 export function FacilityCard({ facility, adminHref }: FacilityCardProps) {
   return (
     <article className="dashboard-info-card facility-card">
+      <div className="facility-card-media" aria-hidden="true">
+        {facility.thumbnailUrl ? (
+          <img src={facility.thumbnailUrl} alt="" />
+        ) : (
+          <div className="facility-card-media-fallback">
+            <Building2 size={30} />
+            <span>{facility.type.replaceAll('_', ' ')}</span>
+          </div>
+        )}
+      </div>
       <div className="dashboard-info-card-body">
         <div className="facility-card-top">
           <div>
@@ -34,9 +45,18 @@ export function FacilityCard({ facility, adminHref }: FacilityCardProps) {
 
         <p className="facility-copy">{facility.description ?? 'No description provided yet.'}</p>
         <div className="facility-meta-grid" aria-label="Facility summary">
-          <span className="facility-meta-item">{facility.location}</span>
-          <span className="facility-meta-item">Capacity {facility.capacity}</span>
-          <span className="facility-meta-item">Code {facility.resourceCode}</span>
+          <span className="facility-meta-item">
+            <MapPin size={14} />
+            {facility.location}
+          </span>
+          <span className="facility-meta-item">
+            <Users size={14} />
+            Capacity {facility.capacity}
+          </span>
+          <span className="facility-meta-item">
+            <Building2 size={14} />
+            {facility.resourceCode}
+          </span>
         </div>
 
         {facility.amenities.length > 0 ? (

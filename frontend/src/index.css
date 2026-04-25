@@ -5,6 +5,13 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
+:root {
+  --site-bg-image: url('./assets/backgrounds/smart-campus-bg.png');
+  --facilities-bg-image: url('./assets/backgrounds/facilities-interior-bg.png');
+  --admin-bg-image: url('./assets/backgrounds/admin-ops-bg.png');
+  --tickets-bg-image: url('./assets/backgrounds/tickets-support-bg.png');
+}
+
 /* ─── Dark Theme (default) ───────────────────────── */
 :root,
 [data-theme='dark'] {
@@ -137,13 +144,23 @@ body {
   font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   font-size: 16px;
   line-height: 1.6;
-  background: var(--bg-base);
+  background:
+    linear-gradient(180deg, rgba(6, 10, 20, 0.9), rgba(8, 13, 26, 0.94)),
+    var(--site-bg-image) center / cover fixed,
+    var(--bg-base);
   color: var(--text-primary);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   transition:
     background var(--t-slow),
     color var(--t-slow);
+}
+
+[data-theme='light'] body {
+  background:
+    linear-gradient(180deg, rgba(241, 245, 251, 0.86), rgba(241, 245, 251, 0.94)),
+    var(--site-bg-image) center / cover fixed,
+    var(--bg-base);
 }
 
 #root {
@@ -171,7 +188,15 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: var(--bg-base);
+  background:
+    radial-gradient(ellipse 70% 44% at 50% 0%, rgba(26, 110, 245, 0.18), transparent 72%),
+    linear-gradient(180deg, rgba(10, 15, 30, 0.12), rgba(10, 15, 30, 0.5));
+}
+
+[data-theme='light'] .app-layout {
+  background:
+    radial-gradient(ellipse 70% 44% at 50% 0%, rgba(29, 78, 216, 0.12), transparent 72%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(241, 245, 251, 0.54));
 }
 
 /* ═══════════════════════════════════════════════════
@@ -611,6 +636,25 @@ body {
   width: 100%;
   max-width: 1200px;
   padding: 36px 32px 64px;
+}
+
+.home-hero,
+#student-dashboard .dashboard-hero,
+#staff-dashboard .dashboard-hero,
+#technician-dashboard .dashboard-hero {
+  background-blend-mode: normal, overlay, normal;
+  background-image:
+    linear-gradient(135deg, rgba(9, 16, 31, 0.86), rgba(12, 52, 70, 0.82)), var(--site-bg-image);
+  background-position: center;
+  background-size: cover;
+}
+
+[data-theme='light'] .home-hero,
+[data-theme='light'] #student-dashboard .dashboard-hero,
+[data-theme='light'] #staff-dashboard .dashboard-hero,
+[data-theme='light'] #technician-dashboard .dashboard-hero {
+  background-image:
+    linear-gradient(135deg, rgba(30, 58, 138, 0.78), rgba(15, 118, 110, 0.74)), var(--site-bg-image);
 }
 
 /* ═══════════════════════════════════════════════════
@@ -2469,7 +2513,9 @@ body {
   overflow: hidden;
   border: 1px solid var(--border);
   border-radius: var(--r-xl);
-  background: linear-gradient(145deg, #12284a 0%, #173b62 54%, #0f3f49 100%);
+  background:
+    linear-gradient(135deg, rgba(9, 16, 31, 0.88), rgba(10, 44, 68, 0.8)),
+    var(--admin-bg-image) center / cover;
   box-shadow: var(--shadow-md);
   padding: 36px;
   display: grid;
@@ -2815,7 +2861,9 @@ body {
 #admin-users .admin-users-hero {
   border: 1px solid var(--border);
   border-radius: var(--r-xl);
-  background: linear-gradient(145deg, #12284a 0%, #183958 58%, #25314f 100%);
+  background:
+    linear-gradient(135deg, rgba(9, 16, 31, 0.88), rgba(26, 37, 64, 0.8)),
+    var(--admin-bg-image) center / cover;
   box-shadow: var(--shadow-md);
   padding: 34px;
   margin-bottom: 22px;
@@ -3300,12 +3348,12 @@ body {
 
 .facility-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+  gap: 18px;
 }
 
 .facility-filters-header {
-  margin-bottom: 18px;
+  margin-bottom: 20px;
   align-items: center;
 }
 
@@ -3316,17 +3364,33 @@ body {
 }
 
 #facilities-page .section-header {
+  position: relative;
+  overflow: hidden;
   border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  background: var(--grad-card);
-  box-shadow: var(--shadow-sm);
-  padding: 18px;
-  margin-bottom: 16px;
+  border-radius: var(--r-xl);
+  background:
+    linear-gradient(135deg, rgba(9, 16, 31, 0.86), rgba(14, 71, 70, 0.8)),
+    var(--facilities-bg-image) center / cover;
+  box-shadow: var(--shadow-md);
+  padding: 34px;
+  margin-bottom: 20px;
+}
+
+#facilities-page .section-header::after,
+#admin-facilities-page .admin-facilities-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: var(--grad-brand);
 }
 
 #facilities-page .section-header h1 {
+  color: #ffffff;
+  font-size: clamp(30px, 4vw, 46px);
+  line-height: 1.08;
   margin-top: 4px;
-  margin-bottom: 6px;
+  margin-bottom: 10px;
 }
 
 #facilities-page .facility-grid > p {
@@ -3340,8 +3404,9 @@ body {
 #facilities-page .section-header p,
 #facility-details-page .section-header p,
 #admin-facilities-page .page-header p {
-  color: var(--text-secondary);
-  line-height: 1.6;
+  color: rgba(241, 245, 249, 0.9);
+  line-height: 1.7;
+  font-size: 15.5px;
 }
 
 .facility-card,
@@ -3361,16 +3426,66 @@ body {
 .facility-detail-hero,
 .facility-blackout-form,
 .facility-form-shell {
-  padding: 16px;
+  padding: 22px;
 }
 
 .facility-card {
   height: 100%;
+  overflow: hidden;
+  padding: 0;
+  transition:
+    transform var(--t-normal),
+    border-color var(--t-normal),
+    box-shadow var(--t-normal);
+}
+
+.facility-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md);
+}
+
+.facility-card .dashboard-info-card-body {
+  padding: 18px;
+}
+
+.facility-card-media {
+  height: 150px;
+  border-bottom: 1px solid var(--border);
+  background:
+    linear-gradient(135deg, rgba(26, 110, 245, 0.22), rgba(20, 184, 166, 0.16)), var(--bg-card-2);
+}
+
+.facility-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.facility-card-media-fallback {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  color: rgba(232, 240, 254, 0.88);
+  text-align: center;
+}
+
+.facility-card-media-fallback span {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .facility-admin-card {
   display: grid;
-  gap: 10px;
+  gap: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: rgba(148, 163, 184, 0.06);
+  padding: 10px;
 }
 
 .facility-card-top {
@@ -3382,11 +3497,15 @@ body {
 
 .facility-title {
   margin: 0;
+  color: var(--text-primary);
+  font-size: 19px;
+  line-height: 1.25;
 }
 
 .facility-copy {
   color: var(--text-secondary);
-  line-height: 1.65;
+  line-height: 1.7;
+  margin: 12px 0;
 }
 
 .facility-meta-grid {
@@ -3398,10 +3517,20 @@ body {
 }
 
 .facility-meta-item {
-  padding: 6px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
   border-radius: 999px;
-  background: var(--bg-card-2);
+  background: rgba(148, 163, 184, 0.08);
   border: 1px solid var(--border);
+  color: var(--text-primary);
+  max-width: 100%;
+}
+
+.facility-meta-item svg {
+  color: var(--brand-300);
+  flex-shrink: 0;
 }
 
 .facility-tag-row {
@@ -3414,10 +3543,11 @@ body {
 .facility-tag {
   border-radius: 999px;
   padding: 6px 10px;
-  background: var(--bg-card-2);
-  border: 1px solid var(--border);
+  background: rgba(20, 184, 166, 0.12);
+  border: 1px solid rgba(20, 184, 166, 0.24);
   font-size: 13px;
-  color: var(--text-primary);
+  color: #99f6e4;
+  font-weight: 650;
 }
 
 .facility-empty-state {
@@ -3430,13 +3560,14 @@ body {
 }
 
 .facility-filters-panel {
-  margin-bottom: 18px;
+  margin-bottom: 22px;
+  border-radius: var(--r-xl);
 }
 
 .facility-filters-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px;
+  gap: 14px;
 }
 
 .facility-filters-grid label {
@@ -3449,35 +3580,57 @@ body {
 }
 
 #facilities-page .facility-filters-grid :is(input, select) {
-  min-height: 42px;
+  min-height: 44px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--text-primary);
+  padding: 0 12px;
+  outline: none;
+}
+
+#facilities-page .facility-filters-grid :is(input, select):focus {
+  border-color: var(--brand-300);
+  box-shadow: 0 0 0 3px var(--input-focus);
 }
 
 [data-theme='light'] #facilities-page .section-header {
-  background: linear-gradient(145deg, #ffffff, #f7faff);
+  background: linear-gradient(145deg, #1e3a8a 0%, #1d4ed8 56%, #0f766e 100%);
+}
+
+[data-theme='light'] .facility-tag {
+  color: #0f766e;
+  background: rgba(20, 184, 166, 0.1);
 }
 
 .facility-detail-hero {
   display: grid;
-  gap: 14px;
+  gap: 18px;
+  border-radius: var(--r-xl);
 }
 
 .facility-detail-copy {
   display: grid;
   gap: 10px;
+  color: var(--text-secondary);
+  line-height: 1.75;
 }
 
 .facility-availability-list {
   display: grid;
-  gap: 12px;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
 .facility-day-card {
   margin-top: 0;
+  padding: 18px;
 }
 
 .facility-slot-list {
   display: grid;
-  gap: 10px;
+  gap: 8px;
+  margin-top: 12px;
 }
 
 .facility-slot {
@@ -3485,8 +3638,10 @@ body {
   justify-content: space-between;
   gap: 12px;
   align-items: flex-start;
-  padding: 10px 0;
-  border-top: 1px solid var(--border);
+  padding: 11px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: rgba(148, 163, 184, 0.07);
 }
 
 .facility-slot strong {
@@ -3499,21 +3654,22 @@ body {
 }
 
 .facility-slot:first-child {
-  border-top: 0;
-  padding-top: 0;
+  border-top: 1px solid var(--border);
 }
 
 .facility-blackout-list {
   display: grid;
-  gap: 12px;
+  gap: 14px;
 }
 
 .facility-blackout-form {
   margin-top: 16px;
+  border-radius: var(--r-xl);
 }
 
 .facility-form-shell {
   margin-top: 16px;
+  border-radius: var(--r-xl);
 }
 
 .facility-form-grid {
@@ -3534,9 +3690,13 @@ body {
 
 .facility-window-row {
   display: grid;
-  grid-template-columns: minmax(120px, 1fr) 140px 140px;
+  grid-template-columns: minmax(150px, 1fr) 140px 140px auto;
   gap: 10px;
   align-items: center;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: rgba(148, 163, 184, 0.07);
 }
 
 .facility-window-row span {
@@ -3544,7 +3704,72 @@ body {
   font-weight: 600;
 }
 
+#facility-details-page .section-header,
+#admin-facilities-page .admin-facilities-hero,
+#admin-facilities-page .admin-facilities-catalogue {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  background: var(--grad-card);
+  box-shadow: var(--shadow-sm);
+  padding: 24px;
+}
+
+#facility-details-page .section-header {
+  margin-bottom: 22px;
+}
+
+#facility-details-page .section-header h1,
+#admin-facilities-page .admin-facilities-hero h1 {
+  color: var(--text-primary);
+  font-size: clamp(30px, 4vw, 44px);
+  line-height: 1.08;
+  margin: 6px 0 10px;
+}
+
+#facility-details-page .section-header p {
+  color: var(--text-secondary);
+}
+
+#admin-facilities-page .admin-facilities-hero {
+  background:
+    linear-gradient(135deg, rgba(9, 16, 31, 0.86), rgba(14, 71, 70, 0.8)),
+    var(--facilities-bg-image) center / cover;
+  margin-bottom: 20px;
+}
+
+#admin-facilities-page .admin-facilities-hero h1 {
+  color: #ffffff;
+}
+
+#admin-facilities-page .admin-facilities-hero p {
+  color: rgba(241, 245, 249, 0.9);
+}
+
+#admin-facilities-page .admin-facilities-catalogue {
+  margin-top: 22px;
+}
+
+#admin-facilities-page .facility-grid {
+  margin-top: 16px;
+}
+
 @media (max-width: 768px) {
+  #facilities-page .section-header,
+  #facility-details-page .section-header,
+  #admin-facilities-page .admin-facilities-hero {
+    padding: 26px 20px;
+  }
+
+  .facility-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .facility-card-top {
+    flex-direction: column;
+  }
+
   .facility-window-row {
     grid-template-columns: 1fr;
   }
@@ -5395,4 +5620,71 @@ body {
   .ticket-detail-meta-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Site-wide image backgrounds */
+.home-hero,
+#student-dashboard .dashboard-hero,
+#staff-dashboard .dashboard-hero,
+#technician-dashboard .dashboard-hero,
+.notification-hero,
+.security-hero {
+  background:
+    linear-gradient(135deg, rgba(9, 16, 31, 0.88), rgba(12, 52, 70, 0.82)),
+    var(--site-bg-image) center / cover;
+}
+
+[data-theme='light'] .home-hero,
+[data-theme='light'] #student-dashboard .dashboard-hero,
+[data-theme='light'] #staff-dashboard .dashboard-hero,
+[data-theme='light'] #technician-dashboard .dashboard-hero,
+[data-theme='light'] .notification-hero,
+[data-theme='light'] .security-hero {
+  background:
+    linear-gradient(135deg, rgba(30, 58, 138, 0.78), rgba(15, 118, 110, 0.74)),
+    var(--site-bg-image) center / cover;
+}
+
+#admin-dashboard .admin-dashboard-hero,
+#admin-users .admin-users-hero {
+  background:
+    linear-gradient(135deg, rgba(9, 16, 31, 0.88), rgba(10, 44, 68, 0.8)),
+    var(--admin-bg-image) center / cover;
+}
+
+#admin-facilities-page .admin-facilities-hero,
+#facilities-page .section-header {
+  background:
+    linear-gradient(135deg, rgba(9, 16, 31, 0.86), rgba(14, 71, 70, 0.8)),
+    var(--facilities-bg-image) center / cover;
+}
+
+#ticket-detail-page .ticket-detail-hero,
+#tickets-page .ticket-create-panel,
+#tickets-page .ticket-list-panel {
+  background:
+    linear-gradient(145deg, rgba(15, 23, 42, 0.92), rgba(17, 34, 56, 0.9)),
+    var(--tickets-bg-image) center / cover;
+}
+
+[data-theme='light'] #admin-dashboard .admin-dashboard-hero,
+[data-theme='light'] #admin-users .admin-users-hero {
+  background:
+    linear-gradient(135deg, rgba(30, 58, 138, 0.78), rgba(15, 118, 110, 0.72)),
+    var(--admin-bg-image) center / cover;
+}
+
+[data-theme='light'] #admin-facilities-page .admin-facilities-hero,
+[data-theme='light'] #facilities-page .section-header {
+  background:
+    linear-gradient(135deg, rgba(30, 58, 138, 0.76), rgba(15, 118, 110, 0.7)),
+    var(--facilities-bg-image) center / cover;
+}
+
+[data-theme='light'] #ticket-detail-page .ticket-detail-hero,
+[data-theme='light'] #tickets-page .ticket-create-panel,
+[data-theme='light'] #tickets-page .ticket-list-panel {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(239, 246, 255, 0.88)),
+    var(--tickets-bg-image) center / cover;
 }

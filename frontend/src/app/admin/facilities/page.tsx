@@ -60,10 +60,15 @@ export function AdminFacilitiesPage() {
   };
 
   return (
-    <main className="page-shell" id="admin-facilities-page">
-      <header className="page-header">
-        <h1>Facility Management</h1>
-        <p>Create, edit, and retire campus resources, and keep availability windows up to date.</p>
+    <main className="page-shell animate-fade-up" id="admin-facilities-page">
+      <header className="page-header admin-facilities-hero">
+        <div>
+          <p className="section-eyebrow">Resource Admin</p>
+          <h1>Facility Management</h1>
+          <p>
+            Create, edit, and retire campus resources, and keep availability windows up to date.
+          </p>
+        </div>
       </header>
 
       <ResourceForm
@@ -74,11 +79,12 @@ export function AdminFacilitiesPage() {
         onSubmit={save}
       />
 
-      <section className="dashboard-section booking-section-gap">
+      <section className="dashboard-section booking-section-gap admin-facilities-catalogue">
         <div className="section-header booking-header-compact">
           <div>
             <p className="section-eyebrow">Catalogue</p>
             <h2 className="booking-tight-title">Existing Resources</h2>
+            <p className="muted">{facilities.length} resources in the campus catalogue.</p>
           </div>
           <button type="button" className="btn-ghost" onClick={() => setEditing(null)}>
             Clear Selection
