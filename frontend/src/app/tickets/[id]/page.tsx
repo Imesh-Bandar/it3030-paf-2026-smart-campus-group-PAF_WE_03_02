@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { ArrowLeft, CalendarClock, Clock3, MapPin, Paperclip, User, UserCog } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useState } from 'react';
@@ -14,6 +15,17 @@ import type { TicketStatus } from '../../../services/types/ticket';
 import { formatStatusLabel, getApiErrorMessage } from '../../../components/tickets/ticketUi';
 
 const statuses: TicketStatus[] = ['OPEN', 'IN_PROGRESS', 'RESOLVED'];
+
+function formatDateTime(value?: string) {
+  return value ? new Date(value).toLocaleString() : 'Pending';
+}
+
+function formatMinutes(value: number) {
+  if (value < 60) return `${value} min`;
+  const hours = Math.floor(value / 60);
+  const minutes = value % 60;
+  return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
+}
 
 export function TicketDetailsPage() {
   const { id } = useParams();
@@ -41,15 +53,15 @@ export function TicketDetailsPage() {
 
   if (isLoading) {
     return (
-      <main className="page-shell">
-        <div className="h-40 animate-pulse rounded-2xl border border-slate-200 bg-slate-100" />
+      <main className="page-shell" id="ticket-detail-page">
+        <div className="ticket-detail-loading" />
       </main>
     );
   }
   if (isError) {
     return (
-      <main className="page-shell">
-        <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+      <main className="page-shell" id="ticket-detail-page">
+        <div className="ticket-error-banner">
           {getApiErrorMessage(error, 'Failed to load ticket.')}
         </div>
       </main>
@@ -63,7 +75,7 @@ export function TicketDetailsPage() {
 
   return (
     <main className="page-shell animate-fade-up" id="ticket-detail-page">
-      <div className="section-header">
+      <div className="ticket-detail-hero">
         <div>
           <p className="section-eyebrow">{ticket.ticketNumber}</p>
           <h1>{ticket.title}</h1>
@@ -71,56 +83,70 @@ export function TicketDetailsPage() {
             Reported by {ticket.reporterName}. Use the status control to move the workflow forward.
           </p>
         </div>
-        <Link className="btn-ghost" to="/tickets">
+        <Link className="btn-ghost ticket-back-link" to="/tickets">
+          <ArrowLeft size={16} aria-hidden="true" />
           Back to tickets
         </Link>
       </div>
 
-      <section className="grid grid-cols-1 gap-6 xl:grid-cols-[2fr_1fr]">
-        <article className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
-          <div className="mb-3 flex flex-wrap gap-2">
+      <section className="ticket-detail-grid">
+        <article className="ticket-detail-main ticket-panel-enter">
+          <div className="ticket-detail-badges">
             <TicketStatusBadge status={ticket.status} />
             <TicketPriorityBadge priority={ticket.priority} />
             <SlaBadge breached={ticket.slaBreached} />
           </div>
-          <p>{ticket.description}</p>
+          <p className="ticket-detail-description">{ticket.description}</p>
           <dl className="ticket-facts">
             <div>
-              <dt>Category</dt>
+              <dt>
+                <CalendarClock size={15} aria-hidden="true" />
+                Category
+              </dt>
               <dd>{ticket.category.replace('_', ' ')}</dd>
             </div>
             <div>
-              <dt>Location</dt>
+              <dt>
+                <MapPin size={15} aria-hidden="true" />
+                Location
+              </dt>
               <dd>{ticket.location || 'Not specified'}</dd>
             </div>
             <div>
-              <dt>Reporter</dt>
+              <dt>
+                <User size={15} aria-hidden="true" />
+                Reporter
+              </dt>
               <dd>{ticket.reporterName}</dd>
             </div>
             <div>
-              <dt>Technician</dt>
+              <dt>
+                <UserCog size={15} aria-hidden="true" />
+                Technician
+              </dt>
               <dd>{ticket.assigneeName || 'Unassigned'}</dd>
             </div>
             <div>
-              <dt>Elapsed</dt>
-              <dd>{ticket.elapsedMinutes} minutes</dd>
+              <dt>
+                <Clock3 size={15} aria-hidden="true" />
+                Elapsed
+              </dt>
+              <dd>{formatMinutes(ticket.elapsedMinutes)}</dd>
             </div>
             <div>
-              <dt>First response</dt>
-              <dd>
-                {ticket.firstResponseAt
-                  ? new Date(ticket.firstResponseAt).toLocaleString()
-                  : 'Pending'}
-              </dd>
+              <dt>
+                <CalendarClock size={15} aria-hidden="true" />
+                First response
+              </dt>
+              <dd>{formatDateTime(ticket.firstResponseAt)}</dd>
             </div>
           </dl>
 
           {canManage && (
-            <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
-              <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+            <div className="ticket-status-control">
+              <label>
                 Status
                 <select
-                  className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none ring-slate-300 focus:ring-2"
                   value={ticket.status}
                   onChange={async (event) => {
                     setActionError(null);
@@ -139,23 +165,24 @@ export function TicketDetailsPage() {
                 >
                   {statuses.map((status) => (
                     <option value={status} key={status}>
-                      {status.replace('_', ' ')}
+                      {formatStatusLabel(status)}
                     </option>
                   ))}
                 </select>
               </label>
-              {actionError && <p className="mt-2 text-xs text-rose-600">{actionError}</p>}
+              {actionError && <p className="ticket-action-error">{actionError}</p>}
             </div>
           )}
         </article>
 
-        <aside className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
-          <h2 className="text-lg font-semibold text-slate-900">Attachments</h2>
-          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-1">
+        <aside className="ticket-detail-section ticket-panel-enter ticket-panel-enter-delay">
+          <div className="ticket-section-title">
+            <Paperclip size={18} aria-hidden="true" />
+            <h2>Attachments</h2>
+          </div>
+          <div className="ticket-attachment-grid">
             {ticket.attachments.length === 0 && (
-              <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-sm text-slate-500">
-                No attachments added.
-              </div>
+              <div className="ticket-empty-state">No attachments added.</div>
             )}
             {ticket.attachments.map((attachment) => (
               <a

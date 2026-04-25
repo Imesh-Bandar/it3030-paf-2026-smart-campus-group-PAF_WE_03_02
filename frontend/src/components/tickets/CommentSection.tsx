@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
+import { MessageSquare } from 'lucide-react';
 import type { TicketComment } from '../../services/types/ticket';
 import { getApiErrorMessage } from './ticketUi';
 
@@ -40,31 +41,24 @@ export function CommentSection({ comments, canUseInternalNotes, onAdd, onEdit, o
   };
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
-      <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-slate-900">Comments</h2>
-        <span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">
-          {comments.length}
-        </span>
+    <section className="ticket-detail-section ticket-comments-panel">
+      <div className="ticket-section-title">
+        <MessageSquare size={18} aria-hidden="true" />
+        <h2>Comments</h2>
+        <span className="ticket-total-pill">{comments.length}</span>
       </div>
-      <div className="space-y-3">
+      <div className="ticket-comments">
         {comments.length === 0 && (
-          <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-sm text-slate-500">
+          <div className="ticket-empty-state">
             No comments yet. Start the conversation with details or updates.
           </div>
         )}
         {comments.map((comment) => (
-          <article className="rounded-xl border border-slate-200 bg-slate-50 p-3" key={comment.id}>
-            <div className="mb-2 flex items-center gap-2">
-              <strong className="text-sm text-slate-800">{comment.authorName}</strong>
-              {comment.internal && (
-                <span className="inline-flex rounded-full bg-violet-100 px-2 py-0.5 text-xs font-semibold text-violet-800">
-                  Internal
-                </span>
-              )}
-              <span className="ml-auto text-xs text-slate-500">
-                {new Date(comment.createdAt).toLocaleString()}
-              </span>
+          <article className="ticket-comment" key={comment.id}>
+            <div className="ticket-comment-header">
+              <strong>{comment.authorName}</strong>
+              {comment.internal && <span className="ticket-badge internal-note">Internal</span>}
+              <span>{new Date(comment.createdAt).toLocaleString()}</span>
             </div>
             {editingId === comment.id ? (
               <form
@@ -85,25 +79,24 @@ export function CommentSection({ comments, canUseInternalNotes, onAdd, onEdit, o
                     setBusyCommentId(null);
                   }
                 }}
-                className="space-y-2"
+                className="ticket-comment-edit"
               >
                 <textarea
-                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none ring-slate-300 focus:ring-2"
                   value={editingContent}
                   onChange={(event) => setEditingContent(event.target.value)}
                   rows={3}
                 />
-                <div className="flex flex-wrap gap-2">
+                <div className="ticket-inline-actions">
                   <button
                     type="submit"
-                    className="inline-flex items-center rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-700 disabled:opacity-60"
+                    className="btn-primary"
                     disabled={busyCommentId === comment.id}
                   >
                     {busyCommentId === comment.id ? 'Saving...' : 'Save'}
                   </button>
                   <button
                     type="button"
-                    className="inline-flex items-center rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                    className="btn-ghost"
                     onClick={() => setEditingId(null)}
                     disabled={busyCommentId === comment.id}
                   >
@@ -113,11 +106,11 @@ export function CommentSection({ comments, canUseInternalNotes, onAdd, onEdit, o
               </form>
             ) : (
               <>
-                <p className="whitespace-pre-line text-sm text-slate-700">{comment.content}</p>
-                <div className="mt-2 flex flex-wrap gap-2">
+                <p>{comment.content}</p>
+                <div className="ticket-inline-actions">
                   <button
                     type="button"
-                    className="inline-flex items-center rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                    className="btn-ghost"
                     onClick={() => {
                       setEditingId(comment.id);
                       setEditingContent(comment.content);
@@ -127,7 +120,7 @@ export function CommentSection({ comments, canUseInternalNotes, onAdd, onEdit, o
                   </button>
                   <button
                     type="button"
-                    className="inline-flex items-center rounded-lg border border-rose-300 px-3 py-1.5 text-xs font-semibold text-rose-700 hover:bg-rose-50 disabled:opacity-60"
+                    className="btn-ghost btn-danger"
                     onClick={async () => {
                       setError(null);
                       setBusyCommentId(comment.id);
@@ -149,12 +142,8 @@ export function CommentSection({ comments, canUseInternalNotes, onAdd, onEdit, o
           </article>
         ))}
       </div>
-      <form
-        className="mt-4 space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-3"
-        onSubmit={submit}
-      >
+      <form className="ticket-comment-form" onSubmit={submit}>
         <textarea
-          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none ring-slate-300 placeholder:text-slate-400 focus:ring-2"
           value={content}
           onChange={(event) => setContent(event.target.value)}
           rows={4}
@@ -162,26 +151,17 @@ export function CommentSection({ comments, canUseInternalNotes, onAdd, onEdit, o
           placeholder="Write a comment..."
         />
         {canUseInternalNotes && (
-          <label className="flex items-center gap-2 text-sm text-slate-700">
+          <label className="ticket-checkbox">
             <input
               type="checkbox"
               checked={internal}
               onChange={(event) => setInternal(event.target.checked)}
-              className="h-4 w-4 rounded border-slate-300"
             />
             Internal note
           </label>
         )}
-        {error && (
-          <div className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-700">
-            {error}
-          </div>
-        )}
-        <button
-          type="submit"
-          className="inline-flex items-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 disabled:opacity-60"
-          disabled={isAdding}
-        >
+        {error && <div className="ticket-error-banner">{error}</div>}
+        <button type="submit" className="btn-primary" disabled={isAdding}>
           {isAdding ? 'Adding...' : 'Add comment'}
         </button>
       </form>

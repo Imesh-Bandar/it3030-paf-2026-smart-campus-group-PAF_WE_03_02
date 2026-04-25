@@ -12,7 +12,7 @@ export const bookingApi = {
   getById: async (id: string): Promise<Booking> => (await api.get(`/bookings/${id}`)).data,
   getPendingForAdmin: async (): Promise<Booking[]> => (await api.get('/bookings/admin/all')).data,
   getResourceBookings: async (resourceId: string, date: string): Promise<Booking[]> =>
-    (await api.get(`/resources/${resourceId}/bookings`, { params: { date } })).data,
+    (await api.get(`/bookings/resource/${resourceId}`, { params: { date } })).data,
   create: async (payload: BookingRequestPayload): Promise<Booking> =>
     (await api.post('/bookings', payload)).data,
   previewConflict: async (payload: BookingRequestPayload): Promise<BookingConflictPreview> =>

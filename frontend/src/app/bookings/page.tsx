@@ -7,6 +7,11 @@ import { bookingApi } from '../../services/api/bookingApi';
 import type { Booking, BookingFilterStatus } from '../../services/types/booking';
 import { useRole } from '../../hooks/useRole';
 
+function getApiErrorMessage(error: unknown, fallback: string) {
+  const message = (error as { response?: { data?: { message?: string } } }).response?.data?.message;
+  return message || fallback;
+}
+
 export function BookingsPage() {
   const { isAdmin } = useRole();
   const { data, isLoading, refetch } = useBookings();
@@ -29,8 +34,10 @@ export function BookingsPage() {
         toast.success('Booking request submitted');
       }
       await refetch();
-    } catch {
-      toast.error('Failed to create booking. Check resource ID and time range.');
+    } catch (error) {
+      toast.error(
+        getApiErrorMessage(error, 'Failed to create booking. Check resource ID and time range.'),
+      );
     } finally {
       setCreating(false);
     }
@@ -47,9 +54,18 @@ export function BookingsPage() {
   };
 
   const bookings: Booking[] = data ?? [];
-  const statusTabs: BookingFilterStatus[] = ['ALL', 'PENDING', 'APPROVED', 'COMPLETED', 'REJECTED', 'CANCELLED'];
+  const statusTabs: BookingFilterStatus[] = [
+    'ALL',
+    'PENDING',
+    'APPROVED',
+    'COMPLETED',
+    'REJECTED',
+    'CANCELLED',
+  ];
   const filteredBookings =
-    activeStatus === 'ALL' ? bookings : bookings.filter((booking) => booking.status === activeStatus);
+    activeStatus === 'ALL'
+      ? bookings
+      : bookings.filter((booking) => booking.status === activeStatus);
 
   return (
     <main className="page-shell animate-fade-up" id="bookings-page">
