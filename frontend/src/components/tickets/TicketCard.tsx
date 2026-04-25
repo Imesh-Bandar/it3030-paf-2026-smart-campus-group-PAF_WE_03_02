@@ -17,17 +17,31 @@ export function TicketCard({ ticket }: { ticket: Ticket }) {
         <span className="ticket-number">{ticket.ticketNumber}</span>
         <TicketStatusBadge status={ticket.status} />
       </div>
-      <h3>{ticket.title}</h3>
-      <p className="ticket-description">{ticket.description}</p>
+
+      <h3 className="ticket-card-title">{ticket.title}</h3>
+      <p className="ticket-card-copy">{ticket.description}</p>
+
+      <dl className="ticket-card-details">
+        <div>
+          <dt>Category</dt>
+          <dd>{ticket.category.replace('_', ' ')}</dd>
+        </div>
+        <div>
+          <dt>Location</dt>
+          <dd>{ticket.location || 'Not specified'}</dd>
+        </div>
+      </dl>
+
       <div className="ticket-card-meta">
         <TicketPriorityBadge priority={ticket.priority} />
         <SlaBadge breached={ticket.slaBreached} />
         <span className="ticket-meta-time">{formatMinutes(ticket.elapsedMinutes)}</span>
       </div>
+
       <div className="ticket-card-footer">
         <span>{ticket.assigneeName ? `Tech: ${ticket.assigneeName}` : 'Unassigned'}</span>
         <Link to={`/tickets/${ticket.id}`} className="ticket-card-link">
-          Open
+          View details
         </Link>
       </div>
     </article>

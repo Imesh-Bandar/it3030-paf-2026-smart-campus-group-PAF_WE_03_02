@@ -42,14 +42,14 @@ export function TicketDetailsPage() {
   if (isLoading) {
     return (
       <main className="page-shell">
-        <div className="h-40 animate-pulse rounded-2xl border border-slate-200 bg-slate-100" />
+        <div className="ticket-loading-card" />
       </main>
     );
   }
   if (isError) {
     return (
       <main className="page-shell">
-        <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+        <div className="ticket-error-banner">
           {getApiErrorMessage(error, 'Failed to load ticket.')}
         </div>
       </main>
@@ -71,20 +71,22 @@ export function TicketDetailsPage() {
             Reported by {ticket.reporterName}. Use the status control to move the workflow forward.
           </p>
         </div>
-        <Link className="btn-ghost" to="/tickets">
-          Back to tickets
-        </Link>
+        <div className="ticket-detail-badges">
+          <Link className="btn-ghost" to="/tickets">
+            Back to tickets
+          </Link>
+        </div>
       </div>
 
-      <section className="grid grid-cols-1 gap-6 xl:grid-cols-[2fr_1fr]">
-        <article className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
-          <div className="mb-3 flex flex-wrap gap-2">
+      <section className="ticket-detail-grid">
+        <article className="ticket-detail-main ticket-detail-section">
+          <div className="ticket-detail-badges">
             <TicketStatusBadge status={ticket.status} />
             <TicketPriorityBadge priority={ticket.priority} />
             <SlaBadge breached={ticket.slaBreached} />
           </div>
-          <p>{ticket.description}</p>
-          <dl className="ticket-facts">
+          <p className="ticket-detail-copy">{ticket.description}</p>
+          <dl className="ticket-detail-meta-grid ticket-facts">
             <div>
               <dt>Category</dt>
               <dd>{ticket.category.replace('_', ' ')}</dd>
@@ -116,11 +118,11 @@ export function TicketDetailsPage() {
           </dl>
 
           {canManage && (
-            <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
-              <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
-                Status
+            <div className="ticket-status-control ticket-detail-section">
+              <label>
+                <span>Status</span>
                 <select
-                  className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none ring-slate-300 focus:ring-2"
+                  className="ticket-status-select"
                   value={ticket.status}
                   onChange={async (event) => {
                     setActionError(null);
@@ -139,23 +141,21 @@ export function TicketDetailsPage() {
                 >
                   {statuses.map((status) => (
                     <option value={status} key={status}>
-                      {status.replace('_', ' ')}
+                      {formatStatusLabel(status)}
                     </option>
                   ))}
                 </select>
               </label>
-              {actionError && <p className="mt-2 text-xs text-rose-600">{actionError}</p>}
+              {actionError && <p className="field-error">{actionError}</p>}
             </div>
           )}
         </article>
 
-        <aside className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
-          <h2 className="text-lg font-semibold text-slate-900">Attachments</h2>
-          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-1">
+        <aside className="ticket-detail-side ticket-detail-section">
+          <h2>Attachments</h2>
+          <div className="ticket-attachment-grid">
             {ticket.attachments.length === 0 && (
-              <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-sm text-slate-500">
-                No attachments added.
-              </div>
+              <div className="ticket-empty-column">No attachments added.</div>
             )}
             {ticket.attachments.map((attachment) => (
               <a

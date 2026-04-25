@@ -62,8 +62,17 @@ export function TicketsPage() {
             <h2>My Ticket Queue</h2>
             <p className="muted">Your latest requests and updates appear here in status order.</p>
           </div>
+          {isError && (
+            <div className="ticket-error-banner mb-4">
+              {getApiErrorMessage(error, 'Could not load tickets.')}
+            </div>
+          )}
           {isLoading ? (
-            <p className="muted">Loading tickets...</p>
+            <div className="ticket-loading-grid" aria-label="Loading tickets">
+              {loadingCards.map((_, index) => (
+                <div className="ticket-loading-card" key={index} />
+              ))}
+            </div>
           ) : (
             <TicketBoard tickets={tickets} />
           )}
