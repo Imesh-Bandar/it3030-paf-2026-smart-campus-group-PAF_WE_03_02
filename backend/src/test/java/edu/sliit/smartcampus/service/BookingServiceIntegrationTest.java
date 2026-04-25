@@ -15,12 +15,16 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import edu.sliit.smartcampus.dto.BookingActionRequestDto;
 import edu.sliit.smartcampus.dto.BookingRequestDto;
+import edu.sliit.smartcampus.model.AvailabilityWindow;
 import edu.sliit.smartcampus.model.BookingStatus;
 import edu.sliit.smartcampus.model.Resource;
+import edu.sliit.smartcampus.model.ResourceStatus;
+import edu.sliit.smartcampus.model.ResourceType;
 import edu.sliit.smartcampus.model.User;
 import edu.sliit.smartcampus.model.UserRole;
 import edu.sliit.smartcampus.model.UserStatus;
 import edu.sliit.smartcampus.repository.UserRepository;
+import edu.sliit.smartcampus.repository.AvailabilityWindowRepository;
 import edu.sliit.smartcampus.repository.ResourceRepository;
 
 @SpringBootTest
@@ -36,6 +40,9 @@ class BookingServiceIntegrationTest {
 
     @Autowired
     private ResourceRepository resourceRepository;
+
+    @Autowired
+    private AvailabilityWindowRepository availabilityWindowRepository;
 
     @MockBean
     private AuthService authService;
@@ -56,8 +63,22 @@ class BookingServiceIntegrationTest {
 
         resource = new Resource();
         resource.setId(UUID.randomUUID());
+        resource.setResourceCode("ENG-LAB-" + UUID.randomUUID().toString().substring(0, 8));
         resource.setName("Engineering Lab");
-        resourceRepository.save(resource);
+        resource.setType(ResourceType.LAB);
+        resource.setStatus(ResourceStatus.ACTIVE);
+        resource.setLocation("Engineering Block");
+        resource.setCapacity(40);
+        resource = resourceRepository.save(resource);
+
+        for (int day = 0; day <= 6; day++) {
+            AvailabilityWindow window = new AvailabilityWindow();
+            window.setResource(resource);
+            window.setDayOfWeek(day);
+            window.setStartTime(LocalTime.of(8, 0));
+            window.setEndTime(LocalTime.of(18, 0));
+            availabilityWindowRepository.save(window);
+        }
     }
 
     @Test

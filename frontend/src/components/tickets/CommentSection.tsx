@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { MessageSquare } from 'lucide-react';
 import type { TicketComment } from '../../services/types/ticket';
 import { getApiErrorMessage } from './ticketUi';
 
@@ -41,15 +40,14 @@ export function CommentSection({ comments, canUseInternalNotes, onAdd, onEdit, o
   };
 
   return (
-    <section className="ticket-detail-section ticket-comments-panel">
-      <div className="ticket-section-title">
-        <MessageSquare size={18} aria-hidden="true" />
+    <section className="ticket-detail-section ticket-comments-shell">
+      <div className="ticket-column-header">
         <h2>Comments</h2>
         <span className="ticket-total-pill">{comments.length}</span>
       </div>
-      <div className="ticket-comments">
+      <div className="ticket-comment-list">
         {comments.length === 0 && (
-          <div className="ticket-empty-state">
+          <div className="ticket-empty-column">
             No comments yet. Start the conversation with details or updates.
           </div>
         )}
@@ -58,7 +56,9 @@ export function CommentSection({ comments, canUseInternalNotes, onAdd, onEdit, o
             <div className="ticket-comment-header">
               <strong>{comment.authorName}</strong>
               {comment.internal && <span className="ticket-badge internal-note">Internal</span>}
-              <span>{new Date(comment.createdAt).toLocaleString()}</span>
+              <span className="ticket-meta-time">
+                {new Date(comment.createdAt).toLocaleString()}
+              </span>
             </div>
             {editingId === comment.id ? (
               <form
@@ -82,11 +82,12 @@ export function CommentSection({ comments, canUseInternalNotes, onAdd, onEdit, o
                 className="ticket-comment-edit"
               >
                 <textarea
+                  className="ticket-comment-edit"
                   value={editingContent}
                   onChange={(event) => setEditingContent(event.target.value)}
                   rows={3}
                 />
-                <div className="ticket-inline-actions">
+                <div className="ticket-comment-actions">
                   <button
                     type="submit"
                     className="btn-primary"
@@ -106,8 +107,8 @@ export function CommentSection({ comments, canUseInternalNotes, onAdd, onEdit, o
               </form>
             ) : (
               <>
-                <p>{comment.content}</p>
-                <div className="ticket-inline-actions">
+                <p className="ticket-comment-copy">{comment.content}</p>
+                <div className="ticket-comment-actions">
                   <button
                     type="button"
                     className="btn-ghost"
@@ -120,7 +121,7 @@ export function CommentSection({ comments, canUseInternalNotes, onAdd, onEdit, o
                   </button>
                   <button
                     type="button"
-                    className="btn-ghost btn-danger"
+                    className="btn-ghost ticket-comment-delete"
                     onClick={async () => {
                       setError(null);
                       setBusyCommentId(comment.id);
@@ -144,6 +145,7 @@ export function CommentSection({ comments, canUseInternalNotes, onAdd, onEdit, o
       </div>
       <form className="ticket-comment-form" onSubmit={submit}>
         <textarea
+          className="ticket-comment-input"
           value={content}
           onChange={(event) => setContent(event.target.value)}
           rows={4}
@@ -156,6 +158,7 @@ export function CommentSection({ comments, canUseInternalNotes, onAdd, onEdit, o
               type="checkbox"
               checked={internal}
               onChange={(event) => setInternal(event.target.checked)}
+              className="ticket-comment-checkbox"
             />
             Internal note
           </label>
