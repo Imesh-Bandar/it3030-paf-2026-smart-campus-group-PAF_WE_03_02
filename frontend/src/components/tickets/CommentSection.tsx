@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { MessageSquare } from 'lucide-react';
 import type { TicketComment } from '../../services/types/ticket';
 import { getApiErrorMessage } from './ticketUi';
 

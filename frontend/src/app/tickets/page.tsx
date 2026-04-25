@@ -12,7 +12,9 @@ export function TicketsPage() {
   const { isAdmin } = useRole();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { data: tickets = [], isLoading } = useTickets();
+  const { data: tickets = [], isLoading, isError, error } = useTickets();
+
+  const loadingCards = ['a', 'b', 'c'];
 
   return (
     <main className="page-shell animate-fade-up" id="tickets-page">

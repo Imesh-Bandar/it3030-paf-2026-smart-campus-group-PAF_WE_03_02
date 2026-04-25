@@ -30,6 +30,24 @@ export function TicketForm({ onSubmit }: Props) {
     submit?: string;
   }>({});
 
+  const hasDraft =
+    Boolean(title.trim()) ||
+    Boolean(description.trim()) ||
+    category !== 'OTHER' ||
+    priority !== 'MEDIUM' ||
+    Boolean(location.trim()) ||
+    files.length > 0;
+
+  const resetForm = () => {
+    setTitle('');
+    setDescription('');
+    setCategory('OTHER');
+    setPriority('MEDIUM');
+    setLocation('');
+    setFiles([]);
+    setErrors({});
+  };
+
   const validate = () => {
     const nextErrors: { title?: string; description?: string; priority?: string } = {};
     if (!title.trim()) {
@@ -65,10 +83,7 @@ export function TicketForm({ onSubmit }: Props) {
         location: location.trim(),
         files,
       });
-      setTitle('');
-      setDescription('');
-      setLocation('');
-      setFiles([]);
+      resetForm();
     } catch (error) {
       setErrors((prev) => ({
         ...prev,

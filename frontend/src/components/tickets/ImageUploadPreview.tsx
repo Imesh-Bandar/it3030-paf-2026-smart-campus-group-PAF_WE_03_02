@@ -6,21 +6,6 @@ type Props = {
 };
 
 export function ImageUploadPreview({ files, onFilesChange }: Props) {
-  const [previews, setPreviews] = useState<Array<{ key: string; url: string; file: File }>>([]);
-
-  useEffect(() => {
-    const nextPreviews = files.map((file) => ({
-      key: `${file.name}-${file.lastModified}`,
-      url: URL.createObjectURL(file),
-      file,
-    }));
-    setPreviews(nextPreviews);
-
-    return () => {
-      nextPreviews.forEach((preview) => URL.revokeObjectURL(preview.url));
-    };
-  }, [files]);
-
   const addFiles = (nextFiles: FileList | null) => {
     if (!nextFiles) return;
     const images = Array.from(nextFiles)
@@ -53,21 +38,42 @@ export function ImageUploadPreview({ files, onFilesChange }: Props) {
       </label>
       {files.length >= 3 && <p className="ticket-upload-warning">Maximum 3 images reached.</p>}
       <div className="ticket-upload-grid">
-        {previews.map((preview) => (
-          <figure key={preview.key}>
-            <img src={preview.url} alt={preview.file.name} />
-            <figcaption>{preview.file.name}</figcaption>
-            <button
-              type="button"
-              className="ticket-upload-remove"
-              onClick={() => onFilesChange(files.filter((item) => item !== preview.file))}
-              aria-label={`Remove ${preview.file.name}`}
-            >
-              Remove
-            </button>
-          </figure>
+        {files.map((file, index) => (
+          <ImagePreviewItem
+            file={file}
+            key={`${file.name}-${file.lastModified}-${file.size}-${index}`}
+            onRemove={() => onFilesChange(files.filter((item) => item !== file))}
+          />
         ))}
       </div>
     </div>
+  );
+}
+
+type ImagePreviewItemProps = {
+  file: File;
+  onRemove: () => void;
+};
+
+function ImagePreviewItem({ file, onRemove }: ImagePreviewItemProps) {
+  const [url] = useState(() => URL.createObjectURL(file));
+
+  useEffect(() => {
+    return () => URL.revokeObjectURL(url);
+  }, [url]);
+
+  return (
+    <figure>
+      <img src={url} alt={file.name} />
+      <figcaption>{file.name}</figcaption>
+      <button
+        type="button"
+        className="ticket-upload-remove"
+        onClick={onRemove}
+        aria-label={`Remove ${file.name}`}
+      >
+        Remove
+      </button>
+    </figure>
   );
 }

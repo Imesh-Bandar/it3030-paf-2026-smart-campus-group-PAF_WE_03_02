@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, CalendarClock, Clock3, MapPin, Paperclip, User, UserCog } from 'lucide-react';
+import { CalendarClock, Clock3, MapPin, User, UserCog } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useState } from 'react';
