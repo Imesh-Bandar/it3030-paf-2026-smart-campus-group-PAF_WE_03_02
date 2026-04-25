@@ -3005,16 +3005,51 @@ body {
 
 .ticket-board {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 0.9rem;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.ticket-board-summary {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--grad-card);
+  padding: 0.9rem 1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.ticket-board-summary span {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 800;
+}
+
+.ticket-board-summary strong {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 1.4rem;
+  letter-spacing: -0.02em;
+}
+
+.ticket-board-summary p {
+  max-width: 52ch;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
 }
 
 .ticket-column {
   min-height: 280px;
   border: 1px solid var(--border);
   border-radius: var(--r-lg);
-  background: var(--surface-2);
-  padding: 0.75rem;
+  background: var(--grad-card);
+  padding: 0.85rem;
+  box-shadow: var(--shadow-sm);
 }
 
 .ticket-column-header,
@@ -3061,6 +3096,36 @@ body {
   padding: 0.85rem;
 }
 
+.ticket-card {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.ticket-card-details,
+.ticket-detail-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.ticket-card-details dt,
+.ticket-detail-meta-grid dt {
+  color: var(--text-secondary);
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 800;
+}
+
+.ticket-card-details dd,
+.ticket-detail-meta-grid dd {
+  margin: 0.2rem 0 0;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
 .ticket-number,
 .ticket-meta-time {
   color: var(--text-secondary);
@@ -3070,14 +3135,17 @@ body {
 
 .ticket-card h3 {
   margin: 0.45rem 0;
-  font-size: 1rem;
+  font-size: 1.02rem;
+  line-height: 1.35;
 }
 
+.ticket-card-copy,
 .ticket-description {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
   overflow: hidden;
+  color: var(--text-secondary);
 }
 
 .ticket-card p,
@@ -3089,13 +3157,9 @@ body {
 }
 
 .ticket-card-link {
-  font-weight: 700;
+  font-weight: 800;
   color: var(--brand-400);
   text-decoration: none;
-}
-
-.ticket-card-link:hover {
-  text-decoration: underline;
 }
 
 .ticket-badge {
@@ -3202,8 +3266,121 @@ body {
   font-weight: 800;
 }
 
+.ticket-facts div {
+  padding: 0.85rem;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
 .ticket-detail-section {
   margin-bottom: 1rem;
+}
+
+.ticket-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(290px, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.ticket-detail-main,
+.ticket-detail-side,
+.ticket-comments-shell {
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--grad-card);
+  padding: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.ticket-detail-copy {
+  margin: 0.85rem 0 1rem;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.ticket-status-control {
+  display: grid;
+  gap: 0.55rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.ticket-status-control label {
+  display: grid;
+  gap: 0.35rem;
+  color: var(--text-primary);
+  font-weight: 800;
+}
+
+.ticket-status-control label span {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.ticket-status-select,
+.ticket-comment-input,
+.ticket-comment-edit {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  color: var(--text);
+  padding: 0.75rem 0.85rem;
+  min-height: 44px;
+}
+
+.ticket-comment-input,
+.ticket-comment-edit {
+  resize: vertical;
+}
+
+.ticket-comment-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.ticket-comment {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.ticket-comment-header strong {
+  color: var(--text-primary);
+}
+
+.ticket-comment-copy {
+  margin: 0;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+.ticket-comment-actions {
+  justify-content: flex-start;
+}
+
+.ticket-comment-delete {
+  color: #ef4444;
+}
+
+.ticket-comment-form {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--border);
+}
+
+.ticket-empty-column {
+  color: var(--text-secondary);
+  padding: 14px;
+  border-radius: var(--r-md);
+  border: 1px dashed var(--border);
+  background: rgba(148, 163, 184, 0.04);
 }
 
 .ticket-checkbox {
@@ -3543,6 +3720,11 @@ body {
 
   .ticket-form,
   .ticket-facts {
+    grid-template-columns: 1fr;
+  }
+
+  .ticket-card-details,
+  .ticket-detail-meta-grid {
     grid-template-columns: 1fr;
   }
 }
