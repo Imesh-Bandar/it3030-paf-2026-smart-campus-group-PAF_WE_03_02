@@ -12,7 +12,7 @@ const formatMinutes = (minutes: number) => {
 
 export function TicketCard({ ticket }: { ticket: Ticket }) {
   return (
-    <article className="ticket-card">
+    <article className="ticket-card ticket-card-interactive">
       <div className="ticket-card-topline">
         <span className="ticket-number">{ticket.ticketNumber}</span>
         <TicketStatusBadge status={ticket.status} />

@@ -1,5 +1,6 @@
 import type { Ticket, TicketStatus } from '../../services/types/ticket';
 import { TicketCard } from './TicketCard';
+import { formatStatusLabel } from './ticketUi';
 
 const columns: TicketStatus[] = ['OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED', 'REJECTED'];
 
