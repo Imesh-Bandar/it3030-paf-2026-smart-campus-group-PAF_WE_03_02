@@ -98,20 +98,17 @@ export function TicketForm({ onSubmit }: Props) {
   return (
     <form className="ticket-form ticket-form-enhanced" onSubmit={submit} noValidate>
       <label>
-        <span>Title</span>
+        Title
         <input
-          className={errors.title ? 'field-invalid' : undefined}
           value={title}
           onChange={(event) => setTitle(event.target.value)}
           required
           maxLength={120}
-          aria-invalid={Boolean(errors.title)}
-          placeholder="Brief issue summary"
+          placeholder="Short issue summary"
         />
-        {errors.title && <span className="field-error">{errors.title}</span>}
       </label>
       <label>
-        <span>Location</span>
+        Location
         <input
           value={location}
           onChange={(event) => setLocation(event.target.value)}
@@ -119,7 +116,7 @@ export function TicketForm({ onSubmit }: Props) {
         />
       </label>
       <label>
-        <span>Category</span>
+        Category
         <select
           value={category}
           onChange={(event) => setCategory(event.target.value as TicketCategory)}
@@ -133,12 +130,10 @@ export function TicketForm({ onSubmit }: Props) {
         </select>
       </label>
       <label>
-        <span>Priority</span>
+        Priority
         <select
-          className={errors.priority ? 'field-invalid' : undefined}
           value={priority}
           onChange={(event) => setPriority(event.target.value as TicketPriority)}
-          aria-invalid={Boolean(errors.priority)}
         >
           <option value="LOW">Low</option>
           <option value="MEDIUM">Medium</option>
@@ -149,39 +144,22 @@ export function TicketForm({ onSubmit }: Props) {
       </label>
 
       <label className="ticket-form-wide">
-        <span>Description</span>
+        Description
         <textarea
-          className={errors.description ? 'field-invalid' : undefined}
           value={description}
           onChange={(event) => setDescription(event.target.value)}
           required
           rows={5}
-          aria-invalid={Boolean(errors.description)}
-          placeholder="Describe what happened, where, and when."
+          placeholder="Describe the issue, impact, and any urgent details."
         />
-        {errors.description && <span className="field-error">{errors.description}</span>}
       </label>
 
       <div className="ticket-form-wide">
         <ImageUploadPreview files={files} onFilesChange={setFiles} />
       </div>
-
-      {errors.submit && (
-        <div className="ticket-error-banner ticket-form-wide" role="alert">
-          {errors.submit}
-        </div>
-      )}
-
       <div className="ticket-form-actions ticket-form-wide">
-        <button
-          type="button"
-          className="btn-ghost"
-          onClick={resetForm}
-          disabled={saving || !hasDraft}
-        >
-          Clear form
-        </button>
-        <button type="submit" className="btn-primary btn-ticket-submit" disabled={saving}>
+        <p className="muted">Tip: add a photo when reporting visible damage or equipment issues.</p>
+        <button type="submit" className="btn-primary" disabled={saving}>
           {saving ? 'Submitting...' : 'Submit ticket'}
         </button>
       </div>

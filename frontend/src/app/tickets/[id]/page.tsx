@@ -67,6 +67,9 @@ export function TicketDetailsPage() {
         <div>
           <p className="section-eyebrow">{ticket.ticketNumber}</p>
           <h1>{ticket.title}</h1>
+          <p className="section-summary">
+            Reported by {ticket.reporterName}. Use the status control to move the workflow forward.
+          </p>
         </div>
         <Link className="btn-ghost" to="/tickets">
           Back to tickets
@@ -80,51 +83,31 @@ export function TicketDetailsPage() {
             <TicketPriorityBadge priority={ticket.priority} />
             <SlaBadge breached={ticket.slaBreached} />
           </div>
-          <p className="whitespace-pre-line text-sm text-slate-700">{ticket.description}</p>
-          <dl className="mt-4 grid grid-cols-1 gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 sm:grid-cols-2">
+          <p>{ticket.description}</p>
+          <dl className="ticket-facts">
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                Category
-              </dt>
-              <dd className="text-sm font-medium text-slate-800">
-                {ticket.category.replace('_', ' ')}
-              </dd>
+              <dt>Category</dt>
+              <dd>{ticket.category.replace('_', ' ')}</dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                Location
-              </dt>
-              <dd className="text-sm font-medium text-slate-800">
-                {ticket.location || 'Not specified'}
-              </dd>
+              <dt>Location</dt>
+              <dd>{ticket.location || 'Not specified'}</dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                Reporter
-              </dt>
-              <dd className="text-sm font-medium text-slate-800">{ticket.reporterName}</dd>
+              <dt>Reporter</dt>
+              <dd>{ticket.reporterName}</dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                Technician
-              </dt>
-              <dd className="text-sm font-medium text-slate-800">
-                {ticket.assigneeName || 'Unassigned'}
-              </dd>
+              <dt>Technician</dt>
+              <dd>{ticket.assigneeName || 'Unassigned'}</dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                Elapsed
-              </dt>
-              <dd className="text-sm font-medium text-slate-800">
-                {ticket.elapsedMinutes} minutes
-              </dd>
+              <dt>Elapsed</dt>
+              <dd>{ticket.elapsedMinutes} minutes</dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                First response
-              </dt>
-              <dd className="text-sm font-medium text-slate-800">
+              <dt>First response</dt>
+              <dd>
                 {ticket.firstResponseAt
                   ? new Date(ticket.firstResponseAt).toLocaleString()
                   : 'Pending'}
@@ -156,7 +139,7 @@ export function TicketDetailsPage() {
                 >
                   {statuses.map((status) => (
                     <option value={status} key={status}>
-                      {formatStatusLabel(status)}
+                      {status.replace('_', ' ')}
                     </option>
                   ))}
                 </select>
@@ -180,16 +163,9 @@ export function TicketDetailsPage() {
                 target="_blank"
                 rel="noreferrer"
                 key={attachment.id}
-                className="group overflow-hidden rounded-xl border border-slate-200 bg-slate-50"
               >
-                <img
-                  src={`${backendRoot}${attachment.fileUrl}`}
-                  alt={attachment.fileName}
-                  className="h-32 w-full object-cover transition group-hover:scale-[1.02]"
-                />
-                <span className="block truncate px-2 py-1.5 text-xs text-slate-600">
-                  {attachment.fileName}
-                </span>
+                <img src={`${backendRoot}${attachment.fileUrl}`} alt={attachment.fileName} />
+                <span>{attachment.fileName}</span>
               </a>
             ))}
           </div>

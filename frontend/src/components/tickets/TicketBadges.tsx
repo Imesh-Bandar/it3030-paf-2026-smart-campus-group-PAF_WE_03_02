@@ -9,38 +9,30 @@ const statusLabels: Record<TicketStatus, string> = {
   REJECTED: 'Rejected',
 };
 
-const statusStyles: Record<TicketStatus, string> = {
-  OPEN: 'status-open',
-  IN_PROGRESS: 'status-in_progress',
-  RESOLVED: 'status-resolved',
-  CLOSED: 'status-closed',
-  REJECTED: 'status-closed',
+const priorityLabels: Record<TicketPriority, string> = {
+  LOW: 'Low',
+  MEDIUM: 'Medium',
+  HIGH: 'High',
+  CRITICAL: 'Critical',
 };
-
-const priorityStyles: Record<TicketPriority, string> = {
-  LOW: 'priority-low',
-  MEDIUM: 'priority-medium',
-  HIGH: 'priority-high',
-  CRITICAL: 'priority-critical',
-};
-
-const baseBadge = 'ticket-badge';
 
 export function TicketStatusBadge({ status }: { status: TicketStatus }) {
   return (
-    <span className={`${baseBadge} ${statusStyles[status]}`} title={formatStatusLabel(status)}>
-      {statusLabels[status]}
-    </span>
+    <span className={`ticket-badge status-${status.toLowerCase()}`}>{statusLabels[status]}</span>
   );
 }
 
 export function TicketPriorityBadge({ priority }: { priority: TicketPriority }) {
-  return <span className={`${baseBadge} ${priorityStyles[priority]}`}>{priority}</span>;
+  return (
+    <span className={`ticket-badge priority-${priority.toLowerCase()}`}>
+      {priorityLabels[priority]}
+    </span>
+  );
 }
 
 export function SlaBadge({ breached }: { breached: boolean }) {
   return (
-    <span className={`${baseBadge} ${breached ? 'sla-breached' : 'sla-ok'}`}>
+    <span className={`ticket-badge ${breached ? 'sla-breached' : 'sla-ok'}`}>
       {breached ? 'SLA risk' : 'On SLA'}
     </span>
   );

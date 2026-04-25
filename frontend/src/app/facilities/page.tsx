@@ -19,8 +19,11 @@ export function FacilitiesPage() {
           <p className="section-eyebrow">Campus Resources</p>
           <h1>Facilities</h1>
           <p>Browse halls, labs, meeting rooms, and shared equipment with live availability.</p>
+          <p className="section-summary">
+            {facilities.length} resources currently match your filter set.
+          </p>
         </div>
-        <div className="booking-card-actions">
+        <div className="booking-card-actions facility-page-actions">
           <button type="button" className="btn-ghost" onClick={() => void refetch()}>
             Refresh
           </button>
@@ -35,8 +38,13 @@ export function FacilitiesPage() {
       <FacilityFilters filters={filters} onChange={setFilters} />
 
       <section className="facility-grid">
-        {isLoading ? <p>Loading facilities...</p> : null}
-        {!isLoading && facilities.length === 0 ? <p>No facilities match the current filters.</p> : null}
+        {isLoading ? <p className="facility-empty-state">Loading facilities...</p> : null}
+        {!isLoading && facilities.length === 0 ? (
+          <p className="facility-empty-state">
+            No facilities match the current filters. Try clearing the search or expanding the
+            capacity range.
+          </p>
+        ) : null}
         {facilities.map((facility) => (
           <FacilityCard
             key={facility.id}

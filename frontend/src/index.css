@@ -1373,6 +1373,12 @@ body {
   color: var(--text-primary);
 }
 
+.section-summary {
+  margin-top: 8px;
+  color: var(--text-secondary);
+  max-width: 60ch;
+}
+
 .coming-soon-card {
   display: flex;
   flex-direction: column;
@@ -1396,12 +1402,27 @@ body {
   background: rgba(26, 110, 245, 0.1);
   border: 1px solid rgba(26, 110, 245, 0.2);
   display: flex;
-  align-items: center;
+  background: var(--bg-card-2);
   justify-content: center;
   color: var(--brand-400);
   margin-bottom: 8px;
 }
 
+.facility-meta-item {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--bg-card-2);
+  border: 1px solid var(--border);
+}
+
+.facility-empty-state {
+  grid-column: 1 / -1;
+  color: var(--text-secondary);
+  padding: 18px 20px;
+  border: 1px dashed var(--border-hover);
+  border-radius: var(--r-lg);
+  background: var(--bg-card-2);
+}
 .coming-soon-card h2 {
   font-size: 22px;
   font-weight: 700;
@@ -1423,9 +1444,10 @@ body {
   border-radius: var(--r-full);
   background: rgba(26, 110, 245, 0.1);
   border: 1px solid rgba(26, 110, 245, 0.22);
-  color: var(--brand-400);
+  border-radius: var(--r-lg);
   font-size: 13px;
   font-weight: 600;
+  box-shadow: var(--shadow-sm);
 }
 
 /* ─── Misc ───────────────────────────────────────── */
@@ -1490,6 +1512,7 @@ body {
   height: 3px;
   background: var(--grad-brand);
   opacity: 0.9;
+  border-radius: var(--r-md);
 }
 
 #student-dashboard .dashboard-hero-content {
@@ -1525,6 +1548,37 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+@media (max-width: 720px) {
+  .section-header {
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .section-header h1 {
+    font-size: clamp(22px, 8vw, 30px);
+  }
+
+  .facility-filters-header,
+  .facility-page-actions,
+  .booking-card-actions,
+  .ticket-form-actions {
+    width: 100%;
+  }
+
+  .facility-filters-header,
+  .booking-card-actions,
+  .ticket-form-actions {
+    justify-content: flex-start;
+  }
+
+  .facility-card-top,
+  .ticket-card-topline,
+  .ticket-card-footer,
+  .ticket-column-header {
+    align-items: flex-start;
+  }
 }
 
 #student-dashboard .dashboard-subtitle {
@@ -2573,6 +2627,17 @@ body {
   gap: 16px;
 }
 
+.facility-filters-header {
+  margin-bottom: 18px;
+  align-items: center;
+}
+
+.facility-filters-copy {
+  margin-top: 6px;
+  color: var(--text-secondary);
+  max-width: 52ch;
+}
+
 #facilities-page .section-header {
   border: 1px solid var(--border);
   border-radius: var(--r-lg);
@@ -2655,6 +2720,13 @@ body {
   color: var(--text-secondary);
 }
 
+.facility-meta-item {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--bg-card-2);
+  border: 1px solid var(--border);
+}
+
 .facility-tag-row {
   display: flex;
   flex-wrap: wrap;
@@ -2665,10 +2737,19 @@ body {
 .facility-tag {
   border-radius: 999px;
   padding: 6px 10px;
-  background: rgba(15, 23, 42, 0.06);
+  background: var(--bg-card-2);
   border: 1px solid var(--border);
   font-size: 13px;
   color: var(--text-primary);
+}
+
+.facility-empty-state {
+  grid-column: 1 / -1;
+  color: var(--text-secondary);
+  padding: 18px 20px;
+  border: 1px dashed var(--border-hover);
+  border-radius: var(--r-lg);
+  background: var(--bg-card-2);
 }
 
 .facility-filters-panel {
@@ -2812,9 +2893,10 @@ body {
 .ticket-detail-main,
 .ticket-detail-section {
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--r-lg);
   background: var(--surface);
-  padding: 1rem;
+  padding: 1.1rem;
+  box-shadow: var(--shadow-sm);
 }
 
 .section-header.compact {
@@ -2828,7 +2910,7 @@ body {
 .ticket-form {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.85rem;
+  gap: 0.9rem;
 }
 
 .ticket-form label,
@@ -2849,10 +2931,11 @@ body {
 .ticket-comment textarea {
   width: 100%;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--r-md);
   background: var(--surface-2);
   color: var(--text);
   padding: 0.75rem 0.85rem;
+  min-height: 44px;
 }
 
 .ticket-form-wide,
@@ -2861,9 +2944,17 @@ body {
   grid-column: 1 / -1;
 }
 
+.ticket-form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .ticket-upload-zone {
   border: 1px dashed var(--border);
-  border-radius: 8px;
+  border-radius: var(--r-md);
   padding: 0.85rem;
   background: var(--surface-2);
 }
@@ -2914,16 +3005,14 @@ body {
 
 .ticket-board {
   display: grid;
-  grid-template-columns: repeat(5, minmax(210px, 1fr));
-  gap: 0.8rem;
-  overflow-x: auto;
-  padding-bottom: 0.35rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.9rem;
 }
 
 .ticket-column {
   min-height: 280px;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--r-lg);
   background: var(--surface-2);
   padding: 0.75rem;
 }
@@ -2952,6 +3041,14 @@ body {
   gap: 0.75rem;
 }
 
+.ticket-empty-column {
+  color: var(--text-secondary);
+  padding: 14px;
+  border-radius: var(--r-md);
+  border: 1px dashed var(--border);
+  background: rgba(148, 163, 184, 0.04);
+}
+
 .ticket-card,
 .ticket-comment,
 .suggestion-box,
@@ -2959,14 +3056,28 @@ body {
 .ticket-metric-grid article,
 .technician-list button {
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--r-md);
   background: var(--surface);
   padding: 0.85rem;
+}
+
+.ticket-number,
+.ticket-meta-time {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 700;
 }
 
 .ticket-card h3 {
   margin: 0.45rem 0;
   font-size: 1rem;
+}
+
+.ticket-description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
 }
 
 .ticket-card p,
@@ -2975,6 +3086,16 @@ body {
 .ticket-comment p {
   color: var(--text-secondary);
   overflow-wrap: anywhere;
+}
+
+.ticket-card-link {
+  font-weight: 700;
+  color: var(--brand-400);
+  text-decoration: none;
+}
+
+.ticket-card-link:hover {
+  text-decoration: underline;
 }
 
 .ticket-badge {

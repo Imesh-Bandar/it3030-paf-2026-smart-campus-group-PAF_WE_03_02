@@ -22,8 +22,8 @@ export function TicketsPage() {
         <div>
           <p className="section-eyebrow">Support & Maintenance</p>
           <h1>Tickets</h1>
-          <p className="ticket-panel-description">
-            Report incidents quickly, track progress by status, and collaborate with support teams.
+          <p className="section-summary">
+            Submit an incident, then track progress across the support workflow in one place.
           </p>
         </div>
         {isAdmin() && (
@@ -37,8 +37,9 @@ export function TicketsPage() {
         <div className="ticket-create-panel ticket-panel-enter">
           <div className="mb-4">
             <h2>Report an Issue</h2>
-            <p className="ticket-panel-description">
-              Fill in the required details and upload up to 3 images if needed.
+            <p className="muted">
+              Keep the title short and include location details so the right team can respond
+              faster.
             </p>
           </div>
           <TicketForm
@@ -56,29 +57,16 @@ export function TicketsPage() {
           />
         </div>
 
-        <div className="ticket-list-panel ticket-panel-enter ticket-panel-enter-delay">
-          <div className="ticket-toolbar">
-            <div>
-              <h2>My Ticket Queue</h2>
-              <p className="ticket-panel-description">Current tickets grouped by workflow stage.</p>
-            </div>
-            <span className="ticket-total-pill" aria-live="polite">
-              {tickets.length} total
-            </span>
+        <div className="ticket-list-panel">
+          <div className="section-header compact">
+            <h2>My Ticket Queue</h2>
+            <p className="muted">Your latest requests and updates appear here in status order.</p>
           </div>
-          {isLoading && (
-            <div className="ticket-loading-grid">
-              {loadingCards.map((_, index) => (
-                <div key={index} className="ticket-loading-card" />
-              ))}
-            </div>
+          {isLoading ? (
+            <p className="muted">Loading tickets...</p>
+          ) : (
+            <TicketBoard tickets={tickets} />
           )}
-          {isError && (
-            <div className="ticket-error-banner">
-              {getApiErrorMessage(error, 'Failed to load tickets.')}
-            </div>
-          )}
-          {!isLoading && !isError && <TicketBoard tickets={tickets} />}
         </div>
       </section>
     </main>
