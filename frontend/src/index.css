@@ -4132,6 +4132,29 @@ body {
   gap: 0.75rem;
 }
 
+.ticket-technician-availability {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  padding: 0.9rem;
+}
+
+.ticket-availability-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.ticket-availability-checkbox input {
+  inline-size: 16px;
+  block-size: 16px;
+}
+
 .technician-list button {
   text-align: left;
   color: var(--text);
