@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import axios from 'axios';
 import toast from 'react-hot-toast';
 import { FacilityCard } from '../../../components/facilities/FacilityCard';
 import { ResourceForm } from '../../../components/facilities/ResourceForm';
@@ -38,8 +39,9 @@ export function AdminFacilitiesPage() {
       }
       setEditing(null);
       await load();
-    } catch {
-      toast.error('Failed to save resource');
+    } catch (error) {
+      const message = axios.isAxiosError(error) ? error.response?.data?.message : null;
+      toast.error(message ?? 'Failed to save resource');
     } finally {
       setSaving(false);
     }
