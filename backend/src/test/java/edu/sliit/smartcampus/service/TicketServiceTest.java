@@ -3,6 +3,7 @@ package edu.sliit.smartcampus.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -18,6 +19,7 @@ import edu.sliit.smartcampus.model.UserRole;
 import edu.sliit.smartcampus.repository.TicketAttachmentRepository;
 import edu.sliit.smartcampus.repository.TicketCommentRepository;
 import edu.sliit.smartcampus.repository.TicketRepository;
+import edu.sliit.smartcampus.repository.TechnicianAvailabilityRepository;
 import edu.sliit.smartcampus.repository.UserRepository;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -41,6 +43,8 @@ class TicketServiceTest {
     @Mock
     private TicketAttachmentRepository attachmentRepository;
     @Mock
+    private TechnicianAvailabilityRepository technicianAvailabilityRepository;
+    @Mock
     private UserRepository userRepository;
     @Mock
     private TicketFileStorageService fileStorageService;
@@ -55,7 +59,8 @@ class TicketServiceTest {
     @BeforeEach
     void setUp() {
         ticketService = new TicketService(authService, ticketRepository, commentRepository, attachmentRepository,
-                userRepository, fileStorageService, notificationService);
+                technicianAvailabilityRepository, userRepository, fileStorageService, notificationService);
+        lenient().when(technicianAvailabilityRepository.findByTechnician_Id(any())).thenReturn(Optional.empty());
         student = user("Student", UserRole.STUDENT);
         admin = user("Admin", UserRole.ADMIN);
         technician = user("Tech", UserRole.TECHNICIAN);

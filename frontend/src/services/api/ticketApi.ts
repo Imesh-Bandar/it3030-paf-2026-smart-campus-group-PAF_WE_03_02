@@ -1,6 +1,7 @@
 import { api } from '../../lib/axios';
 import type {
   AssignmentSuggestion,
+  TechnicianAvailability,
   TechnicianWorkload,
   Ticket,
   TicketAttachment,
@@ -21,8 +22,11 @@ export type CreateTicketPayload = {
 };
 
 export const ticketApi = {
-  getAll: async (filters?: { status?: TicketStatus; assigneeId?: string; reporterId?: string }): Promise<Ticket[]> =>
-    (await api.get('/tickets', { params: filters })).data,
+  getAll: async (filters?: {
+    status?: TicketStatus;
+    assigneeId?: string;
+    reporterId?: string;
+  }): Promise<Ticket[]> => (await api.get('/tickets', { params: filters })).data,
 
   getById: async (id: string): Promise<Ticket> => (await api.get(`/tickets/${id}`)).data,
 
@@ -52,18 +56,35 @@ export const ticketApi = {
   addComment: async (id: string, content: string, internal = false): Promise<TicketComment> =>
     (await api.post(`/tickets/${id}/comments`, { content, internal })).data,
 
-  updateComment: async (ticketId: string, commentId: string, content: string, internal?: boolean): Promise<TicketComment> =>
+  updateComment: async (
+    ticketId: string,
+    commentId: string,
+    content: string,
+    internal?: boolean,
+  ): Promise<TicketComment> =>
     (await api.put(`/tickets/${ticketId}/comments/${commentId}`, { content, internal })).data,
 
   deleteComment: async (ticketId: string, commentId: string) =>
     api.delete(`/tickets/${ticketId}/comments/${commentId}`),
 
-  attachments: async (id: string): Promise<TicketAttachment[]> => (await api.get(`/tickets/${id}/attachments`)).data,
+  attachments: async (id: string): Promise<TicketAttachment[]> =>
+    (await api.get(`/tickets/${id}/attachments`)).data,
 
-  slaMetrics: async (): Promise<TicketSlaMetrics> => (await api.get('/admin/tickets/sla-metrics')).data,
+  slaMetrics: async (): Promise<TicketSlaMetrics> =>
+    (await api.get('/admin/tickets/sla-metrics')).data,
 
-  technicianWorkload: async (): Promise<TechnicianWorkload[]> => (await api.get('/admin/technician-workload')).data,
+  technicianWorkload: async (): Promise<TechnicianWorkload[]> =>
+    (await api.get('/admin/technician-workload')).data,
 
   assignmentSuggestion: async (id: string): Promise<AssignmentSuggestion> =>
     (await api.get(`/admin/tickets/${id}/assignment-suggestion`)).data,
+
+  getMyAvailability: async (): Promise<TechnicianAvailability> =>
+    (await api.get('/tickets/technician/availability')).data,
+
+  updateMyAvailability: async (payload: {
+    available: boolean;
+    note?: string;
+  }): Promise<TechnicianAvailability> =>
+    (await api.put('/tickets/technician/availability', payload)).data,
 };

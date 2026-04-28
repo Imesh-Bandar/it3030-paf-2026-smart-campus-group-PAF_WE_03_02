@@ -8,6 +8,8 @@ import edu.sliit.smartcampus.dto.TicketCommentRequestDto;
 import edu.sliit.smartcampus.dto.TicketCreateRequestDto;
 import edu.sliit.smartcampus.dto.TicketDto;
 import edu.sliit.smartcampus.dto.TicketStatusUpdateRequestDto;
+import edu.sliit.smartcampus.dto.TechnicianAvailabilityDto;
+import edu.sliit.smartcampus.dto.TechnicianAvailabilityUpdateRequestDto;
 import edu.sliit.smartcampus.model.TicketStatus;
 import edu.sliit.smartcampus.service.TicketService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -77,6 +79,21 @@ public class TicketController {
             @PathVariable UUID id,
             @Valid @RequestBody TicketAssignRequestDto request) {
         return ResponseEntity.ok(ticketService.assignTicket(id, request.technicianId()));
+    }
+
+    @GetMapping("/technician/availability")
+    @PreAuthorize("hasRole('TECHNICIAN')")
+    @Operation(summary = "Get current technician availability")
+    public ResponseEntity<TechnicianAvailabilityDto> getMyAvailability() {
+        return ResponseEntity.ok(ticketService.getMyAvailability());
+    }
+
+    @PutMapping("/technician/availability")
+    @PreAuthorize("hasRole('TECHNICIAN')")
+    @Operation(summary = "Update technician availability")
+    public ResponseEntity<TechnicianAvailabilityDto> updateMyAvailability(
+            @Valid @RequestBody TechnicianAvailabilityUpdateRequestDto request) {
+        return ResponseEntity.ok(ticketService.updateMyAvailability(request));
     }
 
     @DeleteMapping("/{id}")
